@@ -1,0 +1,30 @@
+<section>
+  <h1>Gestión de Tickets</h1>
+  <p>Solicitudes registradas en el sistema</p>
+
+  @if (cargando()) {
+    <p>Cargando tickets...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else {
+    <div class="lista">
+      @for (ticket of tickets(); track ticket.id) {
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>#{{ ticket.id }} · {{ ticket.asunto }}</mat-card-title>
+            <mat-card-subtitle>{{ ticket.fechaCreacion | date: 'dd/MM/yyyy' }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ ticket.descripcion }}</p>
+            <span class="etiqueta estado-{{ claseEstado(ticket.estado) }}">{{ ticket.estado }}</span>
+            <span class="etiqueta prioridad-{{ ticket.prioridad.toLowerCase() }}">
+              Prioridad {{ ticket.prioridad }}
+            </span>
+          </mat-card-content>
+        </mat-card>
+      } @empty {
+        <p>No hay registros asociados</p>
+      }
+    </div>
+  }
+</section>

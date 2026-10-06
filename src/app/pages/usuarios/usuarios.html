@@ -1,0 +1,26 @@
+<section>
+  <h1>Usuarios</h1>
+  <p>Personas registradas en el sistema</p>
+
+  @if (cargando()) {
+    <p>Cargando usuarios...</p>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+  } @else {
+    <div class="lista">
+      @for (usuario of usuarios(); track usuario.id) {
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>{{ usuario.nombre.trim() }}</mat-card-title>
+            <mat-card-subtitle>{{ usuario.email }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <span class="etiqueta rol-{{ claseRol(usuario.rol) }}">{{ usuario.rol }}</span>
+          </mat-card-content>
+        </mat-card>
+      } @empty {
+        <p>No hay usuarios registrados</p>
+      }
+    </div>
+  }
+</section>

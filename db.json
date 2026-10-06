@@ -1,0 +1,48 @@
+{
+    "tickets": [
+        {
+            "id": 1,
+            "asunto": "Problema de acceso",
+            "descripcion": "Al intentar acceder, aparecer un error en pantalla",
+            "estado": "Abierto",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+        {
+            "id":2,
+            "asunto": "No genera reporte de ventas",
+            "descripcion": "Durante el proceso de generación del resumen de ventas",
+            "estado": "En proceso",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+        {
+            "id": 3,
+            "asunto": "Impresora no disponible",
+            "descripcion": "Al intentar imprimir, la impresora aparece como no disponible",
+            "estado": "Cerrado",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        }
+    ],
+    "usuarios": [
+        {
+            "id": 1,
+            "nombre": "Ana Maria Olmedo ",
+            "email": "aolmedo@gmail.com",
+            "rol": "Soporte"
+        },
+        {
+            "id": 2,
+            "nombre": "Juanito Peres",
+            "email": "jperes@gmail.com",
+            "rol": "Usuario"
+        },
+        {
+            "id": 3,
+            "nombre": "Daniela Santos",
+            "email": "dsantos@gmail.com",
+            "rol": "Administrador"
+        }
+    ]
+}
