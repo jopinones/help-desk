@@ -1,11 +1,12 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { Ticket } from '../../models/ticket';
 import { TicketService } from '../../services/ticket';
 
 @Component({
-  imports: [MatCardModule, DatePipe],
+  imports: [MatTableModule, MatPaginatorModule, DatePipe],
   selector: 'app-tickets',
   styleUrl: './tickets.scss',
   templateUrl: './tickets.html',
@@ -13,9 +14,21 @@ import { TicketService } from '../../services/ticket';
 export class Tickets implements OnInit {
   private ticketService = inject(TicketService);
 
-  tickets = signal<Ticket[]>([]);
+  columnas: string[] = ['id', 'asunto', 'estado', 'prioridad', 'fechaCreacion'];
+
+  dataSource = new MatTableDataSource<Ticket>();
+
   cargando = signal(true);
-  error = signal<string | null>(null);
+  error = signal(false);
+
+  // El paginador vive dentro del @else, así que solo existe cuando termina la carga.
+  // Un setter lo conecta a la tabla apenas aparece en la vista.
+  @ViewChild(MatPaginator)
+  set paginator(paginador: MatPaginator | undefined) {
+    if (paginador) {
+      this.dataSource.paginator = paginador;
+    }
+  }
 
   ngOnInit(): void {
     this.cargarTickets();
@@ -23,22 +36,22 @@ export class Tickets implements OnInit {
 
   cargarTickets(): void {
     this.cargando.set(true);
-    this.error.set(null);
+    this.error.set(false);
 
     this.ticketService.obtenerTickets().subscribe({
-      next: (datos) => {
-        this.tickets.set(datos);
+      next: (tickets) => {
+        this.dataSource.data = tickets;
         this.cargando.set(false);
       },
       error: (err) => {
-        console.error('Error al obtener los tickets', err);
-        this.error.set('No se pudieron cargar los tickets. Verifica que la API esté activa.');
+        console.error('Error al obtener los tickets: ', err);
+        this.error.set(true);
         this.cargando.set(false);
       },
     });
   }
 
-  claseEstado(estado: Ticket['estado']): string {
-    return estado.toLowerCase().replace(' ', '-');
+  clase(valor: string): string {
+    return valor.toLowerCase().replaceAll(' ', '-');
   }
 }

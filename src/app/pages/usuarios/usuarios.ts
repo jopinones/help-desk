@@ -1,10 +1,11 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
+import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { Usuario } from '../../models/usuario';
 import { UsuarioService } from '../../services/usuario';
 
 @Component({
-  imports: [MatCardModule],
+  imports: [MatTableModule, MatPaginatorModule],
   selector: 'app-usuarios',
   styleUrl: './usuarios.scss',
   templateUrl: './usuarios.html',
@@ -12,9 +13,21 @@ import { UsuarioService } from '../../services/usuario';
 export class Usuarios implements OnInit {
   private usuarioService = inject(UsuarioService);
 
-  usuarios = signal<Usuario[]>([]);
+  columnas: string[] = ['id', 'nombre', 'email', 'rol'];
+
+  dataSource = new MatTableDataSource<Usuario>();
+
   cargando = signal(true);
-  error = signal<string | null>(null);
+  error = signal(false);
+
+  // El paginador vive dentro del @else, así que solo existe cuando termina la carga.
+  // Un setter lo conecta a la tabla apenas aparece en la vista.
+  @ViewChild(MatPaginator)
+  set paginator(paginador: MatPaginator | undefined) {
+    if (paginador) {
+      this.dataSource.paginator = paginador;
+    }
+  }
 
   ngOnInit(): void {
     this.cargarUsuarios();
@@ -22,16 +35,16 @@ export class Usuarios implements OnInit {
 
   cargarUsuarios(): void {
     this.cargando.set(true);
-    this.error.set(null);
+    this.error.set(false);
 
     this.usuarioService.obtenerUsuarios().subscribe({
-      next: (datos) => {
-        this.usuarios.set(datos);
+      next: (usuarios) => {
+        this.dataSource.data = usuarios;
         this.cargando.set(false);
       },
       error: (err) => {
-        console.error('Error al obtener los usuarios', err);
-        this.error.set('No se pudieron cargar los usuarios. Verifica que la API esté activa.');
+        console.error('Error al obtener los usuarios: ', err);
+        this.error.set(true);
         this.cargando.set(false);
       },
     });

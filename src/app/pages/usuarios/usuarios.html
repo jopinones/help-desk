@@ -1,26 +1,47 @@
-<section>
-  <h1>Usuarios</h1>
-  <p>Personas registradas en el sistema</p>
+<section class="usuarios">
+  <div class="encabezado">
+    <h1>Usuarios</h1>
+    <p>Personas registradas en el sistema</p>
+  </div>
 
   @if (cargando()) {
-    <p>Cargando usuarios...</p>
+    <p class="mensaje">Cargando usuarios...</p>
   } @else if (error()) {
-    <p class="error">{{ error() }}</p>
+    <div class="mensaje error">
+      No fue posible obtener los registros
+    </div>
   } @else {
-    <div class="lista">
-      @for (usuario of usuarios(); track usuario.id) {
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>{{ usuario.nombre.trim() }}</mat-card-title>
-            <mat-card-subtitle>{{ usuario.email }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
+    <div class="tabla-contenedor">
+      <table mat-table [dataSource]="dataSource">
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let usuario">#{{ usuario.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let usuario">{{ usuario.nombre.trim() }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let usuario">{{ usuario.email }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="rol">
+          <th mat-header-cell *matHeaderCellDef>Rol</th>
+          <td mat-cell *matCellDef="let usuario">
             <span class="etiqueta rol-{{ claseRol(usuario.rol) }}">{{ usuario.rol }}</span>
-          </mat-card-content>
-        </mat-card>
-      } @empty {
-        <p>No hay usuarios registrados</p>
-      }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5,10,20]" showFirstLastButtons>
+      </mat-paginator>
     </div>
   }
 </section>

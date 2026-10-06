@@ -1,7 +1,7 @@
 {
     "tickets": [
         {
-            "id": 1,
+            "id": "1",
             "asunto": "Problema de acceso",
             "descripcion": "Al intentar acceder, aparecer un error en pantalla",
             "estado": "Abierto",
@@ -9,7 +9,7 @@
             "fechaCreacion": "2026-10-01"
         },
         {
-            "id":2,
+            "id": "2",
             "asunto": "No genera reporte de ventas",
             "descripcion": "Durante el proceso de generación del resumen de ventas",
             "estado": "En proceso",
@@ -17,7 +17,79 @@
             "fechaCreacion": "2026-10-01"
         },
         {
-            "id": 3,
+            "id": "3",
+            "asunto": "Impresora no disponible",
+            "descripcion": "Al intentar imprimir, la impresora aparece como no disponible",
+            "estado": "Cerrado",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+                {
+            "id": "4",
+            "asunto": "Problema de acceso",
+            "descripcion": "Al intentar acceder, aparecer un error en pantalla",
+            "estado": "Abierto",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+        {
+            "id": "5",
+            "asunto": "No genera reporte de ventas",
+            "descripcion": "Durante el proceso de generación del resumen de ventas",
+            "estado": "En proceso",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+        {
+            "id": "6",
+            "asunto": "Impresora no disponible",
+            "descripcion": "Al intentar imprimir, la impresora aparece como no disponible",
+            "estado": "Cerrado",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+        {
+            "id": "7",
+            "asunto": "Problema de acceso",
+            "descripcion": "Al intentar acceder, aparecer un error en pantalla",
+            "estado": "Abierto",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+        {
+            "id": "8",
+            "asunto": "No genera reporte de ventas",
+            "descripcion": "Durante el proceso de generación del resumen de ventas",
+            "estado": "En proceso",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+        {
+            "id": "9",
+            "asunto": "Impresora no disponible",
+            "descripcion": "Al intentar imprimir, la impresora aparece como no disponible",
+            "estado": "Cerrado",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+                {
+            "id": "10",
+            "asunto": "Problema de acceso",
+            "descripcion": "Al intentar acceder, aparecer un error en pantalla",
+            "estado": "Abierto",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+        {
+            "id": "11",
+            "asunto": "No genera reporte de ventas",
+            "descripcion": "Durante el proceso de generación del resumen de ventas",
+            "estado": "En proceso",
+            "prioridad": "Alta",
+            "fechaCreacion": "2026-10-01"
+        },
+        {
+            "id": "12",
             "asunto": "Impresora no disponible",
             "descripcion": "Al intentar imprimir, la impresora aparece como no disponible",
             "estado": "Cerrado",
