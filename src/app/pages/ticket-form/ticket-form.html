@@ -1,0 +1,60 @@
+<section class="ticket-form">
+  <h1>Nuevo Ticket</h1>
+
+  <form [formGroup]="ticketForm" (ngSubmit)="guardar()">
+    <mat-form-field appearance="outline">
+      <mat-label>Asunto</mat-label>
+      <input matInput type="text" formControlName="asunto" />
+      @if (ticketForm.controls.asunto.hasError('required')) {
+        <mat-error>El asunto es obligatorio</mat-error>
+      } @else if (ticketForm.controls.asunto.hasError('minlength')) {
+        <mat-error>Mínimo 5 caracteres</mat-error>
+      } @else if (ticketForm.controls.asunto.hasError('maxlength')) {
+        <mat-error>Máximo 100 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput rows="4" formControlName="descripcion"></textarea>
+      @if (ticketForm.controls.descripcion.hasError('required')) {
+        <mat-error>La descripción es obligatoria</mat-error>
+      } @else if (ticketForm.controls.descripcion.hasError('minlength')) {
+        <mat-error>Mínimo 5 caracteres</mat-error>
+      } @else if (ticketForm.controls.descripcion.hasError('maxlength')) {
+        <mat-error>Máximo 500 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="fila">
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="estado">
+          @for (estado of estados; track estado) {
+            <mat-option [value]="estado">{{ estado }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Prioridad</mat-label>
+        <mat-select formControlName="prioridad">
+          @for (prioridad of prioridades; track prioridad) {
+            <mat-option [value]="prioridad">{{ prioridad }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (error()) {
+      <p class="error">No fue posible guardar el ticket. Verifica que la API esté activa.</p>
+    }
+
+    <div class="acciones">
+      <a mat-button routerLink="/tickets">Cancelar</a>
+      <button mat-flat-button type="submit" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</section>

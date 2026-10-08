@@ -75,3 +75,11 @@ $transicion: 0.2s ease;
     color: $color-primario;
     font-weight: 600;
 }
+
+.submenu-padre {
+    cursor: pointer;
+}
+
+.submenu {
+    padding-left: 24px;
+}

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Ticket } from '../models/ticket';
+import { Ticket, NuevoTicket } from '../models/ticket';
 
 @Injectable({
     providedIn: 'root'
@@ -12,5 +12,9 @@ export class TicketService {
 
     obtenerTickets(): Observable<Ticket[]> {
         return this.http.get<Ticket[]>(this.apiUrl);
+    }
+
+    crearTicket(ticket: NuevoTicket): Observable<Ticket> {
+        return this.http.post<Ticket>(this.apiUrl, ticket);
     }
 }

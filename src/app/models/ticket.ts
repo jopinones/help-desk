@@ -6,3 +6,5 @@ export interface Ticket {
     prioridad: 'Baja' | 'Media' | 'Alta';
     fechaCreacion: string;
 }
+
+export type NuevoTicket = Omit<Ticket, 'id'>;

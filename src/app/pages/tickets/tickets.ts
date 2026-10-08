@@ -1,20 +1,29 @@
 import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { Ticket } from '../../models/ticket';
 import { TicketService } from '../../services/ticket';
 
 @Component({
-  imports: [MatTableModule, MatPaginatorModule, DatePipe],
+  imports: [MatTableModule, MatPaginatorModule, MatButtonModule, RouterLink, DatePipe],
   selector: 'app-tickets',
   styleUrl: './tickets.scss',
   templateUrl: './tickets.html',
 })
 export class Tickets implements OnInit {
+  
   private ticketService = inject(TicketService);
 
-  columnas: string[] = ['id', 'asunto', 'estado', 'prioridad', 'fechaCreacion'];
+  columnas: string[] = [
+    'id', 
+    'asunto', 
+    'estado', 
+    'prioridad', 
+    'fechaCreacion'
+  ];
 
   dataSource = new MatTableDataSource<Ticket>();
 

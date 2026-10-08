@@ -11,11 +11,32 @@
         <span matListItemTitle>Dashboard</span>
     </a>
 
-    <a mat-list-item routerLink="/tickets"
-      routerLinkActive="activo">
-        <mat-icon matListItemIcon>confirmation_number</mat-icon>  
-        <span matListItemTitle>Tickets</span>
-    </a>
+    <div routerLinkActive="grupo-activo" #tickets="routerLinkActive">
+      <a mat-list-item class="submenu-padre" (click)="alternarTickets()"
+        [attr.aria-expanded]="ticketsAbierto() || tickets.isActive">
+          <mat-icon matListItemIcon>confirmation_number</mat-icon>
+          <span matListItemTitle>Tickets</span>
+          <mat-icon matListItemMeta>
+            {{ ticketsAbierto() || tickets.isActive ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+      </a>
+
+      @if (ticketsAbierto() || tickets.isActive) {
+        <div class="submenu">
+          <a mat-list-item routerLink="/tickets"
+            routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }">
+              <mat-icon matListItemIcon>list</mat-icon>
+              <span matListItemTitle>Listado</span>
+          </a>
+
+          <a mat-list-item routerLink="/tickets/nuevo"
+            routerLinkActive="activo">
+              <mat-icon matListItemIcon>add_circle</mat-icon>
+              <span matListItemTitle>Crear ticket</span>
+          </a>
+        </div>
+      }
+    </div>
 
     <a mat-list-item routerLink="/kanban"
       routerLinkActive="activo">

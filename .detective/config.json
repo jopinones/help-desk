@@ -1,0 +1,31 @@
+{
+  "scopes": [
+    "src/app/pages/usuarios",
+    "src/app/pages/tickets",
+    "src/app/pages/reportes",
+    "src/app/pages/not-found",
+    "src/app/pages/kanban",
+    "src/app/pages/dashboard",
+    "src/app/pages/acerca-de"
+  ],
+  "groups": [
+    "src/app/pages",
+    "src/app"
+  ],
+  "entries": [],
+  "filter": {
+    "files": [],
+    "logs": []
+  },
+  "aliases": {},
+  "teams": {
+    "example-team-a": [
+      "John Doe",
+      "Jane Doe"
+    ],
+    "example-team-b": [
+      "Max Muster",
+      "Susi Sorglos"
+    ]
+  }
+}

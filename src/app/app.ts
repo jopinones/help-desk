@@ -24,4 +24,10 @@ import { MatListModule } from '@angular/material/list';
 })
 export class App {
   protected readonly title = signal('help-desk');
+
+  ticketsAbierto = signal(false);
+
+  alternarTickets(): void {
+    this.ticketsAbierto.update((abierto) => !abierto);
+  }
 }

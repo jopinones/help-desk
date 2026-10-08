@@ -1,0 +1,425 @@
+{
+  "version": "2.1.2",
+  "commitCache": [
+    [
+      "1ceef99b483ecd24943589259a607f3530f9ac9b:.ts,.js,.tsx,.jsx:2.1.2",
+      {
+        "commitHash": "1ceef99b483ecd24943589259a607f3530f9ac9b",
+        "fileExtensions": [
+          ".ts",
+          ".js",
+          ".tsx",
+          ".jsx"
+        ],
+        "version": "2.1.2",
+        "timestamp": 1791376182612,
+        "metrics": [
+          {
+            "commitHash": "1ceef99b483ecd24943589259a607f3530f9ac9b",
+            "commitDate": "2026-10-06T19:34:30.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "feat paginacion",
+            "filePath": "src/app/models/ticket.ts",
+            "linesAdded": 1,
+            "linesRemoved": 1,
+            "totalLinesAtCommit": 8,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 252
+          },
+          {
+            "commitHash": "1ceef99b483ecd24943589259a607f3530f9ac9b",
+            "commitDate": "2026-10-06T19:34:30.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "feat paginacion",
+            "filePath": "src/app/pages/tickets/tickets.ts",
+            "linesAdded": 25,
+            "linesRemoved": 12,
+            "totalLinesAtCommit": 58,
+            "mccabeComplexityAtCommit": 2,
+            "processingTimeMs": 245
+          },
+          {
+            "commitHash": "1ceef99b483ecd24943589259a607f3530f9ac9b",
+            "commitDate": "2026-10-06T19:34:30.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "feat paginacion",
+            "filePath": "src/app/pages/usuarios/usuarios.ts",
+            "linesAdded": 23,
+            "linesRemoved": 10,
+            "totalLinesAtCommit": 57,
+            "mccabeComplexityAtCommit": 2,
+            "processingTimeMs": 234
+          }
+        ]
+      }
+    ],
+    [
+      "99673176cb0f58e4e735e73e1ead50bce51451a9:.ts,.js,.tsx,.jsx:2.1.2",
+      {
+        "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+        "fileExtensions": [
+          ".ts",
+          ".js",
+          ".tsx",
+          ".jsx"
+        ],
+        "version": "2.1.2",
+        "timestamp": 1791376182612,
+        "metrics": [
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/app.config.ts",
+            "linesAdded": 4,
+            "linesRemoved": 1,
+            "totalLinesAtCommit": 14,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 191
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/app.routes.ts",
+            "linesAdded": 43,
+            "linesRemoved": 1,
+            "totalLinesAtCommit": 46,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 183
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/app.ts",
+            "linesAdded": 17,
+            "linesRemoved": 2,
+            "totalLinesAtCommit": 28,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 175
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/models/ticket.ts",
+            "linesAdded": 8,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 8,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 166
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/models/usuario.ts",
+            "linesAdded": 6,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 6,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 160
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/acerca-de/acerca-de.spec.ts",
+            "linesAdded": 21,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 22,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 150
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/acerca-de/acerca-de.ts",
+            "linesAdded": 11,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 12,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 143
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/dashboard/dashboard.spec.ts",
+            "linesAdded": 21,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 22,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 124
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/dashboard/dashboard.ts",
+            "linesAdded": 9,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 10,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 150
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/kanban/kanban.spec.ts",
+            "linesAdded": 21,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 22,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 146
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/kanban/kanban.ts",
+            "linesAdded": 9,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 10,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 139
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/not-found/not-found.spec.ts",
+            "linesAdded": 21,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 22,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 130
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/not-found/not-found.ts",
+            "linesAdded": 12,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 13,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 123
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/reportes/reportes.spec.ts",
+            "linesAdded": 21,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 22,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 115
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/reportes/reportes.ts",
+            "linesAdded": 9,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 10,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 112
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/tickets/tickets.spec.ts",
+            "linesAdded": 21,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 22,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 115
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/tickets/tickets.ts",
+            "linesAdded": 44,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 45,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 102
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/usuarios/usuarios.spec.ts",
+            "linesAdded": 21,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 22,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 100
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/pages/usuarios/usuarios.ts",
+            "linesAdded": 43,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 44,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 100
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/services/ticket.spec.ts",
+            "linesAdded": 18,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 19,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 94
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/services/ticket.ts",
+            "linesAdded": 16,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 17,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 89
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/services/usuario.spec.ts",
+            "linesAdded": 18,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 19,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 82
+          },
+          {
+            "commitHash": "99673176cb0f58e4e735e73e1ead50bce51451a9",
+            "commitDate": "2026-10-06T18:06:43.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "inicial",
+            "filePath": "src/app/services/usuario.ts",
+            "linesAdded": 16,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 17,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 77
+          }
+        ]
+      }
+    ],
+    [
+      "3857692831137be86992d7d57879520ce93653fd:.ts,.js,.tsx,.jsx:2.1.2",
+      {
+        "commitHash": "3857692831137be86992d7d57879520ce93653fd",
+        "fileExtensions": [
+          ".ts",
+          ".js",
+          ".tsx",
+          ".jsx"
+        ],
+        "version": "2.1.2",
+        "timestamp": 1791376182613,
+        "metrics": [
+          {
+            "commitHash": "3857692831137be86992d7d57879520ce93653fd",
+            "commitDate": "2026-09-29T18:26:01.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "initial commit",
+            "filePath": "src/app/app.config.ts",
+            "linesAdded": 10,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 11,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 227
+          },
+          {
+            "commitHash": "3857692831137be86992d7d57879520ce93653fd",
+            "commitDate": "2026-09-29T18:26:01.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "initial commit",
+            "filePath": "src/app/app.routes.ts",
+            "linesAdded": 3,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 4,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 222
+          },
+          {
+            "commitHash": "3857692831137be86992d7d57879520ce93653fd",
+            "commitDate": "2026-09-29T18:26:01.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "initial commit",
+            "filePath": "src/app/app.spec.ts",
+            "linesAdded": 24,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 25,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 214
+          },
+          {
+            "commitHash": "3857692831137be86992d7d57879520ce93653fd",
+            "commitDate": "2026-09-29T18:26:01.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "initial commit",
+            "filePath": "src/app/app.ts",
+            "linesAdded": 12,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 13,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 207
+          },
+          {
+            "commitHash": "3857692831137be86992d7d57879520ce93653fd",
+            "commitDate": "2026-09-29T18:26:01.000Z",
+            "author": "Jonathan Piñones",
+            "commitMessage": "initial commit",
+            "filePath": "src/main.ts",
+            "linesAdded": 6,
+            "linesRemoved": 0,
+            "totalLinesAtCommit": 7,
+            "mccabeComplexityAtCommit": 1,
+            "processingTimeMs": 200
+          }
+        ]
+      }
+    ]
+  ]
+}

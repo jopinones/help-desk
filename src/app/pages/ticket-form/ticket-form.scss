@@ -1,0 +1,25 @@
+.ticket-form {
+    max-width: 640px;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .fila {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .acciones {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .error {
+        color: #c62828;
+    }
+}
