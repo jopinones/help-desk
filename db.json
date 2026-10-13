@@ -103,6 +103,22 @@
       "prioridad": "Media",
       "fechaCreacion": "2026-10-08",
       "id": "hyrA9pj9RGc"
+    },
+    {
+      "asunto": "sin impresora",
+      "descripcion": "sin impresora",
+      "estado": "Abierto",
+      "prioridad": "Media",
+      "fechaCreacion": "2026-10-08",
+      "id": "w2U_x4uebKs"
+    },
+    {
+      "asunto": "nuevo",
+      "descripcion": "mensajeje",
+      "estado": "Abierto",
+      "prioridad": "Media",
+      "fechaCreacion": "2026-10-08",
+      "id": "5IxDAmyYXkY"
     }
   ],
   "usuarios": [
