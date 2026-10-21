@@ -5,6 +5,9 @@ import { Tickets } from './pages/tickets/tickets';
 import { Kanban } from './pages/kanban/kanban';
 import { Reportes } from './pages/reportes/reportes';
 import { Usuarios } from './pages/usuarios/usuarios';
+// AGREGADO: formulario (crear/editar) y detalle de usuario.
+import { UsuarioForm } from './pages/usuario-form/usuario-form';
+import { UsuarioDetalle } from './pages/usuario-detalle/usuario-detalle';
 import { AcercaDe } from './pages/acerca-de/acerca-de';
 import { NotFound } from './pages/not-found/not-found';
 import { TicketForm } from './pages/ticket-form/ticket-form';
@@ -48,6 +51,19 @@ export const routes: Routes = [
     {
         path: 'usuarios',
         component: Usuarios
+    },
+    // AGREGADO: 'nuevo' y 'editar/:id' van antes de ':id', si no 'nuevo' se tomaría como un id.
+    {
+        path: 'usuarios/nuevo',
+        component: UsuarioForm
+    },
+    {
+        path: 'usuarios/editar/:id',
+        component: UsuarioForm
+    },
+    {
+        path: 'usuarios/:id',
+        component: UsuarioDetalle
     },
     {
         path: 'acerca-de',

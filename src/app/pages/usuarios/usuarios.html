@@ -4,6 +4,11 @@
       <h1>Usuarios</h1>
       <p>Personas registradas en el sistema</p>
     </div>
+    <!-- AGREGADO: botón para crear un usuario (ruta /usuarios/nuevo). -->
+    <a mat-flat-button routerLink="/usuarios/nuevo">
+      <mat-icon>add</mat-icon>
+      Nuevo usuario
+    </a>
   </header>
 
   @if (cargando()) {
@@ -18,7 +23,10 @@
 
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>ID</th>
-          <td mat-cell *matCellDef="let usuario">#{{ usuario.id }}</td>
+          <!-- AGREGADO: el ID es un enlace al detalle del usuario. -->
+          <td mat-cell *matCellDef="let usuario">
+            <a [routerLink]="['/usuarios', usuario.id]">#{{ usuario.id }}</a>
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="nombre">
@@ -35,6 +43,47 @@
           <th mat-header-cell *matHeaderCellDef>Rol</th>
           <td mat-cell *matCellDef="let usuario">
             <span class="etiqueta rol-{{ claseRol(usuario.rol) }}">{{ usuario.rol }}</span>
+          </td>
+        </ng-container>
+
+        <!-- AGREGADO: columna con el estado del usuario (Vigente, Bloqueado, Eliminado). -->
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let usuario">
+            <span class="etiqueta estado-{{ claseEstado(usuario.estado) }}">{{ usuario.estado }}</span>
+          </td>
+        </ng-container>
+
+        <!-- AGREGADO: acciones Detalle, Editar y Eliminar, igual que en tickets. -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let usuario">
+            <div class="acciones-fila">
+              <a mat-button [routerLink]="['/usuarios', usuario.id]">
+                <mat-icon>visibility</mat-icon>
+                Detalle
+              </a>
+
+              <!-- Editar se deshabilita si el usuario no está Vigente (Bloqueado o Eliminado). -->
+              <span class="envoltura-accion"
+                [matTooltip]="motivoNoEditable(usuario)"
+                [matTooltipDisabled]="puedeEditar(usuario)">
+                <a mat-button
+                  [routerLink]="puedeEditar(usuario) ? ['/usuarios/editar', usuario.id] : null"
+                  [disabled]="!puedeEditar(usuario)">
+                  <mat-icon>edit</mat-icon>
+                  Editar
+                </a>
+              </span>
+
+              <!-- Eliminar se deshabilita si ya está Eliminado, o mientras se procesa. -->
+              <button mat-button type="button"
+                [disabled]="!puedeEliminar(usuario) || eliminandoId() === usuario.id"
+                (click)="eliminar(usuario)">
+                <mat-icon>delete</mat-icon>
+                Eliminar
+              </button>
+            </div>
           </td>
         </ng-container>
 

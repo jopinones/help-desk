@@ -7,6 +7,11 @@
     </div>
   </header>
 
+  <!-- AGREGADO: aviso cuando el usuario no se puede editar (Bloqueado o Eliminado). -->
+  @if (bloqueado()) {
+    <p class="mensaje error">{{ motivoBloqueo() }}.</p>
+  }
+
   <form class="tarjeta" [formGroup]="usuarioForm" (ngSubmit)="guardar()">
     <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Nombre</mat-label>
@@ -39,13 +44,23 @@
       </mat-select>
     </mat-form-field>
 
+    <!-- AGREGADO: selector de estado (Vigente / Bloqueado). -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="estado">
+        @for (estado of estados; track estado) {
+          <mat-option [value]="estado">{{ estado }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
     @if (error()) {
       <p class="error">No fue posible completar la operación con el usuario. Verifica que la API esté activa.</p>
     }
 
     <div class="acciones">
       <a mat-button routerLink="/usuarios">Cancelar</a>
-      <button mat-flat-button type="submit" [disabled]="guardando() || cargando()">
+      <button mat-flat-button type="submit" [disabled]="guardando() || cargando() || bloqueado()">
         {{ guardando() ? 'Guardando...' : 'Guardar' }}
       </button>
     </div>

@@ -9,7 +9,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { UsuarioService } from '../../services/usuario';
-import { NuevoUsuario, Usuario } from '../../models/usuario';
+// AGREGADO: reglas del modelo; un usuario que no está Vigente no se puede editar.
+import { NuevoUsuario, Usuario, motivoNoEditable, puedeEditar } from '../../models/usuario';
 
 @Component({
   imports: [
@@ -38,8 +39,14 @@ export class UsuarioForm implements OnInit {
   // CORRECCIÓN: renombrado de `rol` a `roles` (es una lista; `rol` chocaba con el control del formulario).
   roles: Usuario['rol'][] = ['Administrador', 'Soporte', 'Usuario'];
 
-  // CORRECCIÓN: se quitó `bloqueado`; esa regla era de los tickets cerrados y
-  // no existe para usuarios, así que no se usaba.
+  // AGREGADO: estados que se pueden elegir en el formulario. 'Eliminado' no aparece
+  // porque se asigna solo con la acción Eliminar del listado.
+  estados: Usuario['estado'][] = ['Vigente', 'Bloqueado'];
+
+  // AGREGADO: si el usuario no se puede editar, el formulario se bloquea y se muestra el motivo.
+  bloqueado = signal(false);
+  motivoBloqueo = signal('');
+
   guardando = signal(false);
   error = signal(false);
 
@@ -48,6 +55,8 @@ export class UsuarioForm implements OnInit {
     nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email]],
     rol: ['Usuario' as Usuario['rol'], Validators.required],
+    // AGREGADO: estado del usuario; uno nuevo nace Vigente.
+    estado: ['Vigente' as Usuario['estado'], Validators.required],
   });
 
   ngOnInit(): void {
@@ -59,10 +68,18 @@ export class UsuarioForm implements OnInit {
     // devuelve una lista. Ahora usa obtenerUsuario(id), que devuelve un solo usuario.
     this.usuarioService.obtenerUsuario(this.usuarioId).subscribe({
       next: (usuario) => {
-        // CORRECCIÓN: `usurio` -> `usuario`; y fechaCreacion es opcional en el modelo.
+        // CORRECCIÓN: `usurio` -> `usuario`.
         const { id, fechaCreacion, ...datos } = usuario;
-        this.fechaCreacion = fechaCreacion ?? '';
+        this.fechaCreacion = fechaCreacion;
         this.usuarioForm.patchValue({ ...datos, nombre: datos.nombre.trim() });
+
+        // AGREGADO: cubre a quien llega por URL directa a /usuarios/editar/:id con un
+        // usuario Bloqueado o Eliminado.
+        if (!puedeEditar(usuario)) {
+          this.bloqueado.set(true);
+          this.motivoBloqueo.set(motivoNoEditable(usuario));
+          this.usuarioForm.disable();
+        }
         this.cargando.set(false);
       },
       // CORRECCIÓN: faltaba manejar el error; sin esto la pantalla se quedaba cargando.
@@ -76,6 +93,11 @@ export class UsuarioForm implements OnInit {
 
   // CORRECCIÓN: faltaba guardar(); el formulario no tenía forma de enviarse.
   guardar(): void {
+    // AGREGADO: segunda comprobación antes de enviar.
+    if (this.bloqueado()) {
+      return;
+    }
+
     if (this.usuarioForm.invalid) {
       this.usuarioForm.markAllAsTouched();
       return;

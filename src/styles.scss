@@ -185,6 +185,11 @@ a {
 .prioridad-media { background: #fff8e1; color: #8d6e00; }
 .prioridad-baja { background: #f1f8e9; color: #33691e; }
 
+// AGREGADO: colores del estado de usuario (Vigente, Bloqueado, Eliminado).
+.estado-vigente { background: #e8f5e9; color: #1b5e20; }
+.estado-bloqueado { background: #fff3e0; color: #bf360c; }
+.estado-eliminado { background: #eceff1; color: #546e7a; text-decoration: line-through; }
+
 .rol-administrador { background: #f3e5f5; color: #4a148c; }
 .rol-soporte { background: #e3f2fd; color: #0d47a1; }
 .rol-usuario { background: #eceff1; color: #37474f; }

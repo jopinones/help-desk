@@ -1,1 +1,6 @@
 // Los estilos de página, tabla y etiquetas de rol son globales (ver src/styles.scss).
+
+// AGREGADO: envuelve el botón "Editar" para que el tooltip funcione aunque esté deshabilitado.
+.envoltura-accion {
+    display: inline-flex;
+}

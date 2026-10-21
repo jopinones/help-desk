@@ -1,1 +1,51 @@
-<p>usuario-detalle works!</p>
+<section class="pagina detalle">
+  <div>
+    <a mat-button routerLink="/usuarios">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al listado de usuarios
+    </a>
+  </div>
+
+  @if (cargando()) {
+    <!-- CORRECCIÓN: decía "Cargando usuarios..."; aquí se carga un solo usuario. -->
+    <p class="mensaje">Cargando usuario...</p>
+  } @else if (error() || !usuario()) {
+    <p class="mensaje error">No fue posible obtener el usuario.</p>
+  } @else {
+    @let u = usuario()!;
+
+    <article class="tarjeta">
+      <header class="encabezado">
+        <div>
+          <p class="codigo">Usuario #{{ u.id }}</p>
+          <h1>{{ u.nombre.trim() }}</h1>
+        </div>
+        <!-- CORRECCIÓN: usaba `t` (variable de tickets que aquí no existe) y
+             `motivoNoEditable` sin llamarlo; ahora usa `u` y el motivo según el estado. -->
+        <span [matTooltip]="motivoNoEditable(u)" [matTooltipDisabled]="puedeEditar(u)">
+          <a mat-flat-button
+            [routerLink]="puedeEditar(u) ? ['/usuarios/editar', u.id] : null"
+            [disabled]="!puedeEditar(u)">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </a>
+        </span>
+      </header>
+
+      <!-- CORRECCIÓN: se eliminó la línea suelta `{{ u. }}` (sintaxis inválida) y se
+           mostró el estado además del rol; antes la clase del rol usaba "estado-". -->
+      <div class="etiquetas">
+        <span class="etiqueta rol-{{ clase(u.rol) }}">{{ u.rol }}</span>
+        <span class="etiqueta estado-{{ clase(u.estado) }}">{{ u.estado }}</span>
+      </div>
+
+      <h2>Correo electrónico</h2>
+      <p class="correo">{{ u.email }}</p>
+
+      <p class="fecha">
+        <mat-icon>event</mat-icon>
+        Creado el {{ u.fechaCreacion | date: 'dd/MM/yyyy' }}
+      </p>
+    </article>
+  }
+</section>

@@ -126,37 +126,73 @@
       "id": "1",
       "nombre": "Ana Maria Olmedo ",
       "email": "aolmedo@gmail.com",
-      "rol": "Soporte"
+      "rol": "Soporte",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-01"
     },
     {
       "id": "2",
       "nombre": "Juanito Peres",
       "email": "jperes@gmail.com",
-      "rol": "Usuario"
+      "rol": "Usuario",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-01"
     },
     {
-      "id": "3",
       "nombre": "Daniela Santos",
       "email": "dsantos@gmail.com",
-      "rol": "Administrador"
+      "rol": "Soporte",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-01",
+      "id": "3"
     },
     {
       "id": "4",
       "nombre": "Ana Maria Olmedo ",
       "email": "aolmedo@gmail.com",
-      "rol": "Soporte"
+      "rol": "Soporte",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-01"
     },
     {
       "id": "5",
       "nombre": "Juanito Peres",
       "email": "jperes@gmail.com",
-      "rol": "Usuario"
+      "rol": "Usuario",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-01"
     },
     {
-      "id": "6",
-      "nombre": "Daniela Santos",
+      "nombre": "Zoila Batas",
       "email": "dsantos@gmail.com",
-      "rol": "Administrador"
+      "rol": "Soporte",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-01",
+      "id": "6"
+    },
+    {
+      "id": "7",
+      "nombre": "Luis Mario Netta",
+      "email": "luxitomario@hotmail.con",
+      "rol": "Administrador",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-01"
+    },
+    {
+      "nombre": "Alan Britto",
+      "email": "abritto@hotmail.com",
+      "rol": "Usuario",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-21",
+      "id": "8"
+    },
+    {
+      "id": "9",
+      "nombre": "Patricio Carlos",
+      "email": "pcarlos@mail.com",
+      "rol": "Usuario",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-21"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
