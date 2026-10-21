@@ -1,8 +1,17 @@
-<section class="ticket-form">
-  <h1>Nuevo Ticket</h1>
+<section class="pagina formulario">
+  <header class="encabezado">
+    <div>
+      <h1>{{ ticketId ? 'Editar Ticket' : 'Nuevo Ticket' }}</h1>
+      <p>{{ ticketId ? 'Modifica los datos de la solicitud' : 'Registra una nueva solicitud de soporte' }}</p>
+    </div>
+  </header>
 
-  <form [formGroup]="ticketForm" (ngSubmit)="guardar()">
-    <mat-form-field appearance="outline">
+  @if (bloqueado()) {
+    <p class="mensaje error">{{ motivoNoEditable }}.</p>
+  }
+
+  <form class="tarjeta" [formGroup]="ticketForm" (ngSubmit)="guardar()">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Asunto</mat-label>
       <input matInput type="text" formControlName="asunto" />
       @if (ticketForm.controls.asunto.hasError('required')) {
@@ -14,7 +23,7 @@
       }
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
       <mat-label>Descripción</mat-label>
       <textarea matInput rows="4" formControlName="descripcion"></textarea>
       @if (ticketForm.controls.descripcion.hasError('required')) {
@@ -27,7 +36,7 @@
     </mat-form-field>
 
     <div class="fila">
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
         <mat-label>Estado</mat-label>
         <mat-select formControlName="estado">
           @for (estado of estados; track estado) {
@@ -36,7 +45,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
         <mat-label>Prioridad</mat-label>
         <mat-select formControlName="prioridad">
           @for (prioridad of prioridades; track prioridad) {
@@ -47,12 +56,12 @@
     </div>
 
     @if (error()) {
-      <p class="error">No fue posible guardar el ticket. Verifica que la API esté activa.</p>
+      <p class="error">No fue posible completar la operación con el ticket. Verifica que la API esté activa.</p>
     }
 
     <div class="acciones">
       <a mat-button routerLink="/tickets">Cancelar</a>
-      <button mat-flat-button type="submit" [disabled]="guardando()">
+      <button mat-flat-button type="submit" [disabled]="guardando() || cargando() || bloqueado()">
         {{ guardando() ? 'Guardando...' : 'Guardar' }}
       </button>
     </div>

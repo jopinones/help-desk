@@ -37,17 +37,154 @@ body {
   height: 100%;
 }
 
+// ---------------------------------------------------------------------------
+// Tokens propios. Los colores salen del tema de Material (--mat-sys-*), así
+// que al cambiar la paleta arriba cambia toda la aplicación.
+// ---------------------------------------------------------------------------
+:root {
+  --hd-radio: 12px;
+  --hd-espacio: 24px;
+  --hd-superficie: var(--mat-sys-surface-container-lowest);
+  --hd-fondo: var(--mat-sys-surface-container-low);
+  --hd-borde: var(--mat-sys-outline-variant);
+  --hd-texto-suave: var(--mat-sys-on-surface-variant);
+  --hd-sombra: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
 h1 {
-  margin: 0 0 12px;
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #3f51b5;
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--mat-sys-on-surface);
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
 }
 
 p {
-  margin: 0 0 16px;
-  font-size: 16px;
+  margin: 0 0 12px;
   line-height: 1.6;
-  color: #607d8b;
+  color: var(--hd-texto-suave);
 }
+
+a {
+  color: var(--mat-sys-primary);
+}
+
+// ---------------------------------------------------------------------------
+// Piezas de layout compartidas por todas las páginas
+// ---------------------------------------------------------------------------
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hd-espacio);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.tarjeta {
+  background: var(--hd-superficie);
+  border: 1px solid var(--hd-borde);
+  border-radius: var(--hd-radio);
+  box-shadow: var(--hd-sombra);
+  padding: var(--hd-espacio);
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+  background: var(--hd-superficie);
+  border: 1px solid var(--hd-borde);
+  border-radius: var(--hd-radio);
+  box-shadow: var(--hd-sombra);
+
+  table {
+    width: 100%;
+    background: transparent;
+  }
+
+  th.mat-mdc-header-cell {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--hd-texto-suave);
+    background: var(--hd-fondo);
+  }
+
+  td.mat-mdc-cell a:not([mat-button]) {
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  tr.mat-mdc-row:hover {
+    background: var(--hd-fondo);
+  }
+}
+
+.acciones-fila {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.mensaje {
+  margin: 0;
+  padding: 16px;
+  border-radius: var(--hd-radio);
+  background: var(--hd-superficie);
+  border: 1px solid var(--hd-borde);
+}
+
+.error {
+  color: var(--mat-sys-error);
+}
+
+.mensaje.error {
+  background: var(--mat-sys-error-container);
+  border-color: transparent;
+  color: var(--mat-sys-on-error-container);
+}
+
+// ---------------------------------------------------------------------------
+// Etiquetas de estado, prioridad y rol
+// ---------------------------------------------------------------------------
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  background: #eceff1;
+  color: #37474f;
+}
+
+.estado-abierto { background: #e3f2fd; color: #0d47a1; }
+.estado-en-proceso { background: #fff3e0; color: #bf360c; }
+.estado-cerrado { background: #e8f5e9; color: #1b5e20; }
+
+.prioridad-alta { background: #ffebee; color: #b71c1c; }
+.prioridad-media { background: #fff8e1; color: #8d6e00; }
+.prioridad-baja { background: #f1f8e9; color: #33691e; }
+
+.rol-administrador { background: #f3e5f5; color: #4a148c; }
+.rol-soporte { background: #e3f2fd; color: #0d47a1; }
+.rol-usuario { background: #eceff1; color: #37474f; }

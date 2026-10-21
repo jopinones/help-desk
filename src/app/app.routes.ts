@@ -8,6 +8,7 @@ import { Usuarios } from './pages/usuarios/usuarios';
 import { AcercaDe } from './pages/acerca-de/acerca-de';
 import { NotFound } from './pages/not-found/not-found';
 import { TicketForm } from './pages/ticket-form/ticket-form';
+import { TicketDetalle } from './pages/ticket-detalle/ticket-detalle';
 
 export const routes: Routes = [
     {
@@ -26,6 +27,15 @@ export const routes: Routes = [
     {
         path: 'tickets/nuevo',
         component: TicketForm
+    },
+    {
+        path: 'tickets/editar/:id',
+        component: TicketForm
+    },
+    {
+        path: 'tickets/:id',
+        component: TicketDetalle
+
     },
     {
         path: 'kanban',

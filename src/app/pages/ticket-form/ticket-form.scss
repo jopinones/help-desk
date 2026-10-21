@@ -1,25 +1,23 @@
-.ticket-form {
-    max-width: 640px;
+.formulario {
+    max-width: 720px;
+    margin: 0;
+}
 
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
-    .fila {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-    }
+.fila {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
 
-    .acciones {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-    }
-
-    .error {
-        color: #c62828;
-    }
+.acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 8px;
 }

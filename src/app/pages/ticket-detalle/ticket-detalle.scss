@@ -1,0 +1,44 @@
+.detalle {
+    max-width: 800px;
+    margin: 0;
+}
+
+.tarjeta {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.codigo {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+h2,
+.descripcion {
+    margin: 0;
+}
+
+.descripcion {
+    font-size: 16px;
+    white-space: pre-line;
+}
+
+.fecha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--hd-borde);
+    font-size: 14px;
+}

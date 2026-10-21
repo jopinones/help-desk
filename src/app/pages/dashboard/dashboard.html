@@ -1,10 +1,18 @@
-<section>
-    <h1>Dashboard</h1>
-    <p>
-        Bienvenido
-    </p>
-    <p>
-        Primer avance del proyecto
-    </p>
+<section class="pagina">
+  <header class="encabezado">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Bienvenido al Sistema Help Desk. Elige por dónde empezar.</p>
+    </div>
+  </header>
 
+  <div class="accesos">
+    @for (acceso of accesos; track acceso.ruta) {
+      <a class="acceso tarjeta" [routerLink]="acceso.ruta">
+        <mat-icon>{{ acceso.icono }}</mat-icon>
+        <h2>{{ acceso.titulo }}</h2>
+        <p>{{ acceso.descripcion }}</p>
+      </a>
+    }
+  </div>
 </section>

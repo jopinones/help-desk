@@ -1,0 +1,35 @@
+.accesos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.acceso {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+    }
+
+    mat-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 8px;
+        padding: 8px;
+        box-sizing: border-box;
+        border-radius: 12px;
+        font-size: 24px;
+        background: var(--mat-sys-primary-container);
+        color: var(--mat-sys-on-primary-container);
+    }
+
+    h2,
+    p {
+        margin: 0;
+    }
+}

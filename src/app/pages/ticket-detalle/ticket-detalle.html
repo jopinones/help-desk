@@ -1,0 +1,46 @@
+<section class="pagina detalle">
+  <div>
+    <a mat-button routerLink="/tickets">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al listado
+    </a>
+  </div>
+
+  @if (cargando()) {
+    <p class="mensaje">Cargando ticket...</p>
+  } @else if (error() || !ticket()) {
+    <p class="mensaje error">No fue posible obtener el ticket.</p>
+  } @else {
+    @let t = ticket()!;
+
+    <article class="tarjeta">
+      <header class="encabezado">
+        <div>
+          <p class="codigo">Ticket #{{ t.id }}</p>
+          <h1>{{ t.asunto }}</h1>
+        </div>
+        <span [matTooltip]="motivoNoEditable" [matTooltipDisabled]="puedeEditar(t)">
+          <a mat-flat-button
+            [routerLink]="puedeEditar(t) ? ['/tickets/editar', t.id] : null"
+            [disabled]="!puedeEditar(t)">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </a>
+        </span>
+      </header>
+
+      <div class="etiquetas">
+        <span class="etiqueta estado-{{ clase(t.estado) }}">{{ t.estado }}</span>
+        <span class="etiqueta prioridad-{{ clase(t.prioridad) }}">Prioridad {{ t.prioridad }}</span>
+      </div>
+
+      <h2>Descripción</h2>
+      <p class="descripcion">{{ t.descripcion }}</p>
+
+      <p class="fecha">
+        <mat-icon>event</mat-icon>
+        Creado el {{ t.fechaCreacion | date: 'dd/MM/yyyy' }}
+      </p>
+    </article>
+  }
+</section>

@@ -1,27 +1,31 @@
-<mat-toolbar color="primary" class="toolbar">
-  <span>Sistema Help Desk</span>
+<mat-toolbar class="toolbar">
+  <mat-icon>support_agent</mat-icon>
+  <span class="marca">Sistema Help Desk</span>
 </mat-toolbar>
 
 <mat-sidenav-container class="layout">
   <mat-sidenav mode="side" opened class="sidebar">
     <div class="menu-titulo">Menú Principal</div>
+    <mat-nav-list>
       <a mat-list-item routerLink="/dashboard"
       routerLinkActive="activo">
-        <mat-icon matListItemIcon>dashboard</mat-icon>  
+        <mat-icon matListItemIcon>dashboard</mat-icon>
         <span matListItemTitle>Dashboard</span>
     </a>
 
     <div routerLinkActive="grupo-activo" #tickets="routerLinkActive">
+      @let abierto = ticketsAbierto() || tickets.isActive;
+
       <a mat-list-item class="submenu-padre" (click)="alternarTickets()"
-        [attr.aria-expanded]="ticketsAbierto() || tickets.isActive">
+        [attr.aria-expanded]="abierto">
           <mat-icon matListItemIcon>confirmation_number</mat-icon>
           <span matListItemTitle>Tickets</span>
-          <mat-icon matListItemMeta>
-            {{ ticketsAbierto() || tickets.isActive ? 'expand_less' : 'expand_more' }}
-          </mat-icon>
+          <span matListItemMeta>
+            <mat-icon>{{ abierto ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </span>
       </a>
 
-      @if (ticketsAbierto() || tickets.isActive) {
+      @if (abierto) {
         <div class="submenu">
           <a mat-list-item routerLink="/tickets"
             routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }">
@@ -61,6 +65,7 @@
         <mat-icon matListItemIcon>info</mat-icon>
         <span matListItemTitle>Acerca de</span>
     </a>
+    </mat-nav-list>
   </mat-sidenav>
     
 <mat-sidenav-content>

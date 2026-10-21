@@ -3,18 +3,25 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 48px 16px;
     text-align: center;
-    padding: 96px 48px;
 
     .imagen {
+        width: 320px;
         max-width: 100%;
-        width: 360px;
         height: auto;
-        margin-bottom: 24px;
+        margin-bottom: 16px;
     }
 
+    h1,
     p {
-        max-width: 420px;
-        margin-bottom: 32px;
+        margin: 0;
+    }
+
+    a {
+        margin-top: 16px;
     }
 }

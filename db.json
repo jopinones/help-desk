@@ -1,12 +1,12 @@
 {
   "tickets": [
     {
-      "id": "1",
       "asunto": "Problema de acceso",
       "descripcion": "Al intentar acceder, aparecer un error en pantalla",
       "estado": "Abierto",
       "prioridad": "Alta",
-      "fechaCreacion": "2026-10-01"
+      "fechaCreacion": "2026-10-01",
+      "id": "1"
     },
     {
       "id": "2",
@@ -33,12 +33,12 @@
       "fechaCreacion": "2026-10-01"
     },
     {
-      "id": "5",
       "asunto": "No genera reporte de ventas",
       "descripcion": "Durante el proceso de generación del resumen de ventas",
-      "estado": "En proceso",
+      "estado": "Cerrado",
       "prioridad": "Alta",
-      "fechaCreacion": "2026-10-01"
+      "fechaCreacion": "2026-10-01",
+      "id": "5"
     },
     {
       "id": "6",
@@ -73,12 +73,12 @@
       "fechaCreacion": "2026-10-01"
     },
     {
-      "id": "10",
       "asunto": "Problema de acceso",
       "descripcion": "Al intentar acceder, aparecer un error en pantalla",
-      "estado": "Abierto",
+      "estado": "Cerrado",
       "prioridad": "Alta",
-      "fechaCreacion": "2026-10-01"
+      "fechaCreacion": "2026-10-01",
+      "id": "10"
     },
     {
       "id": "11",

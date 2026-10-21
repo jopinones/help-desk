@@ -1,0 +1,53 @@
+<!-- CORRECCIÓN: la plantilla era solo "usuario-form works!"; se agregó el formulario. -->
+<section class="pagina formulario">
+  <header class="encabezado">
+    <div>
+      <h1>{{ usuarioId ? 'Editar Usuario' : 'Nuevo Usuario' }}</h1>
+      <p>{{ usuarioId ? 'Modifica los datos del usuario' : 'Registra un nuevo usuario en el sistema' }}</p>
+    </div>
+  </header>
+
+  <form class="tarjeta" [formGroup]="usuarioForm" (ngSubmit)="guardar()">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Nombre</mat-label>
+      <input matInput type="text" formControlName="nombre" />
+      @if (usuarioForm.controls.nombre.hasError('required')) {
+        <mat-error>El nombre es obligatorio</mat-error>
+      } @else if (usuarioForm.controls.nombre.hasError('minlength')) {
+        <mat-error>Mínimo 3 caracteres</mat-error>
+      } @else if (usuarioForm.controls.nombre.hasError('maxlength')) {
+        <mat-error>Máximo 100 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" />
+      @if (usuarioForm.controls.email.hasError('required')) {
+        <mat-error>El email es obligatorio</mat-error>
+      } @else if (usuarioForm.controls.email.hasError('email')) {
+        <mat-error>El email no es válido</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Rol</mat-label>
+      <mat-select formControlName="rol">
+        @for (rol of roles; track rol) {
+          <mat-option [value]="rol">{{ rol }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (error()) {
+      <p class="error">No fue posible completar la operación con el usuario. Verifica que la API esté activa.</p>
+    }
+
+    <div class="acciones">
+      <a mat-button routerLink="/usuarios">Cancelar</a>
+      <button mat-flat-button type="submit" [disabled]="guardando() || cargando()">
+        {{ guardando() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</section>
