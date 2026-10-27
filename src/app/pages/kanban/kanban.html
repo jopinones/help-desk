@@ -2,11 +2,28 @@
   <header class="encabezado">
     <div>
       <h1>Kanban</h1>
-      <p>Sección del Tablero Kanban</p>
+      <p>Tickets organizados por estado</p>
     </div>
   </header>
 
-  <div class="tarjeta vacio">
-    <p>Próximamente.</p>
-  </div>
+  <!-- CAMBIO: se reemplazó el "Próximamente" por el tablero real, con el mismo patrón
+       cargando / error / datos que usan tickets y usuarios. -->
+  @if (cargando()) {
+    <p class="mensaje">Cargando tickets...</p>
+  } @else if (error()) {
+    <div class="mensaje error">
+      No fue posible obtener los registros
+      <button type="button" mat-button (click)="cargarTickets()">Reintentar</button>
+    </div>
+  } @else if (tickets().length === 0) {
+    <!-- AGREGADO: si la API respondió bien pero con una lista vacía, se muestra este mensaje
+         en lugar del tablero con tres columnas vacías. -->
+    <p class="mensaje">No hay tickets registrados</p>
+  } @else {
+    <div class="tablero">
+      @for (estado of estados; track estado.nombre) {
+        <app-kanban-columna [titulo]="estado.titulo" [tickets]="ticketsPorEstado(estado.nombre)" />
+      }
+    </div>
+  }
 </section>

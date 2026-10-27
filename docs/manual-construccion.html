@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual de construcción – Help Desk</title>
+<meta name="description" content="Guía paso a paso para construir la aplicación Help Desk con Angular 22 y Angular Material.">
+<style>
+:root {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f8;
+  --text: #1c2333;
+  --muted: #5b657c;
+  --border: #dfe3ee;
+  --primary: #3f51b5;
+  --primary-soft: #e8ebfa;
+  --code-bg: #14192b;
+  --code-text: #e6e9f5;
+  --code-comment: #8c97b8;
+  --code-bar: #1e2540;
+  --nota: #1565c0;      --nota-bg: #e7f1fd;
+  --ojo: #8a5a00;       --ojo-bg: #fff4d6;
+  --error: #b3261e;     --error-bg: #fdecea;
+  --tip: #1b6e3a;       --tip-bg: #e4f5ea;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(20, 25, 43, .08), 0 1px 2px rgba(20, 25, 43, .06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1424; --surface: #181e33; --surface-2: #20274a; --text: #e8ebf7;
+    --muted: #9aa5c4; --border: #2b3358; --primary: #8c9eff; --primary-soft: #232b55;
+    --code-bg: #0a0e1c; --code-bar: #151b33;
+    --nota: #8ec5ff; --nota-bg: #12263f; --ojo: #ffd27a; --ojo-bg: #3a2c0c;
+    --error: #ff9a93; --error-bg: #3d1816; --tip: #86e0a6; --tip-bg: #12301f;
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1424; --surface: #181e33; --surface-2: #20274a; --text: #e8ebf7;
+  --muted: #9aa5c4; --border: #2b3358; --primary: #8c9eff; --primary-soft: #232b55;
+  --code-bg: #0a0e1c; --code-bar: #151b33;
+  --nota: #8ec5ff; --nota-bg: #12263f; --ojo: #ffd27a; --ojo-bg: #3a2c0c;
+  --error: #ff9a93; --error-bg: #3d1816; --tip: #86e0a6; --tip-bg: #12301f;
+  --shadow: none;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.7 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: var(--primary); }
+code, pre, kbd { font-family: ui-monospace, "Cascadia Code", Consolas, Menlo, monospace; }
+p code, li code, td code, th code, h3 code {
+  background: var(--surface-2); padding: 1px 6px; border-radius: 6px; font-size: .88em;
+  overflow-wrap: anywhere;
+}
+
+.hero {
+  background: linear-gradient(135deg, #3f51b5, #283593); color: #fff;
+  padding: 56px 24px 48px;
+}
+.hero-inner { max-width: 1180px; margin: 0 auto; }
+.hero h1 { margin: 0 0 8px; font-size: clamp(28px, 5vw, 42px); line-height: 1.2; color: #fff; letter-spacing: 0; }
+.hero p { margin: 0; max-width: 720px; color: rgba(255,255,255,.88); font-size: 18px; }
+.hero .meta { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 600;
+  background: rgba(255,255,255,.16); color: #fff;
+}
+
+.layout {
+  max-width: 1180px; margin: 0 auto; padding: 32px 24px 80px;
+  display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 40px; align-items: start;
+}
+.toc {
+  position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 12px; box-shadow: var(--shadow); font-size: 14px;
+}
+.toc h2 { margin: 0 8px 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc a {
+  display: flex; gap: 8px; padding: 6px 8px; border-radius: 8px; text-decoration: none;
+  color: var(--text); line-height: 1.35;
+}
+.toc a .n { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 22px; }
+.toc a:hover { background: var(--surface-2); }
+.toc a.activo { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+.toc-movil { display: none; }
+
+main { min-width: 0; }
+.capitulo {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 32px; margin-bottom: 28px; box-shadow: var(--shadow);
+}
+.capitulo > h2 {
+  margin: 0 0 4px; font-size: 26px; line-height: 1.25; display: flex; gap: 12px; align-items: baseline;
+}
+.capitulo > h2 .num {
+  flex: none; min-width: 40px; height: 40px; border-radius: 10px; display: inline-grid; place-items: center;
+  background: var(--primary-soft); color: var(--primary); font-size: 18px; font-weight: 700;
+}
+.resumen { margin: 6px 0 20px 52px; color: var(--muted); }
+h3 { margin: 28px 0 8px; font-size: 19px; }
+h4 { margin: 20px 0 6px; font-size: 16px; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 16px; padding-left: 24px; }
+li { margin-bottom: 6px; }
+
+.pasos { counter-reset: paso; list-style: none; padding: 0; }
+.pasos > li { counter-increment: paso; position: relative; padding-left: 44px; margin-bottom: 14px; }
+.pasos > li::before {
+  content: counter(paso); position: absolute; left: 0; top: 1px; width: 28px; height: 28px;
+  border-radius: 50%; background: var(--primary); color: #fff; display: grid; place-items: center;
+  font-size: 14px; font-weight: 700;
+}
+[data-theme="dark"] .pasos > li::before { color: #0f1424; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pasos > li::before { color: #0f1424; } }
+
+.codigo { margin: 14px 0 18px; border-radius: 10px; overflow: hidden; background: var(--code-bg); }
+.codigo-barra {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--code-bar); color: #aab3d3; padding: 6px 8px 6px 14px; font-size: 12.5px;
+}
+.codigo-barra .archivo { font-family: ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
+.codigo-barra button {
+  background: transparent; color: #aab3d3; border: 1px solid rgba(170,179,211,.35); border-radius: 6px;
+  padding: 2px 10px; font: inherit; cursor: pointer;
+}
+.codigo-barra button:hover { background: rgba(255,255,255,.08); color: #fff; }
+pre { margin: 0; padding: 14px 16px; overflow-x: auto; color: var(--code-text); font-size: 13.5px; line-height: 1.6; tab-size: 2; }
+pre .c { color: var(--code-comment); }
+
+.aviso { border-left: 4px solid; border-radius: 8px; padding: 12px 16px; margin: 18px 0; }
+.aviso > :last-child { margin-bottom: 0; }
+.aviso .t { display: block; font-weight: 700; margin-bottom: 4px; }
+.aviso.nota { color: var(--nota); background: var(--nota-bg); border-color: var(--nota); }
+.aviso.ojo { color: var(--ojo); background: var(--ojo-bg); border-color: var(--ojo); }
+.aviso.error { color: var(--error); background: var(--error-bg); border-color: var(--error); }
+.aviso.tip { color: var(--tip); background: var(--tip-bg); border-color: var(--tip); }
+.aviso p, .aviso li { color: var(--text); }
+.aviso code { background: rgba(127,127,127,.18); }
+
+.tabla-scroll { overflow-x: auto; margin: 14px 0 20px; border: 1px solid var(--border); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--surface-2); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+
+.arbol { background: var(--code-bg); color: var(--code-text); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.55; }
+.arbol .d { color: #9fb0ff; }
+.arbol .c { color: var(--code-comment); }
+
+.flujo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 14px 0 20px; }
+.flujo span.paso {
+  background: var(--primary-soft); color: var(--primary); border-radius: 8px; padding: 6px 12px;
+  font-size: 14px; font-weight: 600;
+}
+.flujo span.flecha { color: var(--muted); }
+
+.check { list-style: none; padding-left: 0; }
+.check li { padding-left: 30px; position: relative; }
+.check li::before { content: "☐"; position: absolute; left: 4px; color: var(--primary); }
+
+.pie { text-align: center; color: var(--muted); font-size: 14px; padding: 0 24px 40px; }
+.tema-btn {
+  position: fixed; right: 16px; bottom: 16px; z-index: 5; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 14px; cursor: pointer; box-shadow: var(--shadow);
+}
+
+@media (max-width: 960px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 20px 16px 60px; }
+  .toc { display: none; }
+  .toc-movil {
+    display: block; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 10px 14px;
+  }
+  .toc-movil summary { cursor: pointer; font-weight: 600; }
+  .toc-movil ol { list-style: none; padding: 8px 0 0; margin: 0; }
+  .toc-movil a { display: block; padding: 6px 0; text-decoration: none; }
+  .capitulo { padding: 20px 16px; }
+  .resumen { margin-left: 0; }
+  .hero { padding: 40px 16px 32px; }
+}
+@media print {
+  .toc, .toc-movil, .tema-btn, .codigo-barra button { display: none !important; }
+  .layout { display: block; padding: 0; }
+  .capitulo { box-shadow: none; break-inside: auto; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+<header class="hero"><div class="hero-inner"><h1>Manual de construcción de Help Desk</h1><p>Cómo se construye, paso a paso, una aplicación Angular para gestionar tickets y usuarios: desde crear el proyecto hasta los diálogos y las pruebas.</p><div class="meta"><span class="chip">Angular 22</span><span class="chip">Angular Material 22</span><span class="chip">Standalone + Signals</span><span class="chip">json-server</span><span class="chip">Vitest</span></div></div></header>
+<div class="layout">
+<nav class="toc" aria-label="Índice"><h2>Capítulos</h2><ol><li><a href="#cap-1"><span class="n">1</span><span>Qué vamos a construir</span></a></li><li><a href="#cap-2"><span class="n">2</span><span>Preparar el entorno y crear el proyecto</span></a></li><li><a href="#cap-3"><span class="n">3</span><span>La estructura de carpetas</span></a></li><li><a href="#cap-4"><span class="n">4</span><span>Modelos de datos y &lt;code&gt;db.json&lt;/code&gt;</span></a></li><li><a href="#cap-5"><span class="n">5</span><span>La API simulada con json-server</span></a></li><li><a href="#cap-6"><span class="n">6</span><span>Arranque de la app, proveedores y rutas</span></a></li><li><a href="#cap-7"><span class="n">7</span><span>Los servicios: hablar con la API</span></a></li><li><a href="#cap-8"><span class="n">8</span><span>El layout principal: toolbar, menú y router-outlet</span></a></li><li><a href="#cap-9"><span class="n">9</span><span>Estilos: tema, variables y clases compartidas</span></a></li><li><a href="#cap-10"><span class="n">10</span><span>Signals y el patrón "cargando / error / datos"</span></a></li><li><a href="#cap-11"><span class="n">11</span><span>Listado con tabla y paginador</span></a></li><li><a href="#cap-12"><span class="n">12</span><span>Formularios reactivos: crear y editar con el mismo componente</span></a></li><li><a href="#cap-13"><span class="n">13</span><span>Pantalla de detalle</span></a></li><li><a href="#cap-14"><span class="n">14</span><span>Componentes compartidos con &lt;code&gt;input()&lt;/code&gt; y &lt;code&gt;output()&lt;/code&gt;</span></a></li><li><a href="#cap-15"><span class="n">15</span><span>Reglas de negocio: "un ticket cerrado no se edita"</span></a></li><li><a href="#cap-16"><span class="n">16</span><span>Diálogos de confirmación e información</span></a></li><li><a href="#cap-17"><span class="n">17</span><span>Usuarios: el mismo patrón, con estados</span></a></li><li><a href="#cap-18"><span class="n">18</span><span>Pruebas con Vitest y &lt;code&gt;ng test&lt;/code&gt;</span></a></li><li><a href="#cap-19"><span class="n">19</span><span>Errores reales que aparecieron (y cómo se resolvieron)</span></a></li><li><a href="#cap-20"><span class="n">20</span><span>Ruta de construcción: hazlo tú desde cero</span></a></li></ol></nav>
+<main>
+<details class="toc-movil"><summary>Índice de capítulos</summary><ol><li><a href="#cap-1">1. Qué vamos a construir</a></li><li><a href="#cap-2">2. Preparar el entorno y crear el proyecto</a></li><li><a href="#cap-3">3. La estructura de carpetas</a></li><li><a href="#cap-4">4. Modelos de datos y &lt;code&gt;db.json&lt;/code&gt;</a></li><li><a href="#cap-5">5. La API simulada con json-server</a></li><li><a href="#cap-6">6. Arranque de la app, proveedores y rutas</a></li><li><a href="#cap-7">7. Los servicios: hablar con la API</a></li><li><a href="#cap-8">8. El layout principal: toolbar, menú y router-outlet</a></li><li><a href="#cap-9">9. Estilos: tema, variables y clases compartidas</a></li><li><a href="#cap-10">10. Signals y el patrón "cargando / error / datos"</a></li><li><a href="#cap-11">11. Listado con tabla y paginador</a></li><li><a href="#cap-12">12. Formularios reactivos: crear y editar con el mismo componente</a></li><li><a href="#cap-13">13. Pantalla de detalle</a></li><li><a href="#cap-14">14. Componentes compartidos con &lt;code&gt;input()&lt;/code&gt; y &lt;code&gt;output()&lt;/code&gt;</a></li><li><a href="#cap-15">15. Reglas de negocio: "un ticket cerrado no se edita"</a></li><li><a href="#cap-16">16. Diálogos de confirmación e información</a></li><li><a href="#cap-17">17. Usuarios: el mismo patrón, con estados</a></li><li><a href="#cap-18">18. Pruebas con Vitest y &lt;code&gt;ng test&lt;/code&gt;</a></li><li><a href="#cap-19">19. Errores reales que aparecieron (y cómo se resolvieron)</a></li><li><a href="#cap-20">20. Ruta de construcción: hazlo tú desde cero</a></li></ol></details>
+<section class="capitulo" id="cap-1"><h2><span class="num">1</span><span>Qué vamos a construir</span></h2><p class="resumen">Una visión general antes de escribir una sola línea: pantallas, tecnologías y las ideas que se aprenden.</p>
+<p><strong>Help Desk</strong> es una aplicación para registrar y seguir solicitudes de soporte (<em>tickets</em>) y
+administrar a las personas que las atienden (<em>usuarios</em>). Es un proyecto ideal para aprender Angular porque
+reúne en un solo lugar casi todo lo que se usa en el trabajo real: rutas, formularios, tablas, llamadas a una API,
+componentes reutilizables y pruebas.</p>
+
+<h3>Las pantallas</h3>
+<div class="tabla-scroll"><table><thead><tr><th>Ruta</th><th>Componente</th><th>Qué hace</th></tr></thead><tbody><tr><td><code>/dashboard</code></td><td><code>Dashboard</code></td><td>Portada con accesos rápidos.</td></tr><tr><td><code>/tickets</code></td><td><code>Tickets</code></td><td>Tabla paginada con acciones: Detalle, Editar, Eliminar.</td></tr><tr><td><code>/tickets/nuevo</code></td><td><code>TicketForm</code></td><td>Formulario para crear un ticket.</td></tr><tr><td><code>/tickets/editar/:id</code></td><td><code>TicketForm</code></td><td>El mismo formulario, cargando un ticket existente.</td></tr><tr><td><code>/tickets/:id</code></td><td><code>TicketDetalle</code></td><td>Ficha de solo lectura de un ticket.</td></tr><tr><td><code>/usuarios</code>, <code>/usuarios/nuevo</code>, <code>/usuarios/editar/:id</code>, <code>/usuarios/:id</code></td><td><code>Usuarios</code>, <code>UsuarioForm</code>, <code>UsuarioDetalle</code></td><td>Lo mismo que tickets, pero para usuarios (con borrado lógico).</td></tr><tr><td><code>/kanban</code>, <code>/reportes</code></td><td><code>Kanban</code>, <code>Reportes</code></td><td>Secciones reservadas ("Próximamente").</td></tr><tr><td><code>/acerca-de</code></td><td><code>AcercaDe</code></td><td>Información del sistema.</td></tr><tr><td>cualquier otra</td><td><code>NotFound</code></td><td>Página de error 404.</td></tr></tbody></table></div>
+
+<h3>Tecnologías</h3>
+<ul>
+  <li><strong>Angular 22</strong>: componentes <em>standalone</em> (sin módulos), <em>signals</em> y plantillas con <code>@if</code>/<code>@for</code>.</li>
+  <li><strong>Angular Material 22</strong>: toolbar, menú lateral, tabla, paginador, formularios, diálogos e íconos.</li>
+  <li><strong>SCSS</strong> para los estilos, apoyado en las variables CSS del tema de Material.</li>
+  <li><strong>RxJS</strong> y <code>HttpClient</code> para hablar con la API.</li>
+  <li><strong>json-server</strong>: una API REST falsa que lee y escribe el archivo <code>db.json</code>.</li>
+  <li><strong>Vitest</strong> con <code>ng test</code> para las pruebas.</li>
+</ul>
+<div class="aviso nota"><span class="t">Sin zone.js</span><p>Este proyecto <strong>no incluye <code>zone.js</code></strong> (no aparece en <code>package.json</code>). Angular 22 trabaja por defecto sin él. La consecuencia práctica es importante: si cambias un campo normal de la clase, la pantalla <em>no se repinta sola</em>. Por eso todo el estado de las pantallas usa <strong>signals</strong>. Lo verás una y otra vez en el manual.</p></div>
+
+<h3>Cómo leer este manual</h3>
+<p>Los capítulos siguen el orden en que conviene construir la aplicación: primero la base (proyecto, datos, API,
+rutas, servicios), luego la estructura visual, después las pantallas y al final las piezas reutilizables,
+las reglas de negocio, los diálogos y las pruebas. El penúltimo capítulo es una lista de los errores reales que
+aparecieron al construirla, con su causa y solución. Los cuadros de colores indican:</p>
+<div class="aviso nota"><span class="t">Concepto</span><p>Una idea que conviene entender bien.</p></div>
+<div class="aviso ojo"><span class="t">Ojo</span><p>Un detalle que suele salir mal.</p></div>
+<div class="aviso error"><span class="t">Error común</span><p>Algo que falló de verdad en este proyecto.</p></div>
+<div class="aviso tip"><span class="t">Pruébalo</span><p>Algo que puedes comprobar tú mismo en el navegador o la terminal.</p></div>
+</section>
+<section class="capitulo" id="cap-2"><h2><span class="num">2</span><span>Preparar el entorno y crear el proyecto</span></h2><p class="resumen">Instalar las herramientas y generar el esqueleto de la aplicación.</p>
+<p>Necesitas <strong>Node.js</strong> (con <code>npm</code>) y un editor como VS Code. Todo lo demás se instala desde la terminal.</p>
+<ol class="pasos">
+  <li><strong>Instala el CLI de Angular</strong> (una sola vez en tu equipo).</li>
+  <li><strong>Crea el proyecto.</strong> Cuando pregunte por el formato de estilos, elige <strong>SCSS</strong>.</li>
+  <li><strong>Agrega Angular Material</strong>: instala el tema, los íconos y las tipografías.</li>
+  <li><strong>Instala json-server</strong>, que será nuestra API de pruebas.</li>
+</ol>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">terminal</span><button type="button">Copiar</button></div><pre><code><span class="c"># 1. CLI de Angular (una sola vez)</span>
+npm install -g @angular/cli
+
+<span class="c"># 2. Crear el proyecto (elige SCSS)</span>
+ng new help-desk
+cd help-desk
+
+<span class="c"># 3. Angular Material</span>
+ng add @angular/material
+
+<span class="c"># 4. API simulada</span>
+npm install json-server
+
+<span class="c"># Comprobar que todo arranca: http://localhost:4200</span>
+npm start</code></pre></div>
+<div class="aviso ojo"><span class="t">Las preguntas del asistente cambian</span><p>Las preguntas exactas de <code>ng new</code> y <code>ng add</code> varían entre versiones. Lo que importa es elegir <strong>SCSS</strong> y aceptar el tema de Material. Si algo no coincide, guíate por el resultado que describe este capítulo.</p></div>
+
+<h3>Tipografía e íconos en <code>index.html</code></h3>
+<p>Material dibuja los íconos con una fuente especial. Si <code>&lt;mat-icon&gt;</code> muestra palabras como
+<code>edit</code> en vez de un dibujo, casi siempre falta esta fuente. El proyecto la carga desde Google Fonts:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/index.html</span><button type="button">Copiar</button></div><pre><code>&lt;link rel="preconnect" href="https://fonts.googleapis.com" /&gt;
+&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /&gt;
+&lt;link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;display=swap" rel="stylesheet" /&gt;
+&lt;link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet" /&gt;</code></pre></div>
+
+<h3>Generar los componentes</h3>
+<p>El CLI crea cada componente con su plantilla, su hoja de estilos y su archivo de pruebas. En esta versión los
+archivos no llevan el sufijo <code>.component</code> (se llaman <code>tickets.ts</code>, <code>tickets.html</code>…) y la
+clase se llama <code>Tickets</code>.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">terminal</span><button type="button">Copiar</button></div><pre><code>ng generate component pages/dashboard
+ng generate component pages/tickets
+ng generate component pages/ticket-form
+ng generate component pages/ticket-detalle
+ng generate component pages/usuarios
+ng generate component shared/estado-ticket
+
+ng generate service services/ticket</code></pre></div>
+<div class="aviso nota"><span class="t">Servicios: renombra la clase</span><p>El generador crea el servicio con una clase llamada <code>Ticket</code>. Aquí se renombró a <code>TicketService</code> para no confundirla con la interfaz <code>Ticket</code> del modelo. Si renombras, recuerda actualizar también el archivo <code>.spec.ts</code>.</p></div>
+</section>
+<section class="capitulo" id="cap-3"><h2><span class="num">3</span><span>La estructura de carpetas</span></h2><p class="resumen">Dónde va cada cosa y por qué. Una buena estructura ahorra horas de búsqueda.</p>
+<p>Todo el código vive en <code>src/app</code>, organizado por <strong>responsabilidad</strong>, no por tipo de archivo:</p>
+<pre class="arbol"><span class="d">help-desk/</span>
+<span class="d">├─ api/</span>
+│  └─ server.mjs<span class="c">              # arranque de json-server con ids correlativos</span>
+├─ db.json<span class="c">                    # la "base de datos" de la API simulada</span>
+<span class="d">├─ public/</span><span class="c">                    # archivos estáticos (favicon, imagen del 404)</span>
+<span class="d">└─ src/</span>
+   ├─ index.html
+   ├─ main.ts<span class="c">                 # punto de entrada</span>
+   ├─ styles.scss<span class="c">             # estilos globales y tema</span>
+<span class="d">   └─ app/</span>
+      ├─ app.ts / app.html / app.scss<span class="c">   # componente raíz: toolbar + menú + router-outlet</span>
+      ├─ app.config.ts<span class="c">        # proveedores globales (router, HttpClient)</span>
+      ├─ app.routes.ts<span class="c">        # tabla de rutas</span>
+<span class="d">      ├─ models/</span><span class="c">              # interfaces y reglas de negocio de cada entidad</span>
+<span class="d">      ├─ services/</span><span class="c">            # comunicación con la API</span>
+<span class="d">      ├─ pages/</span><span class="c">               # una carpeta por pantalla (tienen ruta)</span>
+<span class="d">      │  ├─ tickets/  ticket-form/  ticket-detalle/</span>
+<span class="d">      │  ├─ usuarios/ usuario-form/ usuario-detalle/</span>
+<span class="d">      │  └─ dashboard/ kanban/ reportes/ acerca-de/ not-found/</span>
+<span class="d">      └─ shared/</span><span class="c">              # piezas reutilizables (no tienen ruta)</span>
+<span class="d">         ├─ estado-ticket/  prioridad-ticket/  id-ticket/  acciones-ticket/</span>
+<span class="d">         ├─ rol-usuario/</span>
+<span class="d">         └─ confirm-dialog/  info-dialog/</span></pre>
+<div class="tabla-scroll"><table><thead><tr><th>Carpeta</th><th>Regla para decidir si algo va aquí</th></tr></thead><tbody><tr><td><code>models/</code></td><td>Describe la forma de los datos (<code>interface</code>) y las reglas que dependen solo de ellos (<code>puedeEditar</code>).</td></tr><tr><td><code>services/</code></td><td>Habla con el exterior (la API). Los componentes nunca usan <code>HttpClient</code> directamente.</td></tr><tr><td><code>pages/</code></td><td>Es una pantalla completa y aparece en <code>app.routes.ts</code>.</td></tr><tr><td><code>shared/</code></td><td>Se usa en más de una pantalla o encapsula un detalle visual (una etiqueta, un diálogo).</td></tr></tbody></table></div>
+<div class="aviso tip"><span class="t">Pruébalo</span><p>Antes de crear un componente nuevo pregúntate: <em>¿tiene su propia URL?</em> Si sí, va en <code>pages/</code>. Si solo se pega dentro de otras pantallas, va en <code>shared/</code>.</p></div>
+</section>
+<section class="capitulo" id="cap-4"><h2><span class="num">4</span><span>Modelos de datos y &lt;code&gt;db.json&lt;/code&gt;</span></h2><p class="resumen">Antes de dibujar pantallas, define qué datos existen y cómo se ven.</p>
+<p>Un <strong>modelo</strong> es una <code>interface</code> de TypeScript: no genera código, solo le dice al compilador qué
+forma tienen los datos. Así, si escribes mal un nombre de campo, el error aparece <em>al escribir</em> y no cuando un
+usuario hace clic.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/models/ticket.ts</span><button type="button">Copiar</button></div><pre><code>export interface Ticket {
+    id: string;
+    asunto: string;
+    descripcion: string;
+    estado: 'Abierto' | 'En proceso' | 'Cerrado';
+    prioridad: 'Baja' | 'Media' | 'Alta';
+    fechaCreacion: string;
+}
+
+<span class="c">// Para crear un ticket todavía no existe el id: lo asigna la API.</span>
+export type NuevoTicket = Omit&lt;Ticket, 'id'&gt;;</code></pre></div>
+
+<h3>Tres ideas en pocas líneas</h3>
+<ul>
+  <li><strong>Tipos literales</strong> (<code>'Abierto' | 'En proceso' | 'Cerrado'</code>): el campo solo admite esos valores. Escribir <code>'Abirto'</code> es un error de compilación.</li>
+  <li><strong><code>Omit&lt;Ticket, 'id'&gt;</code></strong>: "un Ticket sin el campo id". Se deriva del modelo, así que si agregas un campo a <code>Ticket</code>, <code>NuevoTicket</code> lo recibe automáticamente.</li>
+  <li><strong>El id es <code>string</code></strong>, no <code>number</code>: así lo entrega json-server (<code>"id": "1"</code>). Declararlo como número fue uno de los primeros errores.</li>
+</ul>
+<p>El modelo de usuario sigue el mismo patrón y agrega un estado:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/models/usuario.ts</span><button type="button">Copiar</button></div><pre><code>export interface Usuario {
+    id: string;
+    nombre: string;
+    email: string;
+    rol: 'Administrador' | 'Soporte' | 'Usuario';
+    <span class="c">// 'Eliminado' es un borrado lógico: el registro se conserva en la API.</span>
+    estado: 'Vigente' | 'Bloqueado' | 'Eliminado';
+    fechaCreacion: string;
+}
+
+export type NuevoUsuario = Omit&lt;Usuario, 'id'&gt;;</code></pre></div>
+
+<h3>Los datos de ejemplo: <code>db.json</code></h3>
+<p>json-server convierte cada propiedad de primer nivel de este archivo en un recurso REST. Con solo esto ya existen
+<code>/tickets</code> y <code>/usuarios</code>:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">db.json</span><button type="button">Copiar</button></div><pre><code>{
+  "tickets": [
+    {
+      "id": "1",
+      "asunto": "Problema de acceso",
+      "descripcion": "Al intentar acceder, aparece un error en pantalla",
+      "estado": "Abierto",
+      "prioridad": "Alta",
+      "fechaCreacion": "2026-10-01"
+    }
+  ],
+  "usuarios": [
+    {
+      "id": "1",
+      "nombre": "Ana Maria Olmedo",
+      "email": "aolmedo@gmail.com",
+      "rol": "Soporte",
+      "estado": "Vigente",
+      "fechaCreacion": "2026-10-01"
+    }
+  ]
+}</code></pre></div>
+<div class="aviso ojo"><span class="t">Los datos deben calzar con el modelo</span><p>Cuando se agregó <code>estado</code> al modelo de usuario hubo que añadirlo también a cada usuario de <code>db.json</code>. Si no, la lista intentaba mostrar un estado <code>undefined</code> y fallaba.</p></div>
+</section>
+<section class="capitulo" id="cap-5"><h2><span class="num">5</span><span>La API simulada con json-server</span></h2><p class="resumen">Un backend de mentira que se comporta como uno de verdad, y un truco para numerar los usuarios.</p>
+<p>json-server ofrece, sin escribir código, las operaciones CRUD sobre cada recurso de <code>db.json</code>:</p>
+<div class="tabla-scroll"><table><thead><tr><th>Operación</th><th>Método y URL</th><th>Qué hace</th></tr></thead><tbody><tr><td>Listar</td><td><code>GET /usuarios</code></td><td>Devuelve todos.</td></tr><tr><td>Leer uno</td><td><code>GET /usuarios/3</code></td><td>Devuelve el de id 3.</td></tr><tr><td>Crear</td><td><code>POST /usuarios</code></td><td>Agrega el cuerpo JSON enviado.</td></tr><tr><td>Reemplazar</td><td><code>PUT /usuarios/3</code></td><td>Sustituye todo el registro.</td></tr><tr><td>Modificar</td><td><code>PATCH /usuarios/3</code></td><td>Cambia solo los campos enviados.</td></tr><tr><td>Borrar</td><td><code>DELETE /usuarios/3</code></td><td>Elimina el registro.</td></tr></tbody></table></div>
+
+<h3>Arrancarla</h3>
+<p>Necesitas <strong>dos terminales</strong>: una para la API y otra para Angular.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">terminal 1 (API)</span><button type="button">Copiar</button></div><pre><code>npm run api
+<span class="c"># La API queda en http://localhost:3000</span></code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">terminal 2 (Angular)</span><button type="button">Copiar</button></div><pre><code>npm start
+<span class="c"># La app queda en http://localhost:4200</span></code></pre></div>
+<div class="aviso tip"><span class="t">Pruébalo</span><p>Abre <code>http://localhost:3000/tickets</code> en el navegador: verás el JSON crudo. Es la misma respuesta que recibirá Angular.</p></div>
+
+<h3>El problema de los ids correlativos</h3>
+<p>Se quería que los usuarios nuevos recibieran el id <code>9</code>, <code>10</code>, <code>11</code>… y no un código al azar.
+El primer intento fue calcular el siguiente número en Angular y enviarlo en el <code>POST</code>. <strong>No funcionó</strong>:
+revisando el código de json-server 1.0.0-beta.15 se ve por qué.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">node_modules/json-server/lib/service.js (fragmento)</span><button type="button">Copiar</button></div><pre><code>async create(name, data = {}) {
+    <span class="c">// ...</span>
+    const item = { ...data, id: randomId() };   <span class="c">// el id enviado se sobrescribe</span>
+    items.push(item);
+    await this.#db.write();
+    return item;
+}</code></pre></div>
+<div class="aviso error"><span class="t">Error común: confiar en el id del POST</span><p>En esta versión de json-server el <code>POST</code> <strong>siempre</strong> pone un id aleatorio. Y <code>PUT</code>/<code>PATCH</code> conservan el id de la URL, así que tampoco sirven para cambiarlo. La numeración correlativa no se puede resolver desde Angular: hay que hacerla en el servidor.</p></div>
+
+<p>La solución es un pequeño script que arranca json-server igual que siempre, pero antes <em>envuelve</em> el método
+<code>create</code>: deja que json-server cree el registro y enseguida reemplaza el id por <code>mayor + 1</code>.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">api/server.mjs</span><button type="button">Copiar</button></div><pre><code>import { Service } from 'json-server/lib/service.js';
+
+<span class="c">// Colecciones con id correlativo.</span>
+const COLECCIONES_CORRELATIVAS = ['usuarios'];
+
+const crearOriginal = Service.prototype.create;
+
+Service.prototype.create = async function (name, data = {}) {
+  const item = await crearOriginal.call(this, name, data);
+  if (!item || !COLECCIONES_CORRELATIVAS.includes(name)) return item;
+
+  <span class="c">// Solo cuentan los ids formados por dígitos; los aleatorios antiguos se ignoran.</span>
+  const mayor = this.find(name, { where: {} }).reduce((max, registro) =&gt; {
+    if (registro === item || !/^\d+$/.test(String(registro.id))) return max;
+    return Math.max(max, Number(registro.id));
+  }, 0);
+
+  item.id = String(mayor + 1);
+  return this.patchById(name, item.id, {});   <span class="c">// vuelve a guardar el archivo</span>
+};
+
+<span class="c">// Con el parche aplicado, se inicia json-server normalmente.</span>
+await import('json-server/lib/bin.js');</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">package.json (fragmento)</span><button type="button">Copiar</button></div><pre><code>"scripts": {
+  "start": "ng serve",
+  "api": "node api/server.mjs db.json",
+  ...
+}</code></pre></div>
+
+<p>Como no hay ningún <code>await</code> entre calcular y asignar el id, dos altas simultáneas nunca obtienen el mismo número
+(se probó con dos altas simultáneas, que recibieron números distintos).</p>
+<div class="aviso ojo"><span class="t">Dos advertencias</span><ul><li>El script modifica una parte interna de una librería en <strong>beta</strong>. Si la actualizas, vuelve a comprobar que la numeración sigue funcionando.</li><li>Si arrancas la API con <code>npx json-server db.json</code> en lugar de <code>npm run api</code>, los ids vuelven a ser aleatorios.</li></ul></div>
+</section>
+<section class="capitulo" id="cap-6"><h2><span class="num">6</span><span>Arranque de la app, proveedores y rutas</span></h2><p class="resumen">main.ts, app.config.ts y app.routes.ts: lo que Angular necesita antes de mostrar nada.</p>
+<h3>El punto de entrada</h3>
+<p>En una aplicación <em>standalone</em> no hay <code>AppModule</code>. <code>main.ts</code> arranca el componente raíz y le pasa
+la configuración global:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/main.ts</span><button type="button">Copiar</button></div><pre><code>import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { App } from './app/app';
+
+bootstrapApplication(App, appConfig)
+  .catch((err) =&gt; console.error(err));</code></pre></div>
+
+<h3>Los proveedores globales</h3>
+<p>Aquí se "enciende" lo que usará toda la aplicación. Sin <code>provideHttpClient()</code>, cualquier servicio que pida
+<code>HttpClient</code> falla con un error de inyección.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/app.config.ts</span><button type="button">Copiar</button></div><pre><code>export const appConfig: ApplicationConfig = {
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes),     <span class="c">// habilita el router con nuestra tabla de rutas</span>
+    provideHttpClient()        <span class="c">// habilita HttpClient</span>
+  ]
+};</code></pre></div>
+
+<h3>La tabla de rutas</h3>
+<p>Cada ruta asocia una URL con el componente que se muestra en el <code>&lt;router-outlet&gt;</code>.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/app.routes.ts (fragmento)</span><button type="button">Copiar</button></div><pre><code>export const routes: Routes = [
+    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    { path: 'dashboard', component: Dashboard },
+    { path: 'tickets', component: Tickets },
+    { path: 'tickets/nuevo', component: TicketForm },
+    { path: 'tickets/editar/:id', component: TicketForm },   <span class="c">// mismo componente, otra URL</span>
+    { path: 'tickets/:id', component: TicketDetalle },       <span class="c">// va DESPUÉS de nuevo y editar</span>
+    { path: 'usuarios', component: Usuarios },
+    { path: 'usuarios/nuevo', component: UsuarioForm },
+    { path: 'usuarios/editar/:id', component: UsuarioForm },
+    { path: 'usuarios/:id', component: UsuarioDetalle },
+    { path: '**', component: NotFound }                      <span class="c">// siempre al final</span>
+];</code></pre></div>
+<div class="aviso nota"><span class="t">El orden importa</span><p>Angular recorre las rutas de arriba hacia abajo y usa <strong>la primera que coincide</strong>. Si <code>tickets/:id</code> estuviera antes que <code>tickets/nuevo</code>, la URL <code>/tickets/nuevo</code> se interpretaría como "el ticket cuyo id es <em>nuevo</em>". Por la misma razón <code>**</code> (cualquier URL) va última.</p></div>
+<div class="aviso error"><span class="t">Error común: la ruta literal</span><p>Una vez se escribió <code>path: 'ticket/id'</code>. Eso es una ruta <em>literal</em>: nunca recibe un parámetro. El parámetro se declara con dos puntos: <code>tickets/:id</code>.</p></div>
+</section>
+<section class="capitulo" id="cap-7"><h2><span class="num">7</span><span>Los servicios: hablar con la API</span></h2><p class="resumen">Un servicio concentra las llamadas HTTP para que los componentes no sepan nada de URLs.</p>
+<p>Un servicio es una clase con <code>@Injectable</code>. Con <code>providedIn: 'root'</code> existe una sola instancia para toda
+la app y cualquier componente puede pedirla con <code>inject()</code>.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/services/ticket.ts</span><button type="button">Copiar</button></div><pre><code>@Injectable({
+    providedIn: 'root'
+})
+export class TicketService {
+    private http = inject(HttpClient);
+    private apiUrl = 'http://localhost:3000/tickets';
+
+    <span class="c">// Read - Get</span>
+    obtenerTickets(): Observable&lt;Ticket[]&gt; {
+        return this.http.get&lt;Ticket[]&gt;(this.apiUrl);
+    }
+    obtenerTicket(id: string): Observable&lt;Ticket&gt; {
+        return this.http.get&lt;Ticket&gt;(`${this.apiUrl}/${id}`);
+    }
+    <span class="c">// Create - Post</span>
+    crearTicket(ticket: NuevoTicket): Observable&lt;Ticket&gt; {
+        return this.http.post&lt;Ticket&gt;(this.apiUrl, ticket);
+    }
+    <span class="c">// Update - Put</span>
+    actualizarTicket(id: string, ticket: Omit&lt;Ticket, 'id'&gt;): Observable&lt;Ticket&gt; {
+        return this.http.put&lt;Ticket&gt;(`${this.apiUrl}/${id}`, ticket);
+    }
+    <span class="c">// Delete - Delete</span>
+    eliminarTicket(id: string): Observable&lt;void&gt; {
+        return this.http.delete&lt;void&gt;(`${this.apiUrl}/${id}`);
+    }
+}</code></pre></div>
+
+<h3>Lo que hay que entender</h3>
+<ul>
+  <li><strong><code>get&lt;Ticket[]&gt;(…)</code></strong>: el genérico le dice a TypeScript qué trae la respuesta. Sin él el resultado sería <code>Object</code> y el compilador no te ayudaría.</li>
+  <li><strong>Un <code>Observable</code> es perezoso</strong>: llamar a <code>obtenerTickets()</code> <em>no</em> hace la petición. Se hace cuando alguien llama a <code>.subscribe()</code>. Es el error clásico de "no pasa nada".</li>
+  <li><strong>CRUD ↔ HTTP</strong>: crear = POST, leer = GET, actualizar = PUT/PATCH, borrar = DELETE.</li>
+  <li>El componente decide <em>cuándo</em> llamar; el servicio decide <em>cómo</em>.</li>
+</ul>
+<p>El servicio de usuarios es igual, con una diferencia de diseño: <strong>"eliminar" no hace DELETE</strong>.
+Solo cambia el estado a <code>Eliminado</code> usando <code>PATCH</code>, que modifica un campo sin reenviar el resto:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/services/usuario.ts (fragmento)</span><button type="button">Copiar</button></div><pre><code><span class="c">// "Eliminar" usuario es un borrado lógico: solo cambia el estado.</span>
+eliminarUsuario(id: string): Observable&lt;Usuario&gt; {
+    return this.http.patch&lt;Usuario&gt;(`${this.apiUrl}/${id}`, { estado: 'Eliminado' });
+}</code></pre></div>
+<div class="aviso error"><span class="t">Error común: inject() mal escrito</span><p>En las primeras versiones el servicio tenía <code>private http = Inject(HttpClient);</code> (con mayúscula y sin importar), además de repetir <code>http</code> en el constructor, y <code>this.http.get(Ticket[](this.apiUrl))</code>, que no es sintaxis válida. La forma correcta es <code>inject(HttpClient)</code> en minúscula y <code>get&lt;Ticket[]&gt;(url)</code>.</p></div>
+</section>
+<section class="capitulo" id="cap-8"><h2><span class="num">8</span><span>El layout principal: toolbar, menú y router-outlet</span></h2><p class="resumen">La "cáscara" de la aplicación: lo que se ve siempre, mientras el centro cambia según la ruta.</p>
+<p>El componente raíz <code>App</code> dibuja una barra superior, un menú lateral y, en el centro, el
+<code>&lt;router-outlet&gt;</code> donde Angular coloca la pantalla de la ruta activa.</p>
+<div class="flujo"><span class="paso">mat-toolbar</span><span class="flecha">→</span><span class="paso">mat-sidenav-container</span><span class="flecha">→</span><span class="paso">mat-sidenav (menú)</span><span class="flecha">→</span><span class="paso">mat-sidenav-content</span><span class="flecha">→</span><span class="paso">router-outlet</span></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/app.html (recortado)</span><button type="button">Copiar</button></div><pre><code>&lt;mat-toolbar class="toolbar"&gt;
+  &lt;mat-icon&gt;support_agent&lt;/mat-icon&gt;
+  &lt;span class="marca"&gt;Sistema Help Desk&lt;/span&gt;
+&lt;/mat-toolbar&gt;
+
+&lt;mat-sidenav-container class="layout"&gt;
+  &lt;mat-sidenav mode="side" opened class="sidebar"&gt;
+    &lt;mat-nav-list&gt;
+      &lt;a mat-list-item routerLink="/dashboard" routerLinkActive="activo"&gt;
+        &lt;mat-icon matListItemIcon&gt;dashboard&lt;/mat-icon&gt;
+        &lt;span matListItemTitle&gt;Dashboard&lt;/span&gt;
+      &lt;/a&gt;
+      ...
+    &lt;/mat-nav-list&gt;
+  &lt;/mat-sidenav&gt;
+
+  &lt;mat-sidenav-content&gt;
+    &lt;main class="contenedor"&gt;
+      &lt;router-outlet&gt;&lt;/router-outlet&gt;
+    &lt;/main&gt;
+  &lt;/mat-sidenav-content&gt;
+&lt;/mat-sidenav-container&gt;</code></pre></div>
+
+<h3>Resaltar el ítem activo</h3>
+<p><code>routerLink</code> navega y <code>routerLinkActive="activo"</code> agrega la clase <code>activo</code> al enlace cuya URL coincide
+con la ruta actual. Solo falta darle estilo a esa clase en <code>app.scss</code>.</p>
+
+<h3>El submenú de Tickets</h3>
+<p>"Tickets" es un ítem padre que se despliega con dos hijos: Listado y Crear ticket. Se controla con un signal y con una
+variable local de plantilla <code>@let</code>:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/app.ts</span><button type="button">Copiar</button></div><pre><code>export class App {
+  ticketsAbierto = signal(false);
+
+  alternarTickets(): void {
+    this.ticketsAbierto.update((abierto) =&gt; !abierto);
+  }
+}</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/app.html (submenú)</span><button type="button">Copiar</button></div><pre><code>&lt;div routerLinkActive="grupo-activo" #tickets="routerLinkActive"&gt;
+  <span class="c">&lt;!-- Abierto si el usuario lo abrió o si ya está dentro de /tickets --&gt;</span>
+  @let abierto = ticketsAbierto() || tickets.isActive;
+
+  &lt;a mat-list-item (click)="alternarTickets()" [attr.aria-expanded]="abierto"&gt;
+    &lt;mat-icon matListItemIcon&gt;confirmation_number&lt;/mat-icon&gt;
+    &lt;span matListItemTitle&gt;Tickets&lt;/span&gt;
+    &lt;span matListItemMeta&gt;
+      &lt;mat-icon&gt;{{ abierto ? 'expand_less' : 'expand_more' }}&lt;/mat-icon&gt;
+    &lt;/span&gt;
+  &lt;/a&gt;
+
+  @if (abierto) {
+    &lt;div class="submenu"&gt;
+      &lt;a mat-list-item routerLink="/tickets" routerLinkActive="activo"
+         [routerLinkActiveOptions]="{ exact: true }"&gt;Listado&lt;/a&gt;
+      &lt;a mat-list-item routerLink="/tickets/nuevo" routerLinkActive="activo"&gt;Crear ticket&lt;/a&gt;
+    &lt;/div&gt;
+  }
+&lt;/div&gt;</code></pre></div>
+<div class="aviso nota"><span class="t">¿Por qué <code>exact: true</code> en "Listado"?</span><p>Sin él, <code>/tickets/nuevo</code> también "empieza con" <code>/tickets</code> y los dos ítems quedarían resaltados. <code>exact</code> exige que la URL sea idéntica.</p></div>
+<div class="aviso error"><span class="t">Error común: el ícono que se ve como texto</span><p>El chevron del submenú mostraba la palabra <strong>"expa"</strong>. Causa: <code>matListItemMeta</code> está pensado para <em>texto</em> (un contador, una fecha) y aplica la fuente de etiqueta pequeña, que tiene más prioridad que la fuente de íconos. Al ponerlo directamente sobre <code>&lt;mat-icon&gt;</code>, el nombre del ícono se dibuja como letras. Solución: envolver el ícono en un <code>&lt;span matListItemMeta&gt;</code>, como en el ejemplo.</p></div>
+
+<h3>Que el layout ocupe toda la altura</h3>
+<p>En vez de calcular <code>100vh - 64px</code> a mano (el alto del toolbar cambia en móvil), la raíz se vuelve una columna
+que ocupa toda la ventana, y el contenedor toma el espacio restante:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/app.scss (fragmento)</span><button type="button">Copiar</button></div><pre><code>:host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.layout {
+    flex: 1 1 auto;
+    min-height: 0;        <span class="c">// necesario para que el contenido pueda hacer scroll</span>
+}</code></pre></div>
+</section>
+<section class="capitulo" id="cap-9"><h2><span class="num">9</span><span>Estilos: tema, variables y clases compartidas</span></h2><p class="resumen">Cómo se organiza el CSS para que cambiar un color sea tocar un solo lugar.</p>
+<h3>Tres niveles</h3>
+<div class="tabla-scroll"><table><thead><tr><th>Nivel</th><th>Dónde</th><th>Alcance</th></tr></thead><tbody><tr><td>Tema de Material</td><td><code>mat.theme(...)</code> en <code>styles.scss</code></td><td>Genera las variables <code>--mat-sys-*</code> con la paleta, tipografía y densidad.</td></tr><tr><td>Global</td><td><code>src/styles.scss</code></td><td>Toda la app: variables propias, reset y clases reutilizables.</td></tr><tr><td>Por componente</td><td><code>pages/…/*.scss</code>, <code>shared/…/*.scss</code></td><td>Solo ese componente (Angular "encapsula" los selectores).</td></tr></tbody></table></div>
+
+<h3>1. El tema de Material</h3>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/styles.scss (inicio)</span><button type="button">Copiar</button></div><pre><code>@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  height: 100%;
+}</code></pre></div>
+
+<h3>2. Variables propias construidas sobre el tema</h3>
+<p>Los colores <strong>no se escriben en hexadecimal</strong> en los componentes: se toman del tema. Así, si cambias la paleta en
+<code>mat.theme</code>, toda la aplicación cambia.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/styles.scss</span><button type="button">Copiar</button></div><pre><code>:root {
+  --hd-radio: 12px;
+  --hd-espacio: 24px;
+  --hd-superficie: var(--mat-sys-surface-container-lowest);
+  --hd-fondo: var(--mat-sys-surface-container-low);
+  --hd-borde: var(--mat-sys-outline-variant);
+  --hd-texto-suave: var(--mat-sys-on-surface-variant);
+}</code></pre></div>
+
+<h3>3. Clases reutilizables</h3>
+<p>Las piezas que se repiten en todas las pantallas viven en el estilo global, para no copiarlas en cada <code>.scss</code>:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/styles.scss (fragmento)</span><button type="button">Copiar</button></div><pre><code>.pagina {                     <span class="c">// contenedor de cada pantalla</span>
+  display: flex;
+  flex-direction: column;
+  gap: var(--hd-espacio);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.encabezado {                 <span class="c">// título a la izquierda, botón a la derecha</span>
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.tarjeta { /* fondo, borde, radio y sombra */ }
+.tabla-contenedor { /* tabla dentro de una tarjeta con scroll horizontal */ }
+.mensaje, .error { /* avisos de carga y error */ }</code></pre></div>
+
+<p>Y así queda el esqueleto de casi cualquier pantalla:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">plantilla típica de una página</span><button type="button">Copiar</button></div><pre><code>&lt;section class="pagina"&gt;
+  &lt;header class="encabezado"&gt;
+    &lt;div&gt;
+      &lt;h1&gt;Título&lt;/h1&gt;
+      &lt;p&gt;Descripción&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;a mat-flat-button routerLink="/…"&gt;Acción principal&lt;/a&gt;
+  &lt;/header&gt;
+
+  <span class="c">&lt;!-- contenido: tabla, formulario o tarjeta --&gt;</span>
+&lt;/section&gt;</code></pre></div>
+<div class="aviso nota"><span class="t">Encapsulación de estilos</span><p>Un <code>.scss</code> de componente solo afecta a <em>su propia plantilla</em>: Angular agrega un atributo único a cada elemento y a cada selector. Por eso <code>.imagen</code> en un componente no choca con <code>.imagen</code> en otro. La contrapartida: para estilar un elemento que crea Material por dentro (como las celdas de la tabla) hay que hacerlo en el CSS global, y esa es la razón de que las reglas de <code>.tabla-contenedor</code> estén en <code>styles.scss</code>.</p></div>
+<div class="aviso ojo"><span class="t">Overlaps y cómo evitarlos</span><p>Una causa frecuente de elementos "encimados" fue sobrescribir con <code>display:flex</code> el layout interno de <code>mat-list-item</code>. Regla práctica: <strong>no redefinas el <code>display</code> de un componente de Material</strong>; envuélvelo en un elemento tuyo y dale layout a ese elemento.</p></div>
+</section>
+<section class="capitulo" id="cap-10"><h2><span class="num">10</span><span>Signals y el patrón "cargando / error / datos"</span></h2><p class="resumen">El patrón que se repite en cada pantalla que lee de la API.</p>
+<p>Un <strong>signal</strong> es una caja que guarda un valor y avisa a Angular cuando cambia. Se lee llamándolo como función
+(<code>cargando()</code>) y se modifica con <code>.set()</code> o <code>.update()</code>.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">ejemplo</span><button type="button">Copiar</button></div><pre><code>cargando = signal(true);          <span class="c">// crear con valor inicial</span>
+cargando();                       <span class="c">// leer           → true</span>
+cargando.set(false);              <span class="c">// reemplazar</span>
+contador.update((n) =&gt; n + 1);    <span class="c">// calcular a partir del valor anterior</span></code></pre></div>
+
+<p>Casi toda pantalla que lee datos pasa por tres estados y los muestra con <code>@if</code>:</p>
+<div class="flujo"><span class="paso">cargando</span><span class="flecha">→</span><span class="paso">datos listos</span><span class="flecha">→</span><span class="paso">o</span><span class="flecha">→</span><span class="paso">error</span></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">patrón en el componente</span><button type="button">Copiar</button></div><pre><code>cargando = signal(true);
+error = signal(false);
+
+cargarTickets(): void {
+  this.cargando.set(true);
+  this.error.set(false);          <span class="c">// al reintentar, se limpia el error anterior</span>
+
+  this.ticketService.obtenerTickets().subscribe({
+    next: (tickets) =&gt; {
+      this.dataSource.data = tickets;
+      this.cargando.set(false);
+    },
+    error: (err) =&gt; {
+      console.error('Error al obtener los tickets: ', err);
+      this.error.set(true);
+      this.cargando.set(false);
+    },
+  });
+}</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">patrón en la plantilla</span><button type="button">Copiar</button></div><pre><code>@if (cargando()) {
+  &lt;p class="mensaje"&gt;Cargando tickets...&lt;/p&gt;
+} @else if (error()) {
+  &lt;div class="mensaje error"&gt;No fue posible obtener los registros&lt;/div&gt;
+} @else {
+  <span class="c">&lt;!-- aquí se dibuja la tabla --&gt;</span>
+}</code></pre></div>
+<div class="aviso error"><span class="t">Error común: campos normales sin zone.js</span><p>Las primeras versiones usaban <code>cargando = true;</code> y <code>this.cargando = false;</code> (campos normales). La pantalla se quedaba en "Cargando…" para siempre, porque sin <code>zone.js</code> nadie avisa a Angular de que el valor cambió dentro del <code>subscribe</code>. Con signals el aviso es automático.</p></div>
+<div class="aviso tip"><span class="t">Pruébalo</span><p>Detén la API (<kbd>Ctrl</kbd>+<kbd>C</kbd> en la terminal 1) y recarga <code>/tickets</code>: debe aparecer el mensaje de error, no una pantalla en blanco. Vuelve a arrancarla y recarga.</p></div>
+</section>
+<section class="capitulo" id="cap-11"><h2><span class="num">11</span><span>Listado con tabla y paginador</span></h2><p class="resumen">MatTable + MatPaginator: mostrar datos de la API en filas, de a cinco por página.</p>
+<p>Una tabla de Material se define <strong>columna por columna</strong>. Cada columna se declara con
+<code>matColumnDef</code> (cómo se ve la cabecera y cómo se ve cada celda) y la lista <code>columnas</code> del componente decide
+cuáles se muestran y en qué orden.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/pages/tickets/tickets.ts (fragmento)</span><button type="button">Copiar</button></div><pre><code>columnas: string[] = ['id', 'asunto', 'estado', 'prioridad', 'fechaCreacion', 'acciones'];
+
+dataSource = new MatTableDataSource&lt;Ticket&gt;();</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/pages/tickets/tickets.html (fragmento)</span><button type="button">Copiar</button></div><pre><code>&lt;table mat-table [dataSource]="dataSource"&gt;
+
+  &lt;ng-container matColumnDef="asunto"&gt;
+    &lt;th mat-header-cell *matHeaderCellDef&gt;Asunto&lt;/th&gt;
+    &lt;td mat-cell *matCellDef="let ticket"&gt;{{ ticket.asunto }}&lt;/td&gt;
+  &lt;/ng-container&gt;
+
+  &lt;ng-container matColumnDef="fechaCreacion"&gt;
+    &lt;th mat-header-cell *matHeaderCellDef&gt;Fecha&lt;/th&gt;
+    &lt;td mat-cell *matCellDef="let ticket"&gt;{{ ticket.fechaCreacion | date:'dd/MM/yyyy' }}&lt;/td&gt;
+  &lt;/ng-container&gt;
+
+  <span class="c">&lt;!-- … resto de columnas … --&gt;</span>
+
+  &lt;tr mat-header-row *matHeaderRowDef="columnas"&gt;&lt;/tr&gt;
+  &lt;tr mat-row *matRowDef="let row; columns: columnas;"&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;mat-paginator [pageSize]="5" [pageSizeOptions]="[5,10,20]" showFirstLastButtons&gt;&lt;/mat-paginator&gt;</code></pre></div>
+<div class="aviso error"><span class="t">Error común: una columna sin definición</span><p>Se agregó <code>'acciones'</code> a <code>columnas</code> <em>antes</em> de escribir su <code>matColumnDef</code>. Material lanza un error y <strong>la tabla completa desaparece</strong>, aunque la API responda bien. Si una tabla sale vacía, revisa que cada nombre de <code>columnas</code> tenga su <code>matColumnDef</code> y que esté escrito igual.</p></div>
+
+<h3>Conectar el paginador</h3>
+<p>El paginador está dentro del <code>@else</code>, o sea que <strong>no existe</strong> mientras la pantalla muestra "Cargando…".
+Si lo pidieras en <code>ngOnInit</code> con un <code>@ViewChild</code> normal, sería <code>undefined</code> y la tabla no paginaría.
+La solución es un <em>setter</em>: Angular lo ejecuta en el momento en que el paginador aparece.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/pages/tickets/tickets.ts</span><button type="button">Copiar</button></div><pre><code>@ViewChild(MatPaginator)
+set paginator(paginador: MatPaginator | undefined) {
+  if (paginador) {
+    this.dataSource.paginator = paginador;
+  }
+}</code></pre></div>
+
+<h3>Delegar las celdas en componentes</h3>
+<p>Para no repetir HTML, las celdas con formato usan componentes del capítulo 14:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">celdas con componentes compartidos</span><button type="button">Copiar</button></div><pre><code>&lt;td mat-cell *matCellDef="let ticket"&gt;&lt;app-id-ticket [ticketId]="ticket.id" /&gt;&lt;/td&gt;
+&lt;td mat-cell *matCellDef="let ticket"&gt;&lt;app-estado-ticket [estado]="ticket.estado" /&gt;&lt;/td&gt;
+&lt;td mat-cell *matCellDef="let ticket"&gt;&lt;app-prioridad-ticket [prioridad]="ticket.prioridad" /&gt;&lt;/td&gt;
+&lt;td mat-cell *matCellDef="let ticket"&gt;
+  &lt;app-acciones-ticket [ticket]="ticket"
+                       [eliminando]="eliminandoId() === ticket.id"
+                       (eliminar)="eliminar($event)" /&gt;
+&lt;/td&gt;</code></pre></div>
+<div class="aviso nota"><span class="t">Cada componente standalone importa lo que usa</span><p>En Angular standalone, lo que una plantilla usa debe estar en el <code>imports</code> de <em>ese</em> componente. Usar <code>&lt;mat-icon&gt;</code> sin <code>MatIconModule</code> en <code>imports</code> falla, aunque el componente raíz ya lo importe. No se hereda.</p></div>
+</section>
+<section class="capitulo" id="cap-12"><h2><span class="num">12</span><span>Formularios reactivos: crear y editar con el mismo componente</span></h2><p class="resumen">FormBuilder, validadores, mensajes de error y cómo un componente sirve para dos rutas.</p>
+<p>Un <strong>formulario reactivo</strong> se define en TypeScript (los campos y sus reglas) y la plantilla solo se enlaza a él. Es
+más verboso que otros enfoques, pero muy fácil de probar y de validar.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/pages/ticket-form/ticket-form.ts (fragmento)</span><button type="button">Copiar</button></div><pre><code>private fb = inject(FormBuilder);
+
+ticketForm = this.fb.nonNullable.group({
+  asunto: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
+  descripcion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
+  estado: ['Abierto' as Ticket['estado'], Validators.required],
+  prioridad: ['Media' as Ticket['prioridad'], Validators.required],
+});</code></pre></div>
+
+<ul>
+  <li><strong><code>nonNullable</code></strong>: los valores nunca son <code>null</code>. Así encajan con la interfaz <code>NuevoTicket</code>.</li>
+  <li><strong><code>'Abierto' as Ticket['estado']</code></strong>: le dice a TypeScript que el valor inicial es del tipo literal, no un <code>string</code> cualquiera.</li>
+</ul>
+
+<h3>La plantilla y los mensajes de error</h3>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/pages/ticket-form/ticket-form.html (fragmento)</span><button type="button">Copiar</button></div><pre><code>&lt;form class="tarjeta" [formGroup]="ticketForm" (ngSubmit)="guardar()"&gt;
+  &lt;mat-form-field appearance="outline" subscriptSizing="dynamic"&gt;
+    &lt;mat-label&gt;Asunto&lt;/mat-label&gt;
+    &lt;input matInput type="text" formControlName="asunto" /&gt;
+    @if (ticketForm.controls.asunto.hasError('required')) {
+      &lt;mat-error&gt;El asunto es obligatorio&lt;/mat-error&gt;
+    } @else if (ticketForm.controls.asunto.hasError('minlength')) {
+      &lt;mat-error&gt;Mínimo 5 caracteres&lt;/mat-error&gt;
+    }
+  &lt;/mat-form-field&gt;
+
+  &lt;div class="acciones"&gt;
+    &lt;a mat-button routerLink="/tickets"&gt;Cancelar&lt;/a&gt;
+    &lt;button mat-flat-button type="submit" [disabled]="guardando() || cargando() || bloqueado()"&gt;
+      {{ guardando() ? 'Guardando...' : 'Guardar' }}
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/form&gt;</code></pre></div>
+
+<h3>Un componente, dos modos</h3>
+<p>Las rutas <code>tickets/nuevo</code> y <code>tickets/editar/:id</code> usan el mismo componente. La diferencia: si la URL trae
+<code>:id</code>, se está editando.</p>
+<div class="flujo"><span class="paso">¿La URL trae :id?</span><span class="flecha">→</span><span class="paso">sí: cargar el ticket y rellenar el formulario</span><span class="flecha">→</span><span class="paso">no: formulario vacío</span></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/pages/ticket-form/ticket-form.ts (fragmento)</span><button type="button">Copiar</button></div><pre><code>private route = inject(ActivatedRoute);
+
+ticketId = this.route.snapshot.paramMap.get('id');       <span class="c">// null al crear</span>
+cargando = signal(!!this.ticketId);                       <span class="c">// solo carga si edita</span>
+
+ngOnInit(): void {
+  if (!this.ticketId) return;
+
+  this.ticketService.obtenerTicket(this.ticketId).subscribe({
+    next: (ticket) =&gt; {
+      const { id, fechaCreacion, ...datos } = ticket;     <span class="c">// separa el id y la fecha</span>
+      this.fechaCreacion = fechaCreacion;
+      this.ticketForm.patchValue(datos);                  <span class="c">// rellena los campos</span>
+      this.cargando.set(false);
+    },
+    error: () =&gt; { this.error.set(true); this.cargando.set(false); },
+  });
+}
+
+guardar(): void {
+  if (this.ticketForm.invalid) {
+    this.ticketForm.markAllAsTouched();                   <span class="c">// muestra todos los errores</span>
+    return;
+  }
+
+  const ticket: NuevoTicket = {
+    ...this.ticketForm.getRawValue(),
+    fechaCreacion: this.fechaCreacion || new Date().toISOString().slice(0, 10),
+  };
+
+  const peticion = this.ticketId
+    ? this.ticketService.actualizarTicket(this.ticketId, ticket)   <span class="c">// PUT</span>
+    : this.ticketService.crearTicket(ticket);                      <span class="c">// POST</span>
+
+  peticion.subscribe({
+    next: () =&gt; this.router.navigate(['/tickets']),
+    error: () =&gt; { this.error.set(true); this.guardando.set(false); },
+  });
+}</code></pre></div>
+<div class="aviso nota"><span class="t">¿Por qué <code>markAllAsTouched()</code>?</span><p>Material solo muestra el error de un campo cuando fue "tocado". Si el usuario pulsa Guardar con todo vacío, ningún campo se tocó, y no vería por qué no se guarda. <code>markAllAsTouched()</code> los marca todos de una vez.</p></div>
+<div class="aviso tip"><span class="t">Pruébalo</span><p>Abre <code>/tickets/nuevo</code>, pulsa Guardar con el formulario vacío y comprueba que aparecen los mensajes. Luego edita un ticket y mira cómo el título cambia a "Editar Ticket".</p></div>
+</section>
+<section class="capitulo" id="cap-13"><h2><span class="num">13</span><span>Pantalla de detalle</span></h2><p class="resumen">Leer un parámetro de la URL, pedir un solo registro y mostrarlo.</p>
+<p>El detalle sigue el mismo patrón "cargando / error / datos" del capítulo 10, con una diferencia: el id viene de la URL.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/pages/ticket-detalle/ticket-detalle.ts (fragmento)</span><button type="button">Copiar</button></div><pre><code>private route = inject(ActivatedRoute);
+private ticketService = inject(TicketService);
+
+ticket = signal&lt;Ticket | null&gt;(null);
+
+ngOnInit(): void {
+  const id = this.route.snapshot.paramMap.get('id');
+
+  if (id === null) {                 <span class="c">// ruta mal formada</span>
+    this.error.set(true);
+    this.cargando.set(false);
+    return;
+  }
+  this.cargarTicket(id);
+}</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/pages/ticket-detalle/ticket-detalle.html (fragmento)</span><button type="button">Copiar</button></div><pre><code>@if (cargando()) {
+  &lt;p class="mensaje"&gt;Cargando ticket...&lt;/p&gt;
+} @else if (error() || !ticket()) {
+  &lt;p class="mensaje error"&gt;No fue posible obtener el ticket.&lt;/p&gt;
+} @else {
+  @let t = ticket()!;                          <span class="c">&lt;!-- variable local, evita repetir ticket()! --&gt;</span>
+
+  &lt;article class="tarjeta"&gt;
+    &lt;h1&gt;{{ t.asunto }}&lt;/h1&gt;
+    &lt;app-estado-ticket [estado]="t.estado" /&gt;
+    &lt;p&gt;{{ t.descripcion }}&lt;/p&gt;
+    &lt;p&gt;Creado el {{ t.fechaCreacion | date: 'dd/MM/yyyy' }}&lt;/p&gt;
+  &lt;/article&gt;
+}</code></pre></div>
+<div class="aviso error"><span class="t">Error común: confundir servicio y ruta</span><p>Una versión inicial inyectaba <code>inject(TicketService)</code> en la variable llamada <code>route</code> y después intentaba <code>this.route.snapshot</code>. Cada cosa se inyecta con su propia clase: <code>ActivatedRoute</code> para leer la URL, <code>TicketService</code> para llamar a la API. También había un <code>.subcribe()</code> (falta una "s") y un <code>signal&lt;Ticket | null&gt;</code> sin paréntesis ni valor inicial.</p></div>
+</section>
+<section class="capitulo" id="cap-14"><h2><span class="num">14</span><span>Componentes compartidos con &lt;code&gt;input()&lt;/code&gt; y &lt;code&gt;output()&lt;/code&gt;</span></h2><p class="resumen">Extraer una etiqueta o un grupo de botones para usarlo en muchas pantallas.</p>
+<p>Cuando el mismo trozo de interfaz aparece en varias pantallas (la etiqueta de color del estado, el "#id" que enlaza al detalle),
+se convierte en un componente de <code>shared/</code>. Recibe datos con <code>input()</code> y avisa con <code>output()</code>.</p>
+
+<h3>Un componente de solo presentación</h3>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/shared/estado-ticket/estado-ticket.ts</span><button type="button">Copiar</button></div><pre><code>@Component({
+  imports: [],
+  selector: 'app-estado-ticket',
+  styleUrl: './estado-ticket.scss',
+  templateUrl: './estado-ticket.html',
+})
+export class EstadoTicket {
+  estado = input.required&lt;Ticket['estado']&gt;();
+}</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/shared/estado-ticket/estado-ticket.html</span><button type="button">Copiar</button></div><pre><code>&lt;span class="estado"
+      [class.abierto]="estado() === 'Abierto'"
+      [class.proceso]="estado() === 'En proceso'"
+      [class.cerrado]="estado() === 'Cerrado'"&gt;
+  {{ estado() }}
+&lt;/span&gt;</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">cómo se usa</span><button type="button">Copiar</button></div><pre><code>&lt;app-estado-ticket [estado]="ticket.estado" /&gt;</code></pre></div>
+
+<ul>
+  <li><strong><code>input.required</code></strong>: el padre está obligado a pasar el valor; si falta, no compila.</li>
+  <li><strong>Se lee como función</strong>: <code>estado()</code>, igual que un signal.</li>
+  <li>Los colores viven <em>dentro</em> del componente; las pantallas ya no calculan clases CSS.</li>
+  <li>Lo mismo se hizo con <code>PrioridadTicket</code> (alta/media/baja), <code>RolUsuario</code> (administrador/soporte/usuario) e <code>IdTicket</code> (el "#id" que enlaza al detalle).</li>
+</ul>
+
+<h3>Un componente que avisa: <code>output()</code></h3>
+<p><code>AccionesTicket</code> dibuja los botones Detalle, Editar y Eliminar. No sabe <em>cómo</em> eliminar (eso es de la pantalla y del servicio):
+solo avisa que el usuario lo pidió.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/shared/acciones-ticket/acciones-ticket.ts</span><button type="button">Copiar</button></div><pre><code>export class AccionesTicket {
+  ticket = input.required&lt;Ticket&gt;();
+  eliminando = input(false);                  <span class="c">// el padre lo activa mientras procesa</span>
+  eliminar = output&lt;Ticket&gt;();                <span class="c">// evento hacia el padre</span>
+
+  editable = computed(() =&gt; puedeEditar(this.ticket()));
+  motivoNoEditable = MOTIVO_NO_EDITABLE;
+
+  solicitarEliminacion(): void {
+    this.eliminar.emit(this.ticket());
+  }
+}</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">en el padre</span><button type="button">Copiar</button></div><pre><code>&lt;app-acciones-ticket [ticket]="ticket"
+                     [eliminando]="eliminandoId() === ticket.id"
+                     (eliminar)="eliminar($event)" /&gt;</code></pre></div>
+<div class="flujo"><span class="paso">hijo: emit(ticket)</span><span class="flecha">→</span><span class="paso">(eliminar)="eliminar($event)"</span><span class="flecha">→</span><span class="paso">padre: confirma y llama a la API</span></div>
+<div class="aviso nota"><span class="t">Regla de oro</span><p><strong>Los datos bajan por <code>input()</code>; los eventos suben por <code>output()</code>.</strong> El componente compartido no llama a la API ni navega por su cuenta: eso lo decide quien lo usa.</p></div>
+<div class="aviso error"><span class="t">Error común: nombres de clase y de archivo que no coinciden</span><p>El componente de prioridad nació como copia del de estado y quedó con tres fallos que nadie veía porque no se usaba: <code>styleUrl: './prioridad-ticket.css'</code> (el archivo es <code>.scss</code>), un carácter <code>|</code> suelto en la plantilla y un SCSS con clases <code>.estado.abierto</code> que no coincidían con las del HTML. <strong>Un componente sin usar puede estar roto sin avisar</strong>: en cuanto lo importes en una pantalla, el compilador lo revisa.</p></div>
+</section>
+<section class="capitulo" id="cap-15"><h2><span class="num">15</span><span>Reglas de negocio: "un ticket cerrado no se edita"</span></h2><p class="resumen">Dónde poner una regla para que se cumpla en todas partes, no solo en un botón.</p>
+<p>La regla se escribe <strong>una sola vez</strong>, junto al modelo, como función pura:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/models/ticket.ts</span><button type="button">Copiar</button></div><pre><code>export const MOTIVO_NO_EDITABLE = 'Los tickets cerrados no se pueden editar';
+
+<span class="c">// Regla única: un ticket cerrado no se edita.</span>
+export function puedeEditar(ticket: Pick&lt;Ticket, 'estado'&gt;): boolean {
+    return ticket.estado !== 'Cerrado';
+}</code></pre></div>
+
+<p>Si mañana la regla cambia (por ejemplo, "también los 'En proceso' de prioridad Alta"), se modifica aquí y se actualizan todas
+las pantallas. Se aplica en <strong>tres capas</strong>, porque desactivar el botón no basta:</p>
+<div class="tabla-scroll"><table><thead><tr><th>Capa</th><th>Qué evita</th><th>Cómo</th></tr></thead><tbody><tr><td>Listado y detalle</td><td>Hacer clic en "Editar".</td><td>Enlace deshabilitado con tooltip.</td></tr><tr><td>Formulario</td><td>Escribir <code>/tickets/editar/3</code> en la barra de direcciones.</td><td>Al cargar el ticket, si no es editable se deshabilita el formulario y se muestra el motivo.</td></tr><tr><td><code>guardar()</code></td><td>Que el estado cambie mientras el formulario está abierto.</td><td>Comprueba <code>bloqueado()</code> antes de enviar.</td></tr></tbody></table></div>
+
+<h3>Deshabilitar un enlace</h3>
+<p>Un <code>&lt;a&gt;</code> no tiene <code>[disabled]</code> como un botón. Con Material, un <code>mat-icon-button</code> sobre un
+<code>&lt;a&gt;</code> sí acepta <code>[disabled]</code>; y poner <code>routerLink</code> en <code>null</code> evita que navegue:</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/shared/acciones-ticket/acciones-ticket.html</span><button type="button">Copiar</button></div><pre><code><span class="c">&lt;!-- El &lt;span&gt; recibe el tooltip: un botón deshabilitado no recibe eventos del mouse --&gt;</span>
+&lt;span class="envoltura-accion"
+      [matTooltip]="editable() ? 'Editar' : motivoNoEditable"&gt;
+  &lt;a mat-icon-button
+     [routerLink]="editable() ? ['/tickets/editar', ticket().id] : null"
+     [disabled]="!editable()"
+     aria-label="Editar ticket"&gt;
+    &lt;mat-icon&gt;edit&lt;/mat-icon&gt;
+  &lt;/a&gt;
+&lt;/span&gt;</code></pre></div>
+<div class="aviso ojo"><span class="t">Esto es solo la interfaz</span><p>La API (json-server) no valida nada. Alguien que llame al <code>PUT</code> directamente puede modificar un ticket cerrado. Una protección real tiene que estar <strong>también en el backend</strong>. Las reglas del frontend mejoran la experiencia; no son seguridad.</p></div>
+</section>
+<section class="capitulo" id="cap-16"><h2><span class="num">16</span><span>Diálogos de confirmación e información</span></h2><p class="resumen">Reemplazar confirm() del navegador por diálogos de Material, y avisar cuando algo terminó.</p>
+<p>MatDialog abre un componente en una capa flotante. Quien lo abre le pasa datos con <code>MAT_DIALOG_DATA</code>, y el diálogo devuelve un
+resultado al cerrarse con <code>MatDialogRef</code>.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/shared/confirm-dialog/confirm-dialog-data.ts</span><button type="button">Copiar</button></div><pre><code>export interface ConfirmDialogData {
+    titulo: string;
+    mensaje: string;
+    textoConfirmar?: string;
+    textoCancelar?: string;
+}</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/shared/confirm-dialog/confirm-dialog.ts</span><button type="button">Copiar</button></div><pre><code>export class ConfirmDialog {
+  data = inject&lt;ConfirmDialogData&gt;(MAT_DIALOG_DATA);
+  private dialogRef = inject&lt;MatDialogRef&lt;ConfirmDialog, boolean&gt;&gt;(MatDialogRef);
+
+  cancelar(): void { this.dialogRef.close(false); }
+  confirmar(): void { this.dialogRef.close(true); }
+}</code></pre></div>
+
+<p>El <code>InfoDialog</code> es más simple: un título, un mensaje y un único botón <strong>Cerrar</strong> que usa la directiva
+<code>mat-dialog-close</code>, así que ni siquiera necesita inyectar <code>MatDialogRef</code>.</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/shared/info-dialog/info-dialog.html (fragmento)</span><button type="button">Copiar</button></div><pre><code>&lt;mat-dialog-actions align="center"&gt;
+  <span class="c">&lt;!-- mat-dialog-close cierra el diálogo al pulsar; no necesita (click) ni método --&gt;</span>
+  &lt;button mat-flat-button type="button" mat-dialog-close&gt;Cerrar&lt;/button&gt;
+&lt;/mat-dialog-actions&gt;</code></pre></div>
+
+<h3>El flujo completo de "Eliminar"</h3>
+<div class="flujo"><span class="paso">clic en Eliminar</span><span class="flecha">→</span><span class="paso">ConfirmDialog</span><span class="flecha">→</span><span class="paso">¿confirmó?</span><span class="flecha">→</span><span class="paso">llamada a la API</span><span class="flecha">→</span><span class="paso">recargar tabla</span><span class="flecha">→</span><span class="paso">InfoDialog</span></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/pages/tickets/tickets.ts (fragmento)</span><button type="button">Copiar</button></div><pre><code>private dialog = inject(MatDialog);
+
+eliminar(ticket: Ticket): void {
+  this.dialog
+    .open&lt;ConfirmDialog, ConfirmDialogData, boolean&gt;(ConfirmDialog, {
+      data: {
+        titulo: 'Eliminar ticket',
+        mensaje: `¿Estás seguro de eliminar el ticket "${ticket.asunto}"? Esta acción no se puede deshacer.`,
+        textoConfirmar: 'Eliminar',
+      },
+    })
+    .afterClosed()                         <span class="c">// Observable que emite true / false al cerrar</span>
+    .subscribe((confirmado) =&gt; {
+      if (confirmado) this.eliminarTicket(ticket);
+    });
+}
+
+private eliminarTicket(ticket: Ticket): void {
+  this.eliminandoId.set(ticket.id);        <span class="c">// deshabilita el botón de esa fila</span>
+
+  this.ticketService.eliminarTicket(ticket.id).subscribe({
+    next: () =&gt; {
+      this.eliminandoId.set(null);
+      this.cargarTickets();
+
+      <span class="c">// El aviso solo aparece cuando la API confirmó la eliminación</span>
+      this.dialog.open&lt;InfoDialog, InfoDialogData&gt;(InfoDialog, {
+        data: { titulo: 'Ticket eliminado', mensaje: `El ticket "${ticket.asunto}" se eliminó correctamente.` },
+      });
+    },
+    error: (error) =&gt; {
+      console.error('Error al intentar eliminar el ticket:', error);
+      this.eliminandoId.set(null);
+    },
+  });
+}</code></pre></div>
+<div class="aviso nota"><span class="t">Los tres genéricos de <code>open&lt;…&gt;</code></span><p><code>open&lt;ComponenteDelDialogo, TipoDeLosDatos, TipoDelResultado&gt;</code>. Con ellos, <code>data</code> se valida al escribir y <code>confirmado</code> llega tipado como <code>boolean</code> en vez de <code>any</code>.</p></div>
+<div class="aviso tip"><span class="t">Pruébalo</span><p>Elimina un ticket: primero ves el diálogo rojo de confirmación; al aceptar, la tabla se actualiza y aparece el aviso azul. Prueba "Cancelar" y comprueba que no pasa nada.</p></div>
+</section>
+<section class="capitulo" id="cap-17"><h2><span class="num">17</span><span>Usuarios: el mismo patrón, con estados</span></h2><p class="resumen">Después de tickets, usuarios es repetir el recorrido con otro modelo. Estas son las diferencias.</p>
+<p>Una vez que Tickets funciona, Usuarios es casi un copiar-adaptar: el mismo listado paginado, el mismo formulario crear/editar,
+el mismo detalle. Conviene construirlo así: <strong>primero una entidad completa, después la segunda</strong>. Lo que cambia:</p>
+<div class="tabla-scroll"><table><thead><tr><th>Tema</th><th>Tickets</th><th>Usuarios</th></tr></thead><tbody><tr><td>Estado</td><td>Abierto, En proceso, Cerrado</td><td>Vigente, Bloqueado, Eliminado</td></tr><tr><td>Qué impide editar</td><td>Estado <em>Cerrado</em></td><td>Estado distinto de <em>Vigente</em> (Bloqueado o Eliminado)</td></tr><tr><td>Eliminar</td><td><code>DELETE</code> real</td><td>Borrado lógico: <code>PATCH</code> con <code>estado: 'Eliminado'</code></td></tr><tr><td>Id</td><td>Aleatorio de json-server</td><td>Correlativo (gracias a <code>api/server.mjs</code>)</td></tr><tr><td>Etiquetas</td><td><code>EstadoTicket</code>, <code>PrioridadTicket</code></td><td><code>RolUsuario</code> (y el estado con clases globales)</td></tr></tbody></table></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/models/usuario.ts</span><button type="button">Copiar</button></div><pre><code>export const MOTIVO_NO_EDITABLE = 'Los usuarios bloqueados no se pueden editar';
+export const MOTIVO_ELIMINADO = 'Los usuarios eliminados no se pueden editar';
+
+<span class="c">// Solo un usuario Vigente se puede editar.</span>
+export function puedeEditar(usuario: Pick&lt;Usuario, 'estado'&gt;): boolean {
+    return usuario.estado === 'Vigente';
+}
+
+<span class="c">// Un usuario ya eliminado no se vuelve a eliminar.</span>
+export function puedeEliminar(usuario: Pick&lt;Usuario, 'estado'&gt;): boolean {
+    return usuario.estado !== 'Eliminado';
+}
+
+<span class="c">// Texto del tooltip cuando "Editar" está deshabilitado.</span>
+export function motivoNoEditable(usuario: Pick&lt;Usuario, 'estado'&gt;): string {
+    return usuario.estado === 'Eliminado' ? MOTIVO_ELIMINADO : MOTIVO_NO_EDITABLE;
+}</code></pre></div>
+<div class="aviso nota"><span class="t">Borrado lógico</span><p>En lugar de destruir el registro, se marca como <em>Eliminado</em>. Ventajas: se conserva el historial, se puede auditar quién existió y una eliminación por error es recuperable. Es una decisión de diseño habitual en sistemas de gestión.</p></div>
+<div class="aviso ojo"><span class="t">Un efecto de la regla</span><p>Como un usuario Bloqueado no se puede editar, tampoco se puede volver a Vigente desde el formulario. Si lo necesitas, agrega una acción aparte ("Desbloquear"). Lo mismo pasa con los tickets cerrados y una posible acción "Reabrir".</p></div>
+</section>
+<section class="capitulo" id="cap-18"><h2><span class="num">18</span><span>Pruebas con Vitest y &lt;code&gt;ng test&lt;/code&gt;</span></h2><p class="resumen">Cada componente trae un .spec.ts. Casi siempre hay que darle lo que necesita para crearse.</p>
+<p><code>ng test</code> ejecuta los archivos <code>*.spec.ts</code> con Vitest. Para una ejecución única (sin quedarse vigilando cambios):</p>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">terminal</span><button type="button">Copiar</button></div><pre><code>npx ng test --watch=false</code></pre></div>
+
+<p>El <code>.spec.ts</code> que genera el CLI crea el componente "en el vacío". Si el componente necesita algo (router, HttpClient,
+un input obligatorio, datos del diálogo), la prueba debe <strong>proveerlo</strong>. Estos son los casos de este proyecto:</p>
+<div class="tabla-scroll"><table><thead><tr><th>El componente usa…</th><th>Error sin proveerlo</th><th>Qué agregar al <code>TestBed</code></th></tr></thead><tbody><tr><td><code>routerLink</code> o <code>ActivatedRoute</code></td><td><code>NG0201: No provider found for ActivatedRoute</code></td><td><code>providers: [provideRouter([])]</code></td></tr><tr><td>Un servicio con <code>HttpClient</code></td><td>Error de inyección de <code>HttpClient</code></td><td><code>provideHttpClient()</code> y <code>provideHttpClientTesting()</code> (esta última evita llamar a la API real)</td></tr><tr><td><code>input.required()</code></td><td><code>NG0950: Input "estado" is required but no value is available yet</code></td><td><code>fixture.componentRef.setInput('estado', 'Abierto')</code></td></tr><tr><td><code>MAT_DIALOG_DATA</code> / <code>MatDialogRef</code></td><td>Error de inyección</td><td><code>{ provide: MAT_DIALOG_DATA, useValue: {…} }</code> y un doble de <code>MatDialogRef</code></td></tr></tbody></table></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">src/app/shared/acciones-ticket/acciones-ticket.spec.ts (fragmento)</span><button type="button">Copiar</button></div><pre><code>beforeEach(async () =&gt; {
+  await TestBed.configureTestingModule({
+    imports: [AccionesTicket],
+    providers: [provideRouter([])],                    <span class="c">// routerLink necesita el router</span>
+  }).compileComponents();
+
+  fixture = TestBed.createComponent(AccionesTicket);
+  component = fixture.componentInstance;
+  fixture.componentRef.setInput('ticket', ticketBase); <span class="c">// input obligatorio</span>
+  await fixture.whenStable();
+});
+
+<span class="c">// Editar queda deshabilitado en un ticket cerrado</span>
+it('deshabilita Editar si el ticket está cerrado', async () =&gt; {
+  fixture.componentRef.setInput('ticket', { ...ticketBase, estado: 'Cerrado' });
+  await fixture.whenStable();
+
+  const editar = (fixture.nativeElement as HTMLElement)
+    .querySelector('a[aria-label="Editar ticket"]');
+  expect(editar?.getAttribute('aria-disabled')).toBe('true');
+});
+
+<span class="c">// Al pulsar Eliminar se avisa al padre con el ticket</span>
+it('emite eliminar con el ticket', () =&gt; {
+  const emitidos: Ticket[] = [];
+  component.eliminar.subscribe((t) =&gt; emitidos.push(t));
+  (fixture.nativeElement as HTMLElement).querySelector&lt;HTMLButtonElement&gt;('button.eliminar')?.click();
+  expect(emitidos).toEqual([ticketBase]);
+});</code></pre></div>
+<div class="codigo"><div class="codigo-barra"><span class="archivo">doble de MatDialogRef (diálogos)</span><button type="button">Copiar</button></div><pre><code>const dialogRef = { close: vi.fn() };
+
+providers: [
+  { provide: MAT_DIALOG_DATA, useValue: { titulo: 'Eliminar', mensaje: '¿Seguro?' } },
+  { provide: MatDialogRef, useValue: dialogRef },
+]
+
+<span class="c">// …</span>
+component.confirmar();
+expect(dialogRef.close).toHaveBeenCalledWith(true);</code></pre></div>
+<div class="aviso tip"><span class="t">Pruébalo</span><p>Rompe algo a propósito (por ejemplo, cambia <code>!== 'Cerrado'</code> por <code>=== 'Cerrado'</code> en <code>puedeEditar</code>) y ejecuta <code>ng test</code>: debe fallar la prueba de Editar. Una prueba que nunca falla no protege nada.</p></div>
+</section>
+<section class="capitulo" id="cap-19"><h2><span class="num">19</span><span>Errores reales que aparecieron (y cómo se resolvieron)</span></h2><p class="resumen">Consulta rápida: síntoma → causa → solución. Todos ocurrieron en este proyecto.</p>
+<p>Equivocarse es parte del proceso. Esta tabla reúne los fallos que más tiempo costaron, ordenados por tema.</p>
+<div class="tabla-scroll"><table><thead><tr><th>Síntoma</th><th>Causa</th><th>Solución</th></tr></thead><tbody><tr><td>La tabla de tickets sale vacía aunque la API responde.</td><td>Una columna en <code>columnas</code> sin su <code>matColumnDef</code> (<code>acciones</code>).</td><td>Definir la columna o quitarla de la lista.</td></tr><tr><td>La pantalla se queda en "Cargando…" para siempre.</td><td>Estado en campos normales y la app no usa <code>zone.js</code>.</td><td>Usar <code>signal()</code> y leer con <code>cargando()</code>.</td></tr><tr><td>La tabla no pagina.</td><td>El <code>@ViewChild(MatPaginator)</code> se evaluó antes de que el paginador existiera (está dentro de un <code>@else</code>).</td><td>Usar un <em>setter</em> en el <code>@ViewChild</code>.</td></tr><tr><td>Error de compilación: <code>styleUrl</code> no encuentra el archivo.</td><td>La ruta apunta a <code>.css</code> pero el archivo es <code>.scss</code>.</td><td>Corregir la extensión en <code>styleUrl</code>.</td></tr><tr><td>Error de compilación en el servicio (<code>Inject</code> sin importar, <code>get(Ticket[](url))</code>).</td><td>Función con mayúscula sin importar y sintaxis de genéricos inválida.</td><td><code>inject(HttpClient)</code> y <code>get&lt;Ticket[]&gt;(url)</code>.</td></tr><tr><td><code>/tickets/nuevo</code> abre el detalle.</td><td><code>tickets/:id</code> declarado antes que <code>tickets/nuevo</code>.</td><td>Poner las rutas específicas primero.</td></tr><tr><td>La ruta del detalle nunca recibe el id.</td><td>Se escribió <code>ticket/id</code> (literal).</td><td>Usar <code>tickets/:id</code>.</td></tr><tr><td>El ícono del menú se ve como la palabra "expa".</td><td><code>matListItemMeta</code> directo sobre <code>&lt;mat-icon&gt;</code>: aplica la fuente de texto.</td><td>Envolver en <code>&lt;span matListItemMeta&gt;</code>.</td></tr><tr><td><code>&lt;mat-icon&gt;</code> no se reconoce.</td><td>El componente no importa <code>MatIconModule</code>.</td><td>Agregarlo al <code>imports</code> de ese componente.</td></tr><tr><td>Los usuarios nuevos tienen id aleatorio.</td><td>json-server beta ignora el <code>id</code> del POST.</td><td><code>npm run api</code> (api/server.mjs).</td></tr><tr><td>Con <code>ng test</code>: <code>NG0201 … ActivatedRoute</code>.</td><td>El spec no provee el router.</td><td><code>provideRouter([])</code>.</td></tr><tr><td>Con <code>ng test</code>: <code>NG0950 … is required</code>.</td><td>Input obligatorio sin valor en el spec.</td><td><code>fixture.componentRef.setInput(…)</code>.</td></tr><tr><td>La lista de usuarios falla tras agregar un campo al modelo.</td><td><code>db.json</code> no tiene el campo nuevo.</td><td>Actualizar los datos de ejemplo junto con el modelo.</td></tr><tr><td>El botón Confirmar del diálogo no es rojo.</td><td>Falta la clase <code>confirmar</code> en el HTML.</td><td>Agregar <code>class="confirmar"</code>.</td></tr><tr><td>Elementos encimados en el menú lateral.</td><td><code>display:flex</code> sobre <code>mat-list-item</code>.</td><td>No redefinir el layout interno de Material.</td></tr></tbody></table></div>
+<div class="aviso tip"><span class="t">Hábito útil</span><p>Después de cada cambio, ejecuta <code>npx ng build</code>. Es la forma más rápida de descubrir que un archivo apunta a algo que no existe, y los mensajes de error del compilador de Angular suelen decir exactamente cuál es la línea.</p></div>
+</section>
+<section class="capitulo" id="cap-20"><h2><span class="num">20</span><span>Ruta de construcción: hazlo tú desde cero</span></h2><p class="resumen">El orden recomendado para reconstruir la aplicación, con una comprobación en cada paso.</p>
+<p>No avances al siguiente paso hasta que la comprobación del actual funcione. Es mucho más fácil encontrar un error cuando solo hay una cosa nueva.</p>
+<ol class="pasos">
+  <li><strong>Proyecto y Material.</strong> <code>ng new</code>, <code>ng add @angular/material</code>.<br><em>Comprobación:</em> <code>npm start</code> muestra la página de bienvenida.</li>
+  <li><strong>Modelos y <code>db.json</code>.</strong> Interfaces <code>Ticket</code> y <code>Usuario</code>.<br><em>Comprobación:</em> <code>npm run api</code> y abrir <code>localhost:3000/tickets</code>.</li>
+  <li><strong>Rutas y componentes vacíos.</strong> Genera las páginas, escribe <code>app.routes.ts</code>.<br><em>Comprobación:</em> escribir cada URL muestra "… works!".</li>
+  <li><strong>Layout.</strong> Toolbar, <code>mat-sidenav</code> y <code>router-outlet</code>.<br><em>Comprobación:</em> el menú navega y resalta la ruta activa.</li>
+  <li><strong>Servicio de tickets.</strong> <code>obtenerTickets()</code> con <code>HttpClient</code>.<br><em>Comprobación:</em> mostrar el resultado en consola.</li>
+  <li><strong>Listado.</strong> Tabla + paginador + estados cargando/error.<br><em>Comprobación:</em> detén la API y verifica el mensaje de error.</li>
+  <li><strong>Formulario.</strong> Crear con validaciones.<br><em>Comprobación:</em> el nuevo ticket aparece en <code>db.json</code>.</li>
+  <li><strong>Editar y detalle.</strong> Reutiliza el formulario con <code>:id</code>; crea la pantalla de detalle.<br><em>Comprobación:</em> editar cambia el registro.</li>
+  <li><strong>Eliminar.</strong> Primero con <code>confirm()</code>; después con los diálogos.<br><em>Comprobación:</em> cancelar no elimina.</li>
+  <li><strong>Componentes compartidos.</strong> Estado, prioridad, id, acciones.<br><em>Comprobación:</em> la tabla se ve igual que antes, con menos HTML.</li>
+  <li><strong>Reglas de negocio.</strong> <code>puedeEditar</code> en las tres capas.<br><em>Comprobación:</em> un ticket cerrado no se edita ni por URL.</li>
+  <li><strong>Usuarios.</strong> Repite el recorrido (pasos 5 a 11) con el nuevo modelo.</li>
+  <li><strong>Estilos.</strong> Tema, variables y clases compartidas; limpia los hexadecimales.</li>
+  <li><strong>Pruebas.</strong> Un <code>.spec.ts</code> por componente y servicio.<br><em>Comprobación:</em> <code>ng test</code> en verde.</li>
+</ol>
+
+<h3>Lista para verificar antes de dar por terminado</h3>
+<ul class="check">
+  <li><code>npx ng build</code> compila sin errores.</li>
+  <li><code>npx ng test --watch=false</code> pasa todas las pruebas.</li>
+  <li>Cada pantalla maneja los tres estados: cargando, error y datos.</li>
+  <li>Ningún componente usa <code>HttpClient</code> directamente (siempre un servicio).</li>
+  <li>No quedan colores en hexadecimal en los componentes (salvo los semánticos, como el rojo de eliminar).</li>
+  <li>Los formularios muestran mensajes de error por cada validación.</li>
+</ul>
+
+<h3>Ejercicios para practicar</h3>
+<ul>
+  <li>Agregar un filtro por estado en la tabla de tickets (<code>MatTableDataSource.filterPredicate</code>).</li>
+  <li>Usar <code>EstadoTicket</code> y <code>PrioridadTicket</code> también dentro del <code>mat-select</code> del formulario de usuarios, adaptándolos a sus estados.</li>
+  <li>Mostrar un <code>InfoDialog</code> de error cuando la API falle al eliminar.</li>
+  <li>Agregar el campo "asignado a" al ticket, relacionándolo con un usuario.</li>
+  <li>Crear la acción "Reabrir" para tickets cerrados y "Desbloquear" para usuarios.</li>
+  <li>Escribir una prueba que compruebe que <code>eliminar()</code> abre el diálogo de confirmación.</li>
+</ul>
+</section>
+</main>
+</div>
+<footer class="pie">Manual generado a partir del código real del proyecto. Los ejemplos están recortados con «…» donde el original es más largo.</footer>
+<button class="tema-btn" id="tema" type="button">Cambiar tema</button>
+<script>
+(function () {
+  // Botón de tema (claro / oscuro) con respaldo si localStorage no está disponible.
+  var raiz = document.documentElement;
+  try { var guardado = localStorage.getItem('manual-tema'); if (guardado) raiz.setAttribute('data-theme', guardado); } catch (e) {}
+  var btn = document.getElementById('tema');
+  if (btn) btn.addEventListener('click', function () {
+    var oscuro = raiz.getAttribute('data-theme') === 'dark' ||
+      (!raiz.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var nuevo = oscuro ? 'light' : 'dark';
+    raiz.setAttribute('data-theme', nuevo);
+    try { localStorage.setItem('manual-tema', nuevo); } catch (e) {}
+  });
+
+  // Botones "Copiar" de los bloques de código.
+  document.querySelectorAll('.codigo-barra button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var texto = b.closest('.codigo').querySelector('pre').innerText;
+      var listo = function () { b.textContent = 'Copiado'; setTimeout(function () { b.textContent = 'Copiar'; }, 1500); };
+      if (navigator.clipboard) { navigator.clipboard.writeText(texto).then(listo, function () {}); }
+    });
+  });
+
+  // Resalta en el índice el capítulo que se está leyendo.
+  var enlaces = {};
+  document.querySelectorAll('.toc a').forEach(function (a) { enlaces[a.getAttribute('href').slice(1)] = a; });
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (e.isIntersecting && enlaces[e.target.id]) {
+          Object.keys(enlaces).forEach(function (k) { enlaces[k].classList.remove('activo'); });
+          enlaces[e.target.id].classList.add('activo');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    document.querySelectorAll('.capitulo').forEach(function (c) { obs.observe(c); });
+  }
+})();
+</script>
+</body>
+</html>

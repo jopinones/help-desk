@@ -1,0 +1,18 @@
+<!-- CORRECCIÓN: <mat-card> no estaba importado (elemento desconocido); ahora es un <article>
+     estilizado en tarjeta-ticket.scss. -->
+<article class="ticket-card">
+    <div class="ticket-superior">
+        <!-- CAMBIO: el "Ticket #id" escrito a mano pasa a app-id-ticket (enlaza al detalle). -->
+        <app-id-ticket [ticketId]="ticket().id" />
+        <!-- CAMBIO: la prioridad en texto plano pasa a app-prioridad-ticket (con color). -->
+        <app-prioridad-ticket [prioridad]="ticket().prioridad" />
+    </div>
+
+    <h3>{{ ticket().asunto }}</h3>
+    <p class="descripcion">{{ ticket().descripcion }}</p>
+
+    <div class="ticket-fecha">
+        Creado: {{ ticket().fechaCreacion | date: 'dd-MM-yyyy' }}
+    </div>
+</article>
+

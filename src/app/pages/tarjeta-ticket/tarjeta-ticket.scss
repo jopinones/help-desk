@@ -1,0 +1,42 @@
+:host {
+    display: block;
+}
+
+// CAMBIO: colores fijos (#e2e8f0, #0f172a...) reemplazados por los tokens --hd-* de
+// styles.scss para que la tarjeta respete el tema claro/oscuro.
+.ticket-card {
+    padding: 14px;
+    border: 1px solid var(--hd-borde);
+    border-radius: var(--hd-radio);
+    background: var(--hd-superficie);
+    box-shadow: var(--hd-sombra);
+}
+
+// CORRECCIÓN: faltaba el punto (`ticket-superior` buscaba una etiqueta, no la clase),
+// por eso el id y la prioridad no se alineaban a los extremos.
+.ticket-superior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ticket-card h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+}
+
+.descripcion {
+    margin: 0 0 14px;
+    color: var(--hd-texto-suave);
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.ticket-fecha {
+    padding-top: 10px;
+    border-top: 1px solid var(--hd-borde);
+    color: var(--hd-texto-suave); // CORRECCIÓN: #67748b (typo) ahora usa el token.
+    font-size: 12px;
+}

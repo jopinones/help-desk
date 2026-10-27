@@ -1,8 +1,10 @@
-.vacio {
-    text-align: center;
-    padding: 64px 24px;
-
-    p {
-        margin: 0;
-    }
+// CAMBIO: se quitó la clase .vacio (era del "Próximamente"); ahora se maqueta el tablero.
+// Tres columnas iguales; en pantallas angostas se hace scroll horizontal en vez de apilarse.
+.tablero {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+    gap: var(--hd-espacio);
+    align-items: start;
+    overflow-x: auto;
+    padding-bottom: 8px;
 }

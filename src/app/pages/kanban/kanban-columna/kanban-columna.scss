@@ -1,0 +1,52 @@
+:host {
+    display: block;
+    min-width: 250px;
+}
+
+// CAMBIO: colores fijos reemplazados por los tokens --hd-* (tema claro/oscuro).
+.columna {
+    min-height: 380px;
+    padding: 14px;
+    border: 1px solid var(--hd-borde);
+    border-radius: var(--hd-radio);
+    background-color: var(--hd-fondo);
+}
+
+.columna-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--hd-borde);
+}
+
+.columna-encabezado h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.cantidad {
+    display: inline-flex;
+    min-width: 26px;
+    height: 26px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--hd-borde);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.columna-contenido {
+    display: grid;
+    gap: 12px;
+    padding-top: 14px;
+}
+
+.mensaje-vacio {
+    margin: 8px 0;
+    color: var(--hd-texto-suave);
+    font-size: 14px;
+}

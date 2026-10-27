@@ -1,0 +1,15 @@
+<section class="columna">
+    <header class="columna-encabezado">
+        <h2>{{ titulo() }}</h2>
+        <span class="cantidad">{{ tickets().length }}</span>
+    </header>
+
+    <div class="columna-contenido">
+        @for (ticket of tickets(); track ticket.id) {
+            <app-tarjeta-ticket [ticket]="ticket" />
+        } @empty {
+            <!-- CAMBIO: el texto decía "registrados"; la columna solo muestra los de su estado. -->
+            <p class="mensaje-vacio">No hay tickets en este estado</p>
+        }
+    </div>
+</section>
