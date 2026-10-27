@@ -1,6 +1,4 @@
 // Los estilos de página, tabla y etiquetas son globales (ver src/styles.scss).
 // Aquí solo va lo propio de este componente.
 
-.envoltura-accion {
-    display: inline-flex;
-}
+// CAMBIO: se quitó .envoltura-accion; el botón Editar ahora vive en AccionesTicket.

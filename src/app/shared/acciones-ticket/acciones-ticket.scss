@@ -1,0 +1,38 @@
+:host {
+    display: inline-block;
+}
+
+.acciones {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+// AGREGADO: envuelve el botón Editar para que el tooltip funcione aunque esté deshabilitado.
+.envoltura-accion {
+    display: inline-flex;
+}
+
+// CAMBIO: colores tomados del tema (antes eran hexadecimales fijos).
+.acciones a,
+.acciones button {
+    color: var(--hd-texto-suave);
+}
+
+// CORRECCIÓN: el hover usaba #3ff6ff (cian muy brillante) y se aplicaba también al botón
+// Editar deshabilitado. Ahora usa el color primario del tema y solo en enlaces activos.
+.acciones a:not([aria-disabled='true']):hover {
+    background-color: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+}
+
+.acciones .eliminar:hover:not(:disabled) {
+    background-color: var(--mat-sys-error-container);
+    color: var(--mat-sys-error);
+}
+
+.acciones button:disabled,
+.acciones a[aria-disabled='true'] {
+    opacity: 0.5;
+}

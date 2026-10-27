@@ -8,6 +8,15 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 // AGREGADO: reglas del modelo (qué usuario se puede editar / eliminar y por qué no).
 import { Usuario, motivoNoEditable, puedeEditar, puedeEliminar } from '../../models/usuario';
 import { UsuarioService } from '../../services/usuario';
+// AGREGADO: componente compartido para mostrar el rol del usuario.
+import { RolUsuario } from '../../shared/rol-usuario/rol-usuario';
+// AGREGADO: diálogo de confirmación compartido (y el tipo de sus datos) para eliminar.
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from '../../shared/confirm-dialog/confirm-dialog';
+import { ConfirmDialogData } from '../../shared/confirm-dialog/confirm-dialog-data';
+// AGREGADO: diálogo informativo compartido (y el tipo de sus datos) para avisar la eliminación.
+import { InfoDialog } from '../../shared/info-dialog/info-dialog';
+import { InfoDialogData } from '../../shared/info-dialog/info-dialog-data';
 
 @Component({
   // AGREGADO: botones, íconos, tooltip y routerLink para las acciones de cada fila.
@@ -18,6 +27,8 @@ import { UsuarioService } from '../../services/usuario';
     MatIconModule,
     MatTooltipModule,
     RouterLink,
+    // AGREGADO: componente compartido que muestra el rol como etiqueta de color.
+    RolUsuario,
   ],
   selector: 'app-usuarios',
   styleUrl: './usuarios.scss',
@@ -25,6 +36,8 @@ import { UsuarioService } from '../../services/usuario';
 })
 export class Usuarios implements OnInit {
   private usuarioService = inject(UsuarioService);
+  // AGREGADO: servicio de Material para abrir el diálogo de confirmación.
+  private dialog = inject(MatDialog);
 
   // AGREGADO: columnas 'estado' y 'acciones'.
   columnas: string[] = ['id', 'nombre', 'email', 'rol', 'estado', 'acciones'];
@@ -71,9 +84,8 @@ export class Usuarios implements OnInit {
     });
   }
 
-  claseRol(rol: Usuario['rol']): string {
-    return rol.toLowerCase();
-  }
+  // CAMBIO: se eliminó claseRol(); calculaba la clase CSS del rol y ahora lo resuelve
+  // el componente RolUsuario.
 
   // AGREGADO: clase CSS según el estado (estado-vigente, estado-bloqueado, estado-eliminado).
   claseEstado(estado: Usuario['estado']): string {
@@ -82,23 +94,46 @@ export class Usuarios implements OnInit {
 
   // AGREGADO: eliminar usuario = borrado lógico (estado 'Eliminado'). Pide confirmación
   // y recarga la tabla al terminar; el usuario sigue en la API pero marcado como eliminado.
+  // CAMBIO: la confirmación ya no usa confirm() del navegador, sino el diálogo de Material
+  // ConfirmDialog; solo si el usuario confirma (true) se ejecuta la eliminación.
   eliminar(usuario: Usuario): void {
     if (!puedeEliminar(usuario)) {
       return;
     }
 
-    const confirmado = confirm(`¿Estás seguro de eliminar al usuario "${usuario.nombre.trim()}"?`);
+    this.dialog
+      .open<ConfirmDialog, ConfirmDialogData, boolean>(ConfirmDialog, {
+        data: {
+          titulo: 'Eliminar usuario',
+          mensaje: `¿Estás seguro de eliminar al usuario "${usuario.nombre.trim()}"? Quedará marcado como Eliminado.`,
+          textoConfirmar: 'Eliminar',
+        },
+      })
+      .afterClosed()
+      .subscribe((confirmado) => {
+        if (confirmado) {
+          this.eliminarUsuario(usuario);
+        }
+      });
+  }
 
-    if (!confirmado) {
-      return;
-    }
-
+  // CAMBIO: la llamada a la API se separó de eliminar() para ejecutarse solo tras confirmar.
+  private eliminarUsuario(usuario: Usuario): void {
     this.eliminandoId.set(usuario.id);
 
     this.usuarioService.eliminarUsuario(usuario.id).subscribe({
       next: () => {
         this.eliminandoId.set(null);
         this.cargarUsuarios();
+
+        // AGREGADO: aviso informativo (InfoDialog) de que el usuario se eliminó. Se muestra
+        // solo cuando la API confirma el cambio, no antes.
+        this.dialog.open<InfoDialog, InfoDialogData>(InfoDialog, {
+          data: {
+            titulo: 'Usuario eliminado',
+            mensaje: `El usuario "${usuario.nombre.trim()}" quedó marcado como Eliminado.`,
+          },
+        });
       },
       error: (err) => {
         console.error('Error al eliminar el usuario: ', err);

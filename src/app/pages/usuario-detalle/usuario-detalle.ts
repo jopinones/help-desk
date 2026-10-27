@@ -7,6 +7,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UsuarioService } from '../../services/usuario';
 // AGREGADO: reglas del modelo para deshabilitar "Editar" y explicar el motivo.
 import { Usuario, motivoNoEditable, puedeEditar } from '../../models/usuario';
+// AGREGADO: componente compartido que muestra el rol como etiqueta de color.
+import { RolUsuario } from '../../shared/rol-usuario/rol-usuario';
 
 @Component({
   imports: [
@@ -14,7 +16,8 @@ import { Usuario, motivoNoEditable, puedeEditar } from '../../models/usuario';
     RouterLink,
     MatButtonModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    RolUsuario
   ],
   selector: 'app-usuario-detalle',
   styleUrl: './usuario-detalle.scss',

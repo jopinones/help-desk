@@ -1,0 +1,33 @@
+:host {
+    display: inline-block;
+}
+
+// AGREGADO: forma de etiqueta igual a estado-ticket y prioridad-ticket.
+.rol {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 78px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 600;
+}
+
+// Colores: los mismos que tenían las clases globales .rol-* de styles.scss, para que el
+// listado se vea igual que antes.
+.rol.administrador {
+    background-color: #f3e5f5;
+    color: #4a148c;
+}
+
+.rol.soporte {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+}
+
+.rol.usuario {
+    background-color: #eceff1;
+    color: #37474f;
+}

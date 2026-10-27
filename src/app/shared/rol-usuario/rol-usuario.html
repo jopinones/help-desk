@@ -1,0 +1,8 @@
+<!-- AGREGADO: reemplaza el texto de ejemplo "rol-usuario works!". Cada rol activa su propia
+     clase de color (administrador, soporte o usuario). -->
+<span class="rol"
+    [class.administrador]="rol() === 'Administrador'"
+    [class.soporte]="rol() === 'Soporte'"
+    [class.usuario]="rol() === 'Usuario'">
+    {{ rol() }}
+</span>

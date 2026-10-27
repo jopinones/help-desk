@@ -6,6 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { TicketService } from '../../services/ticket';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MOTIVO_NO_EDITABLE, Ticket, puedeEditar } from '../../models/ticket';
+// AGREGADO: componentes compartidos que muestran el estado y la prioridad como etiquetas.
+import { EstadoTicket } from '../../shared/estado-ticket/estado-ticket';
+import { PrioridadTicket } from '../../shared/prioridad-ticket/prioridad-ticket';
 
 @Component({
   imports: [
@@ -13,7 +16,9 @@ import { MOTIVO_NO_EDITABLE, Ticket, puedeEditar } from '../../models/ticket';
     RouterLink,
     MatButtonModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    EstadoTicket,
+    PrioridadTicket
   ],
   selector: 'app-ticket-detalle',
   styleUrl: './ticket-detalle.scss',
@@ -60,7 +65,6 @@ export class TicketDetalle implements OnInit {
     });
   }
 
-  clase(valor: string): string {
-    return valor.toLowerCase().replaceAll(' ', '-');
-  }
+  // CAMBIO: se eliminó clase(); calculaba el nombre de la clase CSS de estado/prioridad,
+  // y ahora eso lo resuelven los componentes EstadoTicket y PrioridadTicket.
 }

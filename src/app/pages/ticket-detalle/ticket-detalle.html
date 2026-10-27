@@ -29,9 +29,11 @@
         </span>
       </header>
 
+      <!-- CAMBIO: antes eran dos <span> con clases globales calculadas con clase();
+           ahora se usan los componentes compartidos estado-ticket y prioridad-ticket. -->
       <div class="etiquetas">
-        <span class="etiqueta estado-{{ clase(t.estado) }}">{{ t.estado }}</span>
-        <span class="etiqueta prioridad-{{ clase(t.prioridad) }}">Prioridad {{ t.prioridad }}</span>
+        <app-estado-ticket [estado]="t.estado" />
+        <app-prioridad-ticket [prioridad]="t.prioridad" />
       </div>
 
       <h2>Descripción</h2>

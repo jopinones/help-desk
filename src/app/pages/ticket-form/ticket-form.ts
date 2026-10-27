@@ -7,6 +7,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MOTIVO_NO_EDITABLE, NuevoTicket, Ticket, puedeEditar } from '../../models/ticket';
 import { TicketService } from '../../services/ticket';
+// AGREGADO: componentes compartidos que muestran el estado y la prioridad como etiquetas.
+import { EstadoTicket } from '../../shared/estado-ticket/estado-ticket';
+import { PrioridadTicket } from '../../shared/prioridad-ticket/prioridad-ticket';
 
 @Component({
   imports: [
@@ -16,6 +19,8 @@ import { TicketService } from '../../services/ticket';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    EstadoTicket,
+    PrioridadTicket,
   ],
   selector: 'app-ticket-form',
   styleUrl: './ticket-form.scss',

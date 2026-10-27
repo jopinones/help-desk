@@ -1,0 +1,14 @@
+:host {
+    display: inline-block;
+}
+
+// AGREGADO: estilo del id (negrita, color primario del tema); subrayado solo al pasar el mouse.
+.id {
+    font-weight: 600;
+    color: var(--mat-sys-primary);
+    text-decoration: none;
+}
+
+.id:hover {
+    text-decoration: underline;
+}

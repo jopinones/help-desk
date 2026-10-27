@@ -1,0 +1,24 @@
+<!-- AGREGADO: reemplaza el texto de ejemplo "info-dialog works!". Misma estructura que
+     confirm-dialog (ícono, título, mensaje y acciones), pero con un solo botón. -->
+<div class="dialogo">
+    <div class="icono">
+        <mat-icon>info</mat-icon>
+    </div>
+
+    <h2 mat-dialog-title>
+        {{ data.titulo }}
+    </h2>
+
+    <mat-dialog-content>
+        <p>
+            {{ data.mensaje }}
+        </p>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="center">
+        <!-- mat-dialog-close cierra el diálogo al pulsar; no necesita (click) ni método. -->
+        <button mat-flat-button type="button" mat-dialog-close>
+            Cerrar
+        </button>
+    </mat-dialog-actions>
+</div>

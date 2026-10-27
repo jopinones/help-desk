@@ -1,0 +1,52 @@
+:host {
+    display: inline-block;
+}
+
+// AGREGADO: mismo aspecto que confirm-dialog, pero el ícono usa el color primario del tema
+// (informativo) en vez del rojo de advertencia.
+.dialogo {
+    // Nunca supera el ancho disponible, para que no se desborde en pantallas angostas.
+    min-width: min(360px, 100%);
+    padding-top: 10px;
+}
+
+.icono {
+    display: flex;
+    justify-content: center;
+    padding-top: 12px;
+}
+
+.icono mat-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--mat-sys-primary);
+    font-size: 48px;
+}
+
+h2 {
+    margin: 8px 0 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+
+mat-dialog-content p {
+    margin: 0;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+mat-dialog-actions {
+    padding: 16px 24px 22px;
+    border-top: 1px solid #e2e8f0;
+}
+
+mat-dialog-actions button {
+    min-width: 105px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 600;
+}

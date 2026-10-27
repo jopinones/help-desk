@@ -42,7 +42,9 @@
         <ng-container matColumnDef="rol">
           <th mat-header-cell *matHeaderCellDef>Rol</th>
           <td mat-cell *matCellDef="let usuario">
-            <span class="etiqueta rol-{{ claseRol(usuario.rol) }}">{{ usuario.rol }}</span>
+            <!-- CAMBIO: el <span> con clase calculada por claseRol() se reemplazó por el
+                 componente compartido rol-usuario. -->
+            <app-rol-usuario [rol]="usuario.rol" />
           </td>
         </ng-container>
 

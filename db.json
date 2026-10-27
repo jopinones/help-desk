@@ -4,7 +4,7 @@
       "asunto": "Problema de acceso",
       "descripcion": "Al intentar acceder, aparecer un error en pantalla",
       "estado": "Abierto",
-      "prioridad": "Alta",
+      "prioridad": "Media",
       "fechaCreacion": "2026-10-01",
       "id": "1"
     },
@@ -25,20 +25,12 @@
       "fechaCreacion": "2026-10-01"
     },
     {
-      "id": "4",
       "asunto": "Problema de acceso",
       "descripcion": "Al intentar acceder, aparecer un error en pantalla",
       "estado": "Abierto",
-      "prioridad": "Alta",
-      "fechaCreacion": "2026-10-01"
-    },
-    {
-      "asunto": "No genera reporte de ventas",
-      "descripcion": "Durante el proceso de generación del resumen de ventas",
-      "estado": "Cerrado",
-      "prioridad": "Alta",
+      "prioridad": "Media",
       "fechaCreacion": "2026-10-01",
-      "id": "5"
+      "id": "4"
     },
     {
       "id": "6",
@@ -71,14 +63,6 @@
       "estado": "Cerrado",
       "prioridad": "Alta",
       "fechaCreacion": "2026-10-01"
-    },
-    {
-      "asunto": "Problema de acceso",
-      "descripcion": "Al intentar acceder, aparecer un error en pantalla",
-      "estado": "Cerrado",
-      "prioridad": "Alta",
-      "fechaCreacion": "2026-10-01",
-      "id": "10"
     },
     {
       "id": "11",
@@ -187,12 +171,12 @@
       "id": "8"
     },
     {
-      "id": "9",
       "nombre": "Patricio Carlos",
       "email": "pcarlos@mail.com",
       "rol": "Usuario",
-      "estado": "Vigente",
-      "fechaCreacion": "2026-10-21"
+      "estado": "Bloqueado",
+      "fechaCreacion": "2026-10-21",
+      "id": "9"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

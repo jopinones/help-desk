@@ -38,18 +38,31 @@
     <div class="fila">
       <mat-form-field appearance="outline" subscriptSizing="dynamic">
         <mat-label>Estado</mat-label>
+        <!-- CAMBIO: las opciones y el valor seleccionado se muestran con el componente
+             compartido estado-ticket (etiqueta de color) en lugar de texto plano. -->
         <mat-select formControlName="estado">
+          <mat-select-trigger>
+            <app-estado-ticket [estado]="ticketForm.controls.estado.value" />
+          </mat-select-trigger>
           @for (estado of estados; track estado) {
-            <mat-option [value]="estado">{{ estado }}</mat-option>
+            <mat-option [value]="estado">
+              <app-estado-ticket [estado]="estado" />
+            </mat-option>
           }
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline" subscriptSizing="dynamic">
         <mat-label>Prioridad</mat-label>
+        <!-- CAMBIO: igual que Estado, con el componente compartido prioridad-ticket. -->
         <mat-select formControlName="prioridad">
+          <mat-select-trigger>
+            <app-prioridad-ticket [prioridad]="ticketForm.controls.prioridad.value" />
+          </mat-select-trigger>
           @for (prioridad of prioridades; track prioridad) {
-            <mat-option [value]="prioridad">{{ prioridad }}</mat-option>
+            <mat-option [value]="prioridad">
+              <app-prioridad-ticket [prioridad]="prioridad" />
+            </mat-option>
           }
         </mat-select>
       </mat-form-field>

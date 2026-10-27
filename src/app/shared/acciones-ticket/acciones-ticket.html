@@ -1,0 +1,28 @@
+<div class="acciones">
+
+    <!-- CAMBIO: se reordenó a Detalle, Editar, Eliminar (igual que antes en la tabla) y se
+         agregó tooltip a cada botón, porque al ser solo ícono no se entiende sin él. -->
+    <a mat-icon-button [routerLink]="['/tickets', ticket().id]"
+        matTooltip="Ver detalle" aria-label="Ver detalle">
+        <mat-icon>visibility</mat-icon>
+    </a>
+
+    <!-- AGREGADO: Editar se deshabilita en los tickets cerrados. El <span> recibe el tooltip
+         porque un botón deshabilitado no recibe eventos del mouse. -->
+    <span class="envoltura-accion"
+        [matTooltip]="editable() ? 'Editar' : motivoNoEditable">
+        <a mat-icon-button
+            [routerLink]="editable() ? ['/tickets/editar', ticket().id] : null"
+            [disabled]="!editable()"
+            aria-label="Editar ticket">
+            <mat-icon>edit</mat-icon>
+        </a>
+    </span>
+
+    <button mat-icon-button type="button" class="eliminar"
+        [disabled]="eliminando()" (click)="solicitarEliminacion()"
+        matTooltip="Eliminar" aria-label="Eliminar ticket">
+        <mat-icon>delete</mat-icon>
+    </button>
+
+</div>

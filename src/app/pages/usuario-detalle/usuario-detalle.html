@@ -35,7 +35,9 @@
       <!-- CORRECCIÓN: se eliminó la línea suelta `{{ u. }}` (sintaxis inválida) y se
            mostró el estado además del rol; antes la clase del rol usaba "estado-". -->
       <div class="etiquetas">
-        <span class="etiqueta rol-{{ clase(u.rol) }}">{{ u.rol }}</span>
+        <!-- CAMBIO: el rol ahora se muestra con el componente compartido rol-usuario
+             (antes era un <span> con la clase global .rol-*). -->
+        <app-rol-usuario [rol]="u.rol" />
         <span class="etiqueta estado-{{ clase(u.estado) }}">{{ u.estado }}</span>
       </div>
 

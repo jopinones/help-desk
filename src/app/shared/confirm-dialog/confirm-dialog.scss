@@ -1,0 +1,64 @@
+:host {
+    display: inline-block;
+}
+ 
+.dialogo {
+    // CORRECCIÓN: con `min-width: 360px` fijo el diálogo se desbordaba en pantallas más
+    // angostas; ahora nunca supera el ancho disponible.
+    min-width: min(360px, 100%);
+    padding-top: 10px;
+}
+ 
+.icono {
+    display: flex;
+    justify-content: center;
+    padding-top: 12px;
+}
+ 
+.icono mat-icon {
+    width: 48px;
+    height: 48px;
+    color: #dc2626;
+    font-size: 48px;
+}
+ 
+h2 {
+    margin: 8px 0 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+ 
+mat-dialog-content p {
+    margin: 0;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: center;
+}
+ 
+mat-dialog-actions {
+    gap: 10px;
+    padding: 16px 24px 22px;
+    border-top: 1px solid #e2e8f0;
+}
+ 
+mat-dialog-actions button {
+    min-width: 105px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+ 
+// CORRECCIÓN: antes se pisaba `background-color` directamente, que Material puede volver a
+// sobrescribir según el orden de los estilos. Se usan las variables propias del botón
+// relleno de Material, que sí respetan los estados hover/foco/deshabilitado.
+.confirmar {
+    --mat-button-filled-container-color: #dc2626;
+    --mat-button-filled-label-text-color: #ffffff;
+}
+
+.confirmar:hover:not(:disabled) {
+    --mat-button-filled-container-color: #b91c1c;
+}

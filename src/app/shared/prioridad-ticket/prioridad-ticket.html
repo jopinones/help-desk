@@ -1,0 +1,7 @@
+<!-- CORRECCIÓN: había un `|` suelto después de [class.media]; ese carácter rompía la plantilla. -->
+<span class="prioridad"
+    [class.alta]="prioridad() === 'Alta'"
+    [class.media]="prioridad() === 'Media'"
+    [class.baja]="prioridad() === 'Baja'">
+    {{ prioridad() }}
+</span>
