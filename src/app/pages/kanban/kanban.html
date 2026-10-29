@@ -14,10 +14,12 @@
   } @else if (tickets().length === 0) {
     <div class="mensaje">No hay tickets registrados</div>
   } @else {
-    <div class="tablero">
+    <!-- Conecta todas las columnas para permitir transferencias entre estados. -->
+    <div class="tablero" cdkDropListGroup>
       @for (columna of estados; track columna.nombre) {
         <app-kanban-columna
           [titulo]="columna.titulo"
+          [estado]="columna.nombre"
           [actualizando]="actualizandoID() !== null"
           [tickets]="ticketsPorEstado(columna.nombre)"
           (cambiarEstado)="actualizarEstado($event.ticket, $event.nuevoEstado)"

@@ -3,7 +3,7 @@
     {
       "asunto": "Problema de acceso",
       "descripcion": "Al intentar acceder, aparecer un error en pantalla",
-      "estado": "Cerrado",
+      "estado": "En proceso",
       "prioridad": "Media",
       "fechaCreacion": "2026-10-01",
       "id": "1"
@@ -41,12 +41,12 @@
       "fechaCreacion": "2026-10-01"
     },
     {
-      "id": "7",
       "asunto": "Problema de acceso",
       "descripcion": "Al intentar acceder, aparecer un error en pantalla",
-      "estado": "Abierto",
+      "estado": "En proceso",
       "prioridad": "Alta",
-      "fechaCreacion": "2026-10-01"
+      "fechaCreacion": "2026-10-01",
+      "id": "7"
     },
     {
       "id": "8",
@@ -99,7 +99,7 @@
     {
       "asunto": "nuevo",
       "descripcion": "mensajeje",
-      "estado": "Abierto",
+      "estado": "En proceso",
       "prioridad": "Media",
       "fechaCreacion": "2026-10-08",
       "id": "5IxDAmyYXkY"

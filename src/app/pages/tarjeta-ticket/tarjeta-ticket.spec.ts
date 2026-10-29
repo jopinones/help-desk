@@ -46,7 +46,7 @@ describe('TarjetaTicket', () => {
     expect(select.value).toBe('Abierto');
   });
 
-  it('bloquea cambios durante el guardado y para tickets cerrados', () => {
+  it('bloquea cambios durante el guardado y permite reabrir tickets cerrados', () => {
     const cambios: unknown[] = [];
     component.cambiarEstado.subscribe((evento) => cambios.push(evento));
     fixture.componentRef.setInput('actualizando', true);
@@ -57,7 +57,7 @@ describe('TarjetaTicket', () => {
     fixture.componentRef.setInput('ticket', { ...component.ticket(), estado: 'Cerrado' });
     fixture.detectChanges();
     component.seleccionEstado('Abierto');
-    expect(fixture.nativeElement.querySelector('select').disabled).toBe(true);
-    expect(cambios).toEqual([]);
+    expect(fixture.nativeElement.querySelector('select').disabled).toBe(false);
+    expect(cambios).toEqual([{ ticket: component.ticket(), nuevoEstado: 'Abierto' }]);
   });
 });

@@ -104,4 +104,34 @@ describe('Kanban', () => {
     expect(component.actualizandoID()).toBeNull();
     http.verify();
   });
+
+  it('persiste las transiciones en ambos sentidos entre todos los estados', () => {
+    const http = TestBed.inject(HttpTestingController);
+    const ticket = {
+      id: '1',
+      asunto: 'a',
+      descripcion: 'd',
+      prioridad: 'Baja',
+      estado: 'Abierto',
+      fechaCreacion: '2026-01-01',
+    } as const;
+    http.expectOne('http://localhost:3000/tickets').flush([ticket]);
+    const destinos = [
+      'En proceso',
+      'Cerrado',
+      'En proceso',
+      'Abierto',
+      'Cerrado',
+      'Abierto',
+    ] as const;
+    for (const estado of destinos) {
+      component.actualizarEstado(component.tickets()[0], estado);
+      const peticion = http.expectOne('http://localhost:3000/tickets/1');
+      expect(peticion.request.method).toBe('PUT');
+      expect(peticion.request.body.estado).toBe(estado);
+      peticion.flush({ ...ticket, estado });
+      expect(component.ticketsPorEstado(estado).map((ticket) => ticket.id)).toEqual(['1']);
+    }
+    http.verify();
+  });
 });

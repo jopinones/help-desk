@@ -13,7 +13,7 @@
     class="estado-select"
     [id]="'estado-' + ticket().id"
     [value]="ticket().estado"
-    [disabled]="actualizando() || !puedeEditar(ticket())"
+    [disabled]="actualizando()"
     (change)="seleccionEstado(selectorEstado.value); selectorEstado.value = ticket().estado"
   >
     @for (estado of estados; track estado) {

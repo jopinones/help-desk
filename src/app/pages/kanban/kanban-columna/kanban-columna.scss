@@ -1,52 +1,98 @@
 :host {
-    display: block;
-    min-width: 250px;
+  display: block;
+  min-width: 250px;
 }
 
-// CAMBIO: colores fijos reemplazados por los tokens --hd-* (tema claro/oscuro).
 .columna {
-    min-height: 380px;
-    padding: 14px;
-    border: 1px solid var(--hd-borde);
-    border-radius: var(--hd-radio);
-    background-color: var(--hd-fondo);
+  min-height: 380px;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #f8fafc;
 }
 
 .columna-encabezado {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--hd-borde);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .columna-encabezado h2 {
-    margin: 0;
-    font-size: 17px;
-    font-weight: 600;
+  margin: 0;
+  color: #0f172a;
+  font-size: 17px;
+  font-weight: 600;
 }
 
 .cantidad {
-    display: inline-flex;
-    min-width: 26px;
-    height: 26px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: var(--hd-borde);
-    font-size: 12px;
-    font-weight: 600;
+  display: inline-flex;
+  min-width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .columna-contenido {
-    display: grid;
-    gap: 12px;
-    padding-top: 14px;
+  display: grid;
+  gap: 12px;
+  padding-top: 14px;
 }
 
 .mensaje-vacio {
-    margin: 8px 0;
-    color: var(--hd-texto-suave);
-    font-size: 14px;
+  margin: 8px 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.tarjeta-arrastrable {
+  cursor: grab;
+}
+
+.tarjeta-arrastrable:active {
+  cursor: grabbing;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgb(15 23 42 / 20%);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.35;
+}
+
+.cdk-drop-list-dragging .tarjeta-arrastrable:not(.cdk-drag-placeholder) {
+  transition: transform 180ms ease;
+}
+// Permite soltar tarjetas en columnas vacias sin depender del mensaje de ayuda.
+.columna-contenido {
+  min-height: 280px;
+  align-content: start;
+}
+.asa-arrastre {
+  display: block;
+  margin: 0 0 4px auto;
+  padding: 4px 8px;
+  border: 1px solid var(--hd-borde);
+  border-radius: 6px;
+  background: var(--hd-superficie);
+  color: var(--hd-texto-suave);
+  cursor: grab;
+  touch-action: none;
+}
+.asa-arrastre:active {
+  cursor: grabbing;
+}
+.asa-arrastre:disabled {
+  cursor: wait;
+  opacity: 0.6;
 }

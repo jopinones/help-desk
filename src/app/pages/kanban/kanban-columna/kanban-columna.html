@@ -1,18 +1,40 @@
 <section class="columna">
   <header class="columna-encabezado">
     <h2>{{ titulo() }}</h2>
-    <span class="cantidad">
-      {{ tickets().length }}
-    </span>
+    <span class="cantidad">{{ tickets().length }}</span>
   </header>
-
-  <div class="columna-contenido">
+  <!-- La zona conserva altura aunque la columna no tenga tickets. El orden sigue siendo por fecha. -->
+  <div
+    class="columna-contenido"
+    cdkDropList
+    [cdkDropListData]="tickets()"
+    [cdkDropListDisabled]="actualizando()"
+    [cdkDropListSortingDisabled]="true"
+    (cdkDropListDropped)="soltarTicket($event)"
+  >
     @for (ticket of tickets(); track ticket.id) {
-      <app-tarjeta-ticket
-        [ticket]="ticket"
-        [actualizando]="actualizando()"
-        (cambiarEstado)="cambiarEstado.emit($event)"
-      />
+      <div
+        class="tarjeta-arrastrable"
+        cdkDrag
+        [cdkDragData]="ticket"
+        [cdkDragDisabled]="actualizando()"
+      >
+        <!-- El asa evita iniciar arrastres al usar el enlace o el selector de estado. -->
+        <button
+          type="button"
+          class="asa-arrastre"
+          cdkDragHandle
+          [disabled]="actualizando()"
+          [attr.aria-label]="'Arrastrar ticket #' + ticket.id"
+        >
+          Mover ticket
+        </button>
+        <app-tarjeta-ticket
+          [ticket]="ticket"
+          [actualizando]="actualizando()"
+          (cambiarEstado)="cambiarEstado.emit($event)"
+        />
+      </div>
     } @empty {
       <p class="mensaje-vacio">No hay tickets registrados</p>
     }

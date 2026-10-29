@@ -1,10 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { Ticket, puedeEditar } from '../../models/ticket';
+import { Ticket } from '../../models/ticket';
 import { TicketService } from '../../services/ticket';
+import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { KanbanColumna } from './kanban-columna/kanban-columna';
 
 @Component({
-  imports: [KanbanColumna],
+  imports: [KanbanColumna, CdkDropListGroup],
   selector: 'app-kanban',
   styleUrl: './kanban.scss',
   templateUrl: './kanban.html',
@@ -61,7 +62,8 @@ export class Kanban implements OnInit {
   }
 
   actualizarEstado(ticket: Ticket, nuevoEstado: Ticket['estado']): void {
-    if (!puedeEditar(ticket) || ticket.estado === nuevoEstado || this.actualizandoID() !== null) {
+    // El tablero permite transiciones en ambos sentidos, incluso reabrir tickets cerrados.
+    if (ticket.estado === nuevoEstado || this.actualizandoID() !== null) {
       return;
     }
 
