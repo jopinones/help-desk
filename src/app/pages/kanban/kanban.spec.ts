@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { Kanban } from './kanban';
 
@@ -26,7 +26,12 @@ describe('Kanban', () => {
   });
 
   it('filtra los tickets por estado', () => {
-    const base = { asunto: 'a', descripcion: 'd', prioridad: 'Baja', fechaCreacion: '2026-01-01' } as const;
+    const base = {
+      asunto: 'a',
+      descripcion: 'd',
+      prioridad: 'Baja',
+      fechaCreacion: '2026-01-01',
+    } as const;
     component.tickets.set([
       { ...base, id: '1', estado: 'Abierto' },
       { ...base, id: '2', estado: 'Cerrado' },
@@ -51,5 +56,52 @@ describe('Kanban', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.textContent).toContain('No hay tickets registrados');
     expect(el.querySelector('.tablero')).toBeNull();
+  });
+
+  it('evita guardados simult?neos y conserva el estado si falla la petici?n', () => {
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne('http://localhost:3000/tickets').flush([]);
+    const ticket = {
+      id: '1',
+      asunto: 'a',
+      descripcion: 'd',
+      prioridad: 'Baja',
+      estado: 'Abierto',
+      fechaCreacion: '2026-01-01',
+    } as const;
+    component.tickets.set([ticket]);
+    component.actualizarEstado(ticket, 'En proceso');
+    component.actualizarEstado({ ...ticket, id: '2' }, 'Cerrado');
+    const peticion = http.expectOne('http://localhost:3000/tickets/1');
+    expect(peticion.request.body.estado).toBe('En proceso');
+    http.expectNone('http://localhost:3000/tickets/2');
+    peticion.flush({}, { status: 500, statusText: 'Error' });
+    expect(component.actualizandoID()).toBeNull();
+    expect(component.tickets()[0].estado).toBe('Abierto');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
+      'No fue posible cambiar el estado',
+    );
+    http.verify();
+  });
+
+  it('actualiza la columna cuando el servidor confirma el guardado', () => {
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne('http://localhost:3000/tickets').flush([]);
+    const ticket = {
+      id: '1',
+      asunto: 'a',
+      descripcion: 'd',
+      prioridad: 'Baja',
+      estado: 'Abierto',
+      fechaCreacion: '2026-01-01',
+    } as const;
+    component.tickets.set([ticket]);
+    component.actualizarEstado(ticket, 'En proceso');
+    http.expectOne('http://localhost:3000/tickets/1').flush({ ...ticket, estado: 'En proceso' });
+    expect(component.ticketsPorEstado('Abierto')).toEqual([]);
+    expect(component.ticketsPorEstado('En proceso').length).toBe(1);
+    expect(component.actualizandoID()).toBeNull();
+    http.verify();
   });
 });

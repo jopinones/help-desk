@@ -35,4 +35,29 @@ describe('TarjetaTicket', () => {
     expect(texto).toContain('Sin internet');
     expect(texto).toContain('#1');
   });
+
+  it('emite el cambio de estado y conserva el valor confirmado mientras guarda', () => {
+    const cambios: unknown[] = [];
+    component.cambiarEstado.subscribe((evento) => cambios.push(evento));
+    const select: HTMLSelectElement = fixture.nativeElement.querySelector('select');
+    select.value = 'En proceso';
+    select.dispatchEvent(new Event('change'));
+    expect(cambios).toEqual([{ ticket: component.ticket(), nuevoEstado: 'En proceso' }]);
+    expect(select.value).toBe('Abierto');
+  });
+
+  it('bloquea cambios durante el guardado y para tickets cerrados', () => {
+    const cambios: unknown[] = [];
+    component.cambiarEstado.subscribe((evento) => cambios.push(evento));
+    fixture.componentRef.setInput('actualizando', true);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('select').disabled).toBe(true);
+    component.seleccionEstado('En proceso');
+    fixture.componentRef.setInput('actualizando', false);
+    fixture.componentRef.setInput('ticket', { ...component.ticket(), estado: 'Cerrado' });
+    fixture.detectChanges();
+    component.seleccionEstado('Abierto');
+    expect(fixture.nativeElement.querySelector('select').disabled).toBe(true);
+    expect(cambios).toEqual([]);
+  });
 });

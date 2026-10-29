@@ -3,7 +3,7 @@
     {
       "asunto": "Problema de acceso",
       "descripcion": "Al intentar acceder, aparecer un error en pantalla",
-      "estado": "Abierto",
+      "estado": "Cerrado",
       "prioridad": "Media",
       "fechaCreacion": "2026-10-01",
       "id": "1"
@@ -83,7 +83,7 @@
     {
       "asunto": "problema red",
       "descripcion": "problema de red",
-      "estado": "Abierto",
+      "estado": "En proceso",
       "prioridad": "Media",
       "fechaCreacion": "2026-10-08",
       "id": "hyrA9pj9RGc"

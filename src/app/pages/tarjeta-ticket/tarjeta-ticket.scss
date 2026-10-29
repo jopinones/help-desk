@@ -1,42 +1,75 @@
+// Los tokens mantienen los colores de la tarjeta alineados con el tema.
 :host {
-    display: block;
+  display: block;
 }
 
-// CAMBIO: colores fijos (#e2e8f0, #0f172a...) reemplazados por los tokens --hd-* de
-// styles.scss para que la tarjeta respete el tema claro/oscuro.
 .ticket-card {
-    padding: 14px;
-    border: 1px solid var(--hd-borde);
-    border-radius: var(--hd-radio);
-    background: var(--hd-superficie);
-    box-shadow: var(--hd-sombra);
+  padding: 14px;
+  border-left: 4px solid #94a3b8;
+  background-color: var(--hd-superficie);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 10%);
 }
 
-// CORRECCIÓN: faltaba el punto (`ticket-superior` buscaba una etiqueta, no la clase),
-// por eso el id y la prioridad no se alineaban a los extremos.
 .ticket-superior {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
-.ticket-card h3 {
-    margin: 0 0 8px;
-    font-size: 16px;
+.ticket-id {
+  color: var(--hd-texto-suave);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ticket-asunto {
+  margin: 0 0 8px;
+  color: var(--mat-sys-on-surface);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .descripcion {
-    margin: 0 0 14px;
-    color: var(--hd-texto-suave);
-    font-size: 14px;
-    line-height: 1.45;
+  margin: 0 0 14px;
+  color: var(--hd-texto-suave);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .ticket-fecha {
-    padding-top: 10px;
-    border-top: 1px solid var(--hd-borde);
-    color: var(--hd-texto-suave); // CORRECCIÓN: #67748b (typo) ahora usa el token.
-    font-size: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--hd-borde);
+  color: var(--hd-texto-suave);
+  font-size: 12px;
+}
+
+.estado-label {
+  display: block;
+  margin: 14px 0 6px;
+  color: var(--hd-texto-suave);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.estado-select {
+  width: 100%;
+  min-height: 38px;
+  padding: 6px 10px;
+  border: 1px solid var(--hd-borde);
+  border-radius: 6px;
+  background-color: var(--hd-superficie);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+}
+
+.ticket-asunto,
+.descripcion {
+  overflow-wrap: anywhere;
+}
+.estado-select:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }

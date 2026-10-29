@@ -1,18 +1,23 @@
-<!-- CORRECCIÓN: <mat-card> no estaba importado (elemento desconocido); ahora es un <article>
-     estilizado en tarjeta-ticket.scss. -->
-<article class="ticket-card">
-    <div class="ticket-superior">
-        <!-- CAMBIO: el "Ticket #id" escrito a mano pasa a app-id-ticket (enlaza al detalle). -->
-        <app-id-ticket [ticketId]="ticket().id" />
-        <!-- CAMBIO: la prioridad en texto plano pasa a app-prioridad-ticket (con color). -->
-        <app-prioridad-ticket [prioridad]="ticket().prioridad" />
-    </div>
-
-    <h3>{{ ticket().asunto }}</h3>
-    <p class="descripcion">{{ ticket().descripcion }}</p>
-
-    <div class="ticket-fecha">
-        Creado: {{ ticket().fechaCreacion | date: 'dd-MM-yyyy' }}
-    </div>
-</article>
-
+<mat-card class="ticket-card">
+  <div class="ticket-superior">
+    <span class="ticket-id">Ticket <app-id-ticket [ticketId]="ticket().id" /></span>
+    <app-prioridad-ticket [prioridad]="ticket().prioridad" />
+  </div>
+  <h3 class="ticket-asunto">{{ ticket().asunto }}</h3>
+  <p class="descripcion">{{ ticket().descripcion }}</p>
+  <div class="ticket-fecha">Creado: {{ ticket().fechaCreacion | date: 'dd-MM-yyyy' }}</div>
+  <label class="estado-label" [for]="'estado-' + ticket().id">Cambiar estado</label>
+  <!-- Conserva el estado confirmado hasta que el servidor guarde el cambio. -->
+  <select
+    #selectorEstado
+    class="estado-select"
+    [id]="'estado-' + ticket().id"
+    [value]="ticket().estado"
+    [disabled]="actualizando() || !puedeEditar(ticket())"
+    (change)="seleccionEstado(selectorEstado.value); selectorEstado.value = ticket().estado"
+  >
+    @for (estado of estados; track estado) {
+      <option [value]="estado">{{ estado }}</option>
+    }
+  </select>
+</mat-card>

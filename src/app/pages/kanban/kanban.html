@@ -1,28 +1,27 @@
-<section class="pagina">
+<section class="kanban-page pagina">
   <header class="encabezado">
-    <div>
-      <h1>Kanban</h1>
-      <p>Tickets organizados por estado</p>
-    </div>
+    <h1>Tablero Kanban</h1>
+    <p>Tickets organizados por estado</p>
   </header>
 
-  <!-- CAMBIO: se reemplazó el "Próximamente" por el tablero real, con el mismo patrón
-       cargando / error / datos que usan tickets y usuarios. -->
+  @if (mensajeError()) {
+    <p class="mensaje error" role="alert">{{ mensajeError() }}</p>
+  }
   @if (cargando()) {
-    <p class="mensaje">Cargando tickets...</p>
-  } @else if (error()) {
-    <div class="mensaje error">
-      No fue posible obtener los registros
-      <button type="button" mat-button (click)="cargarTickets()">Reintentar</button>
-    </div>
+    <div class="mensaje">Cargando datos</div>
+  } @else if (errorCarga()) {
+    <div class="mensaje error">No fue posible cargar los tickets</div>
   } @else if (tickets().length === 0) {
-    <!-- AGREGADO: si la API respondió bien pero con una lista vacía, se muestra este mensaje
-         en lugar del tablero con tres columnas vacías. -->
-    <p class="mensaje">No hay tickets registrados</p>
+    <div class="mensaje">No hay tickets registrados</div>
   } @else {
     <div class="tablero">
-      @for (estado of estados; track estado.nombre) {
-        <app-kanban-columna [titulo]="estado.titulo" [tickets]="ticketsPorEstado(estado.nombre)" />
+      @for (columna of estados; track columna.nombre) {
+        <app-kanban-columna
+          [titulo]="columna.titulo"
+          [actualizando]="actualizandoID() !== null"
+          [tickets]="ticketsPorEstado(columna.nombre)"
+          (cambiarEstado)="actualizarEstado($event.ticket, $event.nuevoEstado)"
+        />
       }
     </div>
   }
