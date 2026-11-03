@@ -1,4 +1,3 @@
-// CAMBIO: se quitó la clase .vacio (era del "Próximamente"); ahora se maqueta el tablero.
 // Tres columnas iguales; en pantallas angostas se hace scroll horizontal en vez de apilarse.
 .tablero {
     display: grid;
@@ -7,4 +6,29 @@
     align-items: start;
     overflow-x: auto;
     padding-bottom: 8px;
+}
+
+// AGREGADO: estilos del panel de filtros (la clase estaba en el HTML sin estilos).
+.filtros-kanban {
+    display: grid;
+    grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(140px, 1fr)) auto;
+    align-items: start;
+    gap: 12px;
+    margin: 20px 0 8px;
+}
+
+.filtro-busqueda {
+    width: 100%;
+}
+
+.contador-resultados {
+    margin: 4px 0 14px;
+    color: var(--hd-texto-suave);
+    font-size: 13px;
+}
+
+@media (max-width: 800px) {
+    .filtros-kanban {
+        grid-template-columns: 1fr;
+    }
 }

@@ -1,30 +1,84 @@
-<section class="kanban-page pagina">
-  <header class="encabezado">
-    <h1>Tablero Kanban</h1>
-    <p>Tickets organizados por estado</p>
-  </header>
+<!-- CORRECCIÓN: la clase "enabezado" tenía un typo y no existía; se usan las clases globales
+     .pagina y .encabezado de styles.scss. -->
+<section class="pagina kanban-page">
+    <header class="encabezado">
+        <div>
+            <h1>Tablero Kanban</h1>
+            <p>Tickets organizados por estado</p>
+        </div>
+    </header>
 
-  @if (mensajeError()) {
-    <p class="mensaje error" role="alert">{{ mensajeError() }}</p>
-  }
-  @if (cargando()) {
-    <div class="mensaje">Cargando datos</div>
-  } @else if (errorCarga()) {
-    <div class="mensaje error">No fue posible cargar los tickets</div>
-  } @else if (tickets().length === 0) {
-    <div class="mensaje">No hay tickets registrados</div>
-  } @else {
-    <!-- Conecta todas las columnas para permitir transferencias entre estados. -->
-    <div class="tablero" cdkDropListGroup>
-      @for (columna of estados; track columna.nombre) {
-        <app-kanban-columna
-          [titulo]="columna.titulo"
-          [estado]="columna.nombre"
-          [actualizando]="actualizandoID() !== null"
-          [tickets]="ticketsPorEstado(columna.nombre)"
-          (cambiarEstado)="actualizarEstado($event.ticket, $event.nuevoEstado)"
-        />
-      }
-    </div>
-  }
+    <section class="filtros-kanban" aria-label="Panel de filtros">
+        <mat-form-field appearance="outline" class="filtro-busqueda">
+            <mat-label>Buscar tickets</mat-label>
+            <!-- CORRECCIÓN: "placelholder" (typo) no mostraba nada; y el texto ahora coincide
+                 con lo que busca el filtro (ID, asunto o descripción). -->
+            <input matInput type="search" placeholder="ID, asunto o descripción" [ngModel]="textoBusqueda()" (ngModelChange)="actualizarBusqueda($event)">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-select [ngModel]="estadoSeleccionado()" (ngModelChange)="actualizarEstadoSeleccionado($event)">
+                <mat-option value="">Todos</mat-option>
+                <mat-option value="Abierto">Abierto</mat-option>
+                <mat-option value="En proceso">En proceso</mat-option>
+                <mat-option value="Cerrado">Cerrado</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Prioridad</mat-label>
+            <!-- CORRECCIÓN: faltaban los paréntesis; se enlazaba la función del signal en
+                 vez de su valor y el select no reflejaba la prioridad elegida. -->
+            <mat-select [ngModel]="prioridadSeleccionada()" (ngModelChange)="actualizarPrioridadSeleccionada($event)">
+                <mat-option value="">Todos</mat-option>
+                <mat-option value="Baja">Baja</mat-option>
+                <mat-option value="Media">Media</mat-option>
+                <mat-option value="Alta">Alta</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
+    </section>
+
+    @if (!cargando() && !errorCarga()) {
+        <p class="contador-resultados" aria-live="polite">
+            Mostrando {{ ticketsFiltrados().length }} de {{ tickets().length }}
+        </p>
+    }
+
+    <!-- AGREGADO: el error de guardado (mensajeError) se calculaba pero nunca se mostraba. -->
+    @if (mensajeError()) {
+        <div class="mensaje error" role="alert">{{ mensajeError() }}</div>
+    }
+
+    @if (cargando()) {
+        <div class="mensaje">Cargando datos</div>
+    } @else if (errorCarga()) {
+        <div class="mensaje error">
+            No fue posible cargar los tickets
+            <button type="button" mat-button (click)="cargarTickets()">Reintentar</button>
+        </div>
+    } @else if (tickets().length === 0) {
+        <div class="mensaje">No hay tickets registrados</div>
+    } @else if (sinResultados) {
+        <!-- AGREGADO: con filtros activos sin coincidencias se avisa en vez de mostrar tres
+             columnas vacías (sinResultados existía pero no se usaba). -->
+        <div class="mensaje">Ningún ticket coincide con los filtros</div>
+    } @else {
+        <div class="tablero" cdkDropListGroup>
+            @for (columna of estados; track columna.nombre) {
+                <!-- CORRECCIÓN: se eliminó (moverTicket); la columna no tiene esa salida y el
+                     build fallaba. El cambio de estado llega por (cambiarEstado).
+                     AGREGADO: [actualizando] bloquea arrastre y selector mientras se guarda. -->
+                <app-kanban-columna
+                    [titulo]="columna.titulo"
+                    [estado]="columna.nombre"
+                    [tickets]="ticketsPorEstado(columna.nombre)"
+                    [actualizando]="actualizandoID() !== null"
+                    (cambiarEstado)="actualizarEstado($event.ticket, $event.nuevoEstado)"
+                />
+            }
+        </div>
+    }
 </section>

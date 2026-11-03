@@ -58,7 +58,7 @@ describe('Kanban', () => {
     expect(el.querySelector('.tablero')).toBeNull();
   });
 
-  it('evita guardados simult?neos y conserva el estado si falla la petici?n', () => {
+  it('evita guardados simultáneos y conserva el estado si falla la petición', () => {
     const http = TestBed.inject(HttpTestingController);
     http.expectOne('http://localhost:3000/tickets').flush([]);
     const ticket = {
@@ -133,5 +133,30 @@ describe('Kanban', () => {
       expect(component.ticketsPorEstado(estado).map((ticket) => ticket.id)).toEqual(['1']);
     }
     http.verify();
+  });
+
+  // AGREGADO: pruebas de los filtros.
+  it('combina los filtros y limpiarFiltros los restablece', () => {
+    const base = { descripcion: 'd', fechaCreacion: '2026-01-01' } as const;
+    component.tickets.set([
+      { ...base, id: '1', asunto: 'Red caída', prioridad: 'Alta', estado: 'Abierto' },
+      { ...base, id: '2', asunto: 'Impresora', prioridad: 'Baja', estado: 'Abierto' },
+    ]);
+    component.actualizarBusqueda('red');
+    component.actualizarPrioridadSeleccionada('Alta');
+    expect(component.ticketsFiltrados().map((t) => t.id)).toEqual(['1']);
+    component.limpiarFiltros();
+    expect(component.ticketsFiltrados().length).toBe(2);
+    expect(component.textoBusqueda()).toBe('');
+  });
+
+  it('avisa cuando los filtros no encuentran tickets', () => {
+    const base = { descripcion: 'd', fechaCreacion: '2026-01-01', prioridad: 'Baja', estado: 'Abierto' } as const;
+    component.cargando.set(false);
+    component.tickets.set([{ ...base, id: '1', asunto: 'a' }]);
+    component.actualizarBusqueda('zzz');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Ningún ticket coincide');
+    expect(fixture.nativeElement.querySelector('.tablero')).toBeNull();
   });
 });

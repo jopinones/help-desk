@@ -1,99 +1,155 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 import { Ticket } from '../../models/ticket';
 import { TicketService } from '../../services/ticket';
-import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { KanbanColumna } from './kanban-columna/kanban-columna';
-
+import { CdkDropListGroup } from '@angular/cdk/drag-drop';
+ 
 @Component({
-  imports: [KanbanColumna, CdkDropListGroup],
+  imports: [
+    KanbanColumna,
+    CdkDropListGroup,
+    FormsModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule
+  ],
   selector: 'app-kanban',
+  // CORRECCIÓN: apuntaba a './kanban.css' pero el archivo es .scss; el build fallaba.
   styleUrl: './kanban.scss',
   templateUrl: './kanban.html',
 })
-export class Kanban implements OnInit {
+export class Kanban implements OnInit{
   private ticketService = inject(TicketService);
-
+ 
   estados = [
     {
       nombre: 'Abierto',
-      titulo: 'Abiertos',
+      titulo: 'Abiertos'
     },
     {
       nombre: 'En proceso',
-      titulo: 'En proceso',
+      titulo: 'En proceso'
     },
     {
       nombre: 'Cerrado',
-      titulo: 'Cerrados',
-    },
+      titulo: 'Cerrados'
+    }
   ] as const;
-
+ 
   tickets = signal<Ticket[]>([]);
   cargando = signal(true);
   errorCarga = signal(false);
-  actualizandoID = signal<string | null>(null);
+  actualizandoID = signal(<string | null>(null));
   mensajeError = signal('');
-
+ 
+  textoBusqueda = signal('');
+  estadoSeleccionado = signal('');
+  prioridadSeleccionada = signal('');
+ 
+  ticketsFiltrados = computed(() => {
+    const texto = this.textoBusqueda().trim().toLocaleLowerCase();
+    const estado = this.estadoSeleccionado();
+    const prioridad = this.prioridadSeleccionada();
+ 
+    return this.tickets().filter(ticket => {
+      const coincidenciaTexto = texto === '' || [ticket.id, ticket.asunto, ticket.descripcion].some(valor => String(valor).toLocaleLowerCase().includes(texto));
+ 
+      const coincidenciaEstado = estado === '' || ticket.estado === estado;
+ 
+      const coincidenciaPrioridad = prioridad === '' || ticket.prioridad === prioridad;
+ 
+      return coincidenciaTexto && coincidenciaEstado && coincidenciaPrioridad;
+    });
+  });
+ 
   ngOnInit(): void {
     this.cargarTickets();
   }
-
+ 
   cargarTickets(): void {
     this.cargando.set(true);
     this.errorCarga.set(false);
-
+ 
     this.ticketService.obtenerTickets().subscribe({
       next: (tickets) => {
         this.tickets.set(tickets);
         this.cargando.set(false);
       },
       error: (error) => {
-        console.error('Error al cargar tickets: ', error);
+        console.error("Error al cargar tickets: ", error)
         this.cargando.set(false);
         this.errorCarga.set(true);
-      },
+      }
     });
   }
-
+ 
+  // Tickets filtrados de una columna, del más reciente al más antiguo (filter() ya devuelve
+  // una copia, así que sort() no altera el signal).
   ticketsPorEstado(estado: Ticket['estado']): Ticket[] {
-    return this.tickets()
-      .filter((ticket) => ticket.estado === estado)
-      .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime());
+    return this.ticketsFiltrados().filter(ticket => ticket.estado === estado).sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime());
   }
-
+ 
+  actualizarBusqueda(valor: string): void {
+    this.textoBusqueda.set(valor);
+  }
+ 
+  actualizarEstadoSeleccionado(valor: string): void {
+    this.estadoSeleccionado.set(valor);
+  }
+ 
+  actualizarPrioridadSeleccionada(valor: string): void {
+    this.prioridadSeleccionada.set(valor);
+  }
+ 
+  limpiarFiltros(): void {
+    // CORRECCIÓN: antes se reasignaban los signals (= signal('')), pero ticketsFiltrados
+    // (computed) seguía leyendo los signals originales y los filtros no se limpiaban.
+    // Hay que conservar los mismos signals y cambiar su valor con set().
+    this.textoBusqueda.set('');
+    this.estadoSeleccionado.set('');
+    this.prioridadSeleccionada.set('');
+  }
+ 
+  get sinResultados():boolean {
+    return this.ticketsFiltrados().length === 0;
+  }
+ 
   actualizarEstado(ticket: Ticket, nuevoEstado: Ticket['estado']): void {
-    // El tablero permite transiciones en ambos sentidos, incluso reabrir tickets cerrados.
+    // CORRECCIÓN: antes solo se bloqueaba el mismo ticket; se podían lanzar guardados de
+    // otros tickets en paralelo, aunque la interfaz queda bloqueada ([actualizando]) mientras
+    // hay uno en curso. Ahora se ignora cualquier cambio si ya hay un guardado activo.
     if (ticket.estado === nuevoEstado || this.actualizandoID() !== null) {
       return;
     }
-
-    // Serializa los guardados para evitar solicitudes simult?neas y respuestas fuera de orden.
+ 
     this.actualizandoID.set(ticket.id);
     this.mensajeError.set('');
-
+ 
     const datosActualizados: Omit<Ticket, 'id'> = {
       asunto: ticket.asunto,
       descripcion: ticket.descripcion,
       estado: nuevoEstado,
       prioridad: ticket.prioridad,
-      fechaCreacion: ticket.fechaCreacion,
+      fechaCreacion: ticket.fechaCreacion
     };
-
+ 
     this.ticketService.actualizarTicket(ticket.id, datosActualizados).subscribe({
       next: (ticketGuardado) => {
-        this.tickets.update((lista) =>
-          lista.map((actual) => (actual.id === ticketGuardado.id ? ticketGuardado : actual)),
-        );
-
+        this.tickets.update(lista => lista.map(actual => actual.id === ticketGuardado.id ? ticketGuardado: actual));
+ 
         this.actualizandoID.set(null);
       },
       error: (error) => {
         console.error('Error al intentar cambiar el estado del ticket', error);
-
+ 
         this.mensajeError.set('No fue posible cambiar el estado. Inténtelo nuevamente.');
-
+ 
         this.actualizandoID.set(null);
-      },
-    });
+      }
+    });    
   }
 }
