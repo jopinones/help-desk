@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { Ticket } from '../../models/ticket';
 import { TicketService } from '../../services/ticket';
 import { KanbanColumna } from './kanban-columna/kanban-columna';
@@ -15,8 +17,12 @@ import { CdkDropListGroup } from '@angular/cdk/drag-drop';
     FormsModule,
     MatInputModule,
     MatSelectModule,
-    MatButtonModule
+    MatButtonModule,
+    // AGREGADO: selector de fechas (Date Picker) para el filtro Desde - Hasta.
+    MatDatepickerModule
   ],
+  // AGREGADO: el datepicker necesita un adaptador de fechas; el nativo trabaja con Date.
+  providers: [provideNativeDateAdapter()],
   selector: 'app-kanban',
   // CORRECCIÓN: apuntaba a './kanban.css' pero el archivo es .scss; el build fallaba.
   styleUrl: './kanban.scss',
@@ -49,11 +55,27 @@ export class Kanban implements OnInit{
   textoBusqueda = signal('');
   estadoSeleccionado = signal('');
   prioridadSeleccionada = signal('');
- 
+  // AGREGADO: rango de fechas del filtro (null = sin límite). El picker entrega objetos Date.
+  fechaDesde = signal<Date | null>(null);
+  fechaHasta = signal<Date | null>(null);
+
+  // AGREGADO: convierte un Date a "yyyy-MM-dd" usando la fecha LOCAL (toISOString usaría UTC y
+  // podría correr el día). Así se compara como texto con ticket.fechaCreacion.slice(0, 10).
+  private aTexto(fecha: Date | null): string {
+    if (!fecha) {
+      return '';
+    }
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    return `${fecha.getFullYear()}-${mes}-${dia}`;
+  }
+
   ticketsFiltrados = computed(() => {
     const texto = this.textoBusqueda().trim().toLocaleLowerCase();
     const estado = this.estadoSeleccionado();
     const prioridad = this.prioridadSeleccionada();
+    const desde = this.aTexto(this.fechaDesde());
+    const hasta = this.aTexto(this.fechaHasta());
  
     return this.tickets().filter(ticket => {
       const coincidenciaTexto = texto === '' || [ticket.id, ticket.asunto, ticket.descripcion].some(valor => String(valor).toLocaleLowerCase().includes(texto));
@@ -62,7 +84,11 @@ export class Kanban implements OnInit{
  
       const coincidenciaPrioridad = prioridad === '' || ticket.prioridad === prioridad;
  
-      return coincidenciaTexto && coincidenciaEstado && coincidenciaPrioridad;
+      // AGREGADO: ambos extremos son inclusivos (Hasta incluye el día completo).
+      const fecha = ticket.fechaCreacion.slice(0, 10);
+      const coincidenciaFecha = (desde === '' || fecha >= desde) && (hasta === '' || fecha <= hasta);
+
+      return coincidenciaTexto && coincidenciaEstado && coincidenciaPrioridad && coincidenciaFecha;
     });
   });
  
@@ -105,7 +131,18 @@ export class Kanban implements OnInit{
     this.prioridadSeleccionada.set(valor);
   }
  
+  // AGREGADO: el rango del picker emite cada extremo por separado (dateChange).
+  actualizarFechaDesde(evento: MatDatepickerInputEvent<Date>): void {
+    this.fechaDesde.set(evento.value);
+  }
+
+  actualizarFechaHasta(evento: MatDatepickerInputEvent<Date>): void {
+    this.fechaHasta.set(evento.value);
+  }
+
   limpiarFiltros(): void {
+    this.fechaDesde.set(null);
+    this.fechaHasta.set(null);
     // CORRECCIÓN: antes se reasignaban los signals (= signal('')), pero ticketsFiltrados
     // (computed) seguía leyendo los signals originales y los filtros no se limpiaban.
     // Hay que conservar los mismos signals y cambiar su valor con set().

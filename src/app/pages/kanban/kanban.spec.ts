@@ -159,4 +159,22 @@ describe('Kanban', () => {
     expect(fixture.nativeElement.textContent).toContain('Ningún ticket coincide');
     expect(fixture.nativeElement.querySelector('.tablero')).toBeNull();
   });
+
+  // AGREGADO: filtro por rango de fechas (extremos inclusivos).
+  it('filtra por rango Desde - Hasta incluyendo ambos extremos y se limpia', () => {
+    const base = { asunto: 'a', descripcion: 'd', prioridad: 'Baja', estado: 'Abierto' } as const;
+    component.tickets.set([
+      { ...base, id: '1', fechaCreacion: '2026-01-10' },
+      { ...base, id: '2', fechaCreacion: '2026-02-10' },
+      { ...base, id: '3', fechaCreacion: '2026-03-10' },
+    ]);
+    component.fechaDesde.set(new Date(2026, 1, 10));
+    component.fechaHasta.set(new Date(2026, 2, 10));
+    expect(component.ticketsFiltrados().map((t) => t.id)).toEqual(['2', '3']);
+    component.fechaHasta.set(null);
+    component.fechaDesde.set(new Date(2026, 2, 1));
+    expect(component.ticketsFiltrados().map((t) => t.id)).toEqual(['3']);
+    component.limpiarFiltros();
+    expect(component.ticketsFiltrados().length).toBe(3);
+  });
 });

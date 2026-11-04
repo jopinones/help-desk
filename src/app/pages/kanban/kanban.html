@@ -38,6 +38,18 @@
             </mat-select>
         </mat-form-field>
 
+        <!-- AGREGADO: filtro por fecha de creación Desde - Hasta con Date Picker (rango). Los
+             valores se enlazan con [value] y se leen con (dateChange). -->
+        <mat-form-field appearance="outline">
+            <mat-label>Desde - Hasta</mat-label>
+            <mat-date-range-input [rangePicker]="selectorRango">
+                <input matStartDate placeholder="Desde" [value]="fechaDesde()" (dateChange)="actualizarFechaDesde($event)">
+                <input matEndDate placeholder="Hasta" [value]="fechaHasta()" (dateChange)="actualizarFechaHasta($event)">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="selectorRango"></mat-datepicker-toggle>
+            <mat-date-range-picker #selectorRango></mat-date-range-picker>
+        </mat-form-field>
+
         <button mat-stroked-button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
     </section>
 

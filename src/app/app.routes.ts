@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 
 import { Dashboard } from './pages/dashboard/dashboard';
 import { Tickets } from './pages/tickets/tickets';
-import { Kanban } from './pages/kanban/kanban';
+// CAMBIO: Kanban ya no se importa aquí; se carga bajo demanda (loadComponent) para que el
+// datepicker y el drag & drop no engorden el bundle inicial (superaba el límite de 1 MB).
 import { Reportes } from './pages/reportes/reportes';
 import { Usuarios } from './pages/usuarios/usuarios';
 // AGREGADO: formulario (crear/editar) y detalle de usuario.
@@ -42,7 +43,7 @@ export const routes: Routes = [
     },
     {
         path: 'kanban',
-        component: Kanban
+        loadComponent: () => import('./pages/kanban/kanban').then((m) => m.Kanban)
     },
     {
         path: 'reportes',
