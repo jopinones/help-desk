@@ -1,0 +1,109 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+// CAMBIO: colores fijos reemplazados por los tokens --hd-* / --mat-sys-* para respetar el
+// tema claro/oscuro (antes el panel quedaba blanco en modo oscuro).
+.panel {
+    padding: 22px;
+    border: 1px solid var(--hd-borde);
+    border-radius: 16px;
+    background: var(--hd-superficie);
+    box-shadow: var(--hd-sombra);
+}
+
+h3 {
+    margin: 0 0 16px;
+}
+
+.lienzo {
+    display: block;
+    width: 100%;
+    height: 220px;
+}
+
+.base {
+    stroke: var(--hd-borde);
+}
+
+text {
+    fill: var(--mat-sys-on-surface);
+    font-size: 13px;
+    // CORRECCIÓN: `font-width` no existe; la propiedad es font-weight.
+    font-weight: 700;
+}
+
+.total {
+    font-size: 25px;
+}
+
+// CORRECCIÓN: la plantilla usaba `atenueado` (typo) en las barras y `atenuado` en el anillo;
+// se unificó en `atenuado`, que es el que define esta regla.
+.atenuado {
+    opacity: 0.35;
+}
+
+.detalle {
+    min-height: 2.5em;
+    margin: 8px 0;
+    color: var(--hd-texto-suave);
+    font-size: 0.875rem;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px;
+    border: 0;
+    border-bottom: 1px solid var(--hd-borde);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+button strong {
+    margin-left: auto;
+}
+
+button:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: -2px;
+}
+
+.muestra {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+// AGREGADO: gráfico de líneas.
+.linea {
+    pointer-events: none;
+}
+
+.punto {
+    cursor: pointer;
+    outline: none;
+}
+
+.punto:focus-visible {
+    stroke: var(--mat-sys-primary);
+    stroke-width: 3;
+}
+
+.eje {
+    fill: var(--hd-texto-suave);
+    font-size: 9px;
+    font-weight: 500;
+}
