@@ -2,10 +2,36 @@
   <header class="encabezado">
     <div>
       <h1>Dashboard</h1>
-      <p>Bienvenido al Sistema Help Desk. Elige por dónde empezar.</p>
+      <p>Bienvenido al Sistema Help Desk. Resumen del estado de las solicitudes.</p>
     </div>
   </header>
 
+  <!-- CORRECCIÓN: había un segundo <section> con otro <h1>"Dashboard" y una tarjeta de prueba
+       con datos fijos; se eliminó y los indicadores reales van aquí, dentro de la página. -->
+  @if (cargando()) {
+    <p class="mensaje">Cargando indicadores...</p>
+  } @else if (error()) {
+    <div class="mensaje error">
+      No fue posible cargar los indicadores.
+      <button type="button" mat-button (click)="cargarDatos()">Reintentar</button>
+    </div>
+  } @else {
+    <div class="indicadores">
+      @for (indicador of indicadores(); track indicador.titulo) {
+        <app-tarjeta-indicador
+          [titulo]="indicador.titulo"
+          [valor]="indicador.valor"
+          [unidad]="indicador.unidad ?? ''"
+          [descripcion]="indicador.descripcion"
+          [apoyo]="indicador.apoyo ?? ''"
+          [icono]="indicador.icono"
+          [variante]="indicador.variante"
+        />
+      }
+    </div>
+  }
+
+  <h2 class="subtitulo">Accesos rápidos</h2>
   <div class="accesos">
     @for (acceso of accesos; track acceso.ruta) {
       <a class="acceso tarjeta" [routerLink]="acceso.ruta">

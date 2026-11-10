@@ -1,0 +1,30 @@
+<!-- CORRECCIÓN: la clase raíz pasó de "tarjeta" a "indicador": "tarjeta" también existe como clase
+     global en styles.scss y se mezclaban sus estilos (padding, borde, fondo) con los de este
+     componente. -->
+<article class="indicador" [ngClass]="variante()">
+
+    <header class="indicador-encabezado">
+        <h3>{{ titulo() }}</h3>
+        <!-- CORRECCIÓN: el ícono se escribía como texto ("confirmation_number" aparecía literal);
+             MatIconModule estaba importado pero no se usaba. Ahora es un <mat-icon>. -->
+        <span class="indicador-icono" aria-hidden="true">
+            <mat-icon>{{ icono() }}</mat-icon>
+        </span>
+    </header>
+
+    <div class="indicador-cifra">
+        <strong>{{ valor() }}</strong>
+        @if (unidad()) {
+            <span class="indicador-unidad">{{ unidad() }}</span>
+        }
+    </div>
+
+    @if (descripcion()) {
+        <p class="indicador-descripcion">{{ descripcion() }}</p>
+    }
+
+    @if (apoyo()) {
+        <footer class="indicador-apoyo">{{ apoyo() }}</footer>
+    }
+
+</article>

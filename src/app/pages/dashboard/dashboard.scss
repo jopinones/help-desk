@@ -1,3 +1,14 @@
+// AGREGADO: grilla de indicadores; las tarjetas miden lo mismo y se acomodan según el ancho.
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+}
+
+.subtitulo {
+    margin: 32px 0 12px;
+}
+
 .accesos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

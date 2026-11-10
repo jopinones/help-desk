@@ -1,0 +1,131 @@
+:host {
+    display: block;
+    min-width: 0;
+    height: 100%;
+}
+
+// CAMBIO: la variante solo define dos variables (--acento y --fondo-icon) y el resto de la
+// tarjeta las consume; antes --acento se declaraba pero nunca se usaba.
+// Variante por defecto ("neutra"):
+.indicador {
+    --acento: var(--mat-sys-outline);
+    --fondo-icon: var(--mat-sys-surface-container);
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 0;
+    // CORRECCIÓN: padding de 2px dejaba el contenido pegado al borde.
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid var(--hd-borde);
+    border-top: 4px solid var(--acento);
+    border-radius: 16px;
+    // CORRECCIÓN: `background-color` no acepta gradientes (la regla se ignoraba); y los colores
+    // fijos se cambiaron por tokens para respetar el tema claro/oscuro.
+    background: var(--hd-superficie);
+    box-shadow: var(--hd-sombra);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.indicador:hover {
+    // CORRECCIÓN: translate(-3px) movía la tarjeta a la izquierda; la intención era subirla.
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgb(15 23 42 / 10%);
+}
+
+// CAMBIO: los selectores .azul/.ambar/... ahora cuelgan de .indicador (más específicos) y la
+// variante "principal" se resuelve por su propia clase, que antes no definía --acento.
+.indicador.principal {
+    --acento: var(--mat-sys-primary);
+    --fondo-icon: var(--mat-sys-primary-container);
+}
+
+.indicador.azul {
+    --acento: #2563eb;
+    --fondo-icon: #eff6ff;
+}
+
+.indicador.ambar {
+    --acento: #b45309;
+    --fondo-icon: #fffbeb;
+}
+
+.indicador.verde {
+    --acento: #15803d;
+    --fondo-icon: #f0fdf4;
+}
+
+.indicador.roja {
+    --acento: #b91c1c;
+    --fondo-icon: #fef2f2;
+}
+
+.indicador-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.indicador h3 {
+    margin: 0;
+    color: var(--hd-texto-suave);
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.indicador-icono {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--fondo-icon);
+    // AGREGADO: el ícono toma el color de acento de la variante.
+    color: var(--acento);
+}
+
+.indicador-cifra {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 14px;
+}
+
+.indicador-cifra strong {
+    color: var(--mat-sys-on-surface);
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -1.5px;
+    font-variant-numeric: tabular-nums;
+}
+
+.indicador-unidad {
+    color: var(--hd-texto-suave);
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.indicador-descripcion {
+    margin: 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--hd-borde);
+    color: var(--hd-texto-suave);
+    // CORRECCIÓN: 11px era demasiado pequeño para leer.
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+// AGREGADO: la plantilla ya renderizaba .tarjeta-apoyo pero no tenía estilos.
+.indicador-apoyo {
+    margin-top: auto;
+    padding-top: 10px;
+    color: var(--acento);
+    font-size: 12px;
+    font-weight: 600;
+}
