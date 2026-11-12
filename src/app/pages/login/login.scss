@@ -1,0 +1,31 @@
+// CAMBIO: colores fijos (#fff, #dbe3ee, #1d4ed8) reemplazados por los tokens de styles.scss
+// y del tema Material, para que el login respete el modo claro/oscuro como el resto de la app.
+.acceso {
+    max-width: 32rem;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid var(--hd-borde);
+    border-radius: 1rem;
+    background: var(--hd-superficie);
+}
+
+.perfiles {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+button {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--mat-sys-primary);
+    border-radius: 0.5rem;
+    background: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+    font: inherit;
+    cursor: pointer;
+}
+
+button:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 3px;
+}

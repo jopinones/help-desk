@@ -1,77 +1,98 @@
 <mat-toolbar class="toolbar">
-  <mat-icon>support_agent</mat-icon>
-  <span class="marca">Sistema Help Desk</span>
+  <div class="marca">
+    <mat-icon>support_agent</mat-icon>
+
+    <div class="marca-texto">
+      <span class="marca-nombre">Sistema Help Desk</span>
+      <span class="marca-subtitulo">Gestión de soporte</span>
+    </div>
+  </div>
+
+  @if (sesion.actual(); as perfil) {
+    <!-- CAMBIO: el style="margin-left: auto" en línea pasó a la clase .cerrar-sesion (app.scss). -->
+    <button mat-button type="button" class="cerrar-sesion" (click)="cerrarSesion()">
+      Cerrar sesión - {{ perfil.rol }}
+    </button>
+  }
 </mat-toolbar>
 
 <mat-sidenav-container class="layout">
-  <mat-sidenav mode="side" opened class="sidebar">
-    <div class="menu-titulo">Menú Principal</div>
+
+  <!-- CORRECCIÓN: `opened="sesion.actual() !== null"` pasaba ese TEXTO como valor (siempre
+       verdadero); para evaluar la expresión hay que enlazar con [opened]. Así el menú solo
+       aparece con sesión iniciada (en el login queda oculto). -->
+  <mat-sidenav mode="side" [opened]="sesion.actual() !== null" class="sidebar">
+    <div class="menu-titulo">Menú principal</div>
+
     <mat-nav-list>
-      <a mat-list-item routerLink="/dashboard"
-      routerLinkActive="activo">
+
+      <a mat-list-item routerLink="/dashboard" routerLinkActive="activo">
         <mat-icon matListItemIcon>dashboard</mat-icon>
         <span matListItemTitle>Dashboard</span>
-    </a>
+      </a>
 
-    <div routerLinkActive="grupo-activo" #tickets="routerLinkActive">
-      @let abierto = ticketsAbierto() || tickets.isActive;
+      <!-- AGREGADO: se repuso el submenú Tickets con Listado y Crear ticket; la reescritura del
+           menú lo había dejado como un único enlace "Tickets" sin acceso a "Crear ticket". -->
+      <div routerLinkActive="grupo-activo" #tickets="routerLinkActive">
+        @let abierto = ticketsAbierto() || tickets.isActive;
 
-      <a mat-list-item class="submenu-padre" (click)="alternarTickets()"
-        [attr.aria-expanded]="abierto">
+        <a mat-list-item class="submenu-padre" (click)="alternarTickets()" [attr.aria-expanded]="abierto">
           <mat-icon matListItemIcon>confirmation_number</mat-icon>
           <span matListItemTitle>Tickets</span>
           <span matListItemMeta>
             <mat-icon>{{ abierto ? 'expand_less' : 'expand_more' }}</mat-icon>
           </span>
-      </a>
+        </a>
 
-      @if (abierto) {
-        <div class="submenu">
-          <a mat-list-item routerLink="/tickets"
-            routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }">
+        @if (abierto) {
+          <div class="submenu">
+            <a mat-list-item routerLink="/tickets" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }">
               <mat-icon matListItemIcon>list</mat-icon>
               <span matListItemTitle>Listado</span>
-          </a>
+            </a>
 
-          <a mat-list-item routerLink="/tickets/nuevo"
-            routerLinkActive="activo">
+            <a mat-list-item routerLink="/tickets/nuevo" routerLinkActive="activo">
               <mat-icon matListItemIcon>add_circle</mat-icon>
               <span matListItemTitle>Crear ticket</span>
-          </a>
-        </div>
+            </a>
+          </div>
+        }
+      </div>
+
+      @if (sesion.tieneAlgunRol(['Soporte', 'Administrador'])) {
+        <a mat-list-item routerLink="/kanban" routerLinkActive="activo">
+          <mat-icon matListItemIcon>view_kanban</mat-icon>
+          <span matListItemTitle>Kanban</span>
+        </a>
       }
-    </div>
 
-    <a mat-list-item routerLink="/kanban"
-      routerLinkActive="activo">
-        <mat-icon matListItemIcon>view_kanban</mat-icon>  
-        <span matListItemTitle>Kanban</span>
-    </a>
+      <!-- AGREGADO: Reportes y Usuarios solo para Administrador, igual que sus guards en
+           app.routes.ts (no se muestran enlaces a páginas que llevarían a "Acceso restringido").
+           También se repuso Usuarios y Acerca de, que la reescritura del menú había quitado. -->
+      @if (sesion.tieneAlgunRol(['Administrador'])) {
+        <a mat-list-item routerLink="/reportes" routerLinkActive="activo">
+          <mat-icon matListItemIcon>bar_chart</mat-icon>
+          <span matListItemTitle>Reportes</span>
+        </a>
 
-    <a mat-list-item routerLink="/reportes"
-      routerLinkActive="activo">
-        <mat-icon matListItemIcon>bar_chart</mat-icon>  
-        <span matListItemTitle>Reportes</span>
-    </a>
+        <a mat-list-item routerLink="/usuarios" routerLinkActive="activo">
+          <mat-icon matListItemIcon>group</mat-icon>
+          <span matListItemTitle>Usuarios</span>
+        </a>
+      }
 
-    <a mat-list-item routerLink="/usuarios"
-      routerLinkActive="activo">
-        <mat-icon matListItemIcon>group</mat-icon>
-        <span matListItemTitle>Usuarios</span>
-    </a>
-
-    <a mat-list-item routerLink="/acerca-de"
-      routerLinkActive="activo">
+      <a mat-list-item routerLink="/acerca-de" routerLinkActive="activo">
         <mat-icon matListItemIcon>info</mat-icon>
         <span matListItemTitle>Acerca de</span>
-    </a>
+      </a>
+
     </mat-nav-list>
   </mat-sidenav>
-    
-<mat-sidenav-content>
-  <main class="contenedor">
-    <router-outlet></router-outlet>
-  </main>
-</mat-sidenav-content>
+
+  <mat-sidenav-content class="contenido">
+    <main class="contenedor">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
 
 </mat-sidenav-container>

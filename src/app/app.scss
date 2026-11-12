@@ -13,10 +13,35 @@
     color: var(--mat-sys-on-primary);
     box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
 
+    // CAMBIO: la marca ahora es un bloque (ícono + nombre + subtítulo) y el botón de cerrar
+    // sesión se empuja a la derecha. Antes las clases .marca-nombre/.marca-subtitulo y
+    // .cerrar-sesion no tenían estilos.
     .marca {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .marca-texto {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    .marca-nombre {
         font-size: 20px;
         font-weight: 600;
         letter-spacing: 0.01em;
+    }
+
+    .marca-subtitulo {
+        font-size: 12px;
+        opacity: 0.85;
+    }
+
+    .cerrar-sesion {
+        margin-left: auto;
+        color: inherit;
     }
 }
 
