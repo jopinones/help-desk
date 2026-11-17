@@ -1,8 +1,9 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Sesion } from '../../services/sesion';
 import { MOTIVO_NO_EDITABLE, Ticket, puedeEditar } from '../../models/ticket';
 
 @Component({
@@ -16,6 +17,10 @@ import { MOTIVO_NO_EDITABLE, Ticket, puedeEditar } from '../../models/ticket';
 export class AccionesTicket {
   // CORRECCIÓN: la clase estaba vacía y la plantilla usaba ticket(), eliminando() y
   // solicitarEliminacion() que no existían. Se agregan:
+
+  // AGREGADO: sesión; Editar y Eliminar solo se muestran a Soporte y Administrador. El perfil
+  // Usuario solo ve el botón Detalle.
+  protected readonly sesion = inject(Sesion);
 
   // Ticket sobre el que se actúan las acciones (obligatorio).
   ticket = input.required<Ticket>();
@@ -32,6 +37,10 @@ export class AccionesTicket {
   motivoNoEditable = MOTIVO_NO_EDITABLE;
 
   solicitarEliminacion(): void {
+    // AGREGADO: defensa por si el evento llegara sin el botón (el botón ya está oculto).
+    if (!this.sesion.puedeGestionarTickets()) {
+      return;
+    }
     this.eliminar.emit(this.ticket());
   }
 }

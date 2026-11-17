@@ -5,10 +5,13 @@
     <p>Listado de solicitudes registradas en el Sistema Help Desk.</p>
   </div>
  
-  <a mat-flat-button routerLink="/tickets/nuevo">
-    <mat-icon>add</mat-icon>
-    Nuevo Ticket
-  </a>
+  <!-- CAMBIO: Nuevo Ticket solo lo ven Soporte y Administrador (la ruta también está protegida). -->
+  @if (sesion.puedeGestionarTickets()) {
+    <a mat-flat-button routerLink="/tickets/nuevo">
+      <mat-icon>add</mat-icon>
+      Nuevo Ticket
+    </a>
+  }
  
   <section class="panel-filtro" aria-label="Panel de filtros">
     <mat-form-field appearance="outline" class="filtro-busqueda">

@@ -51,10 +51,13 @@
               <span matListItemTitle>Listado</span>
             </a>
 
-            <a mat-list-item routerLink="/tickets/nuevo" routerLinkActive="activo">
-              <mat-icon matListItemIcon>add_circle</mat-icon>
-              <span matListItemTitle>Crear ticket</span>
-            </a>
+            <!-- CAMBIO: Crear ticket solo se muestra a quien puede gestionar tickets. -->
+            @if (sesion.puedeGestionarTickets()) {
+              <a mat-list-item routerLink="/tickets/nuevo" routerLinkActive="activo">
+                <mat-icon matListItemIcon>add_circle</mat-icon>
+                <span matListItemTitle>Crear ticket</span>
+              </a>
+            }
           </div>
         }
       </div>

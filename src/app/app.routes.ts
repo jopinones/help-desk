@@ -17,6 +17,7 @@ import { NotFound } from './pages/not-found/not-found';
 
 import { Login } from './pages/login/login';
 import { requiereRoles, sesionGuard } from './guards/acceso-guard';
+import { ROLES_GESTION_TICKETS } from './services/sesion';
 import { SinAcceso } from './pages/sin-acceso/sin-acceso';
 
 export const routes: Routes = [
@@ -45,14 +46,16 @@ export const routes: Routes = [
     canActivate: [sesionGuard]
   },
   {
+    // CAMBIO: crear y editar tickets exige Soporte o Administrador. Con perfil Usuario el guard
+    // redirige a /sin-acceso; el listado y el detalle siguen abiertos a cualquier sesión.
     path: 'tickets/nuevo',
     component: TicketForm,
-    canActivate: [sesionGuard]
+    canActivate: [requiereRoles(...ROLES_GESTION_TICKETS)]
   },
   {
     path: 'tickets/editar/:id',
     component: TicketForm,
-    canActivate: [sesionGuard]
+    canActivate: [requiereRoles(...ROLES_GESTION_TICKETS)]
   },
   {
     path: 'tickets/:id',

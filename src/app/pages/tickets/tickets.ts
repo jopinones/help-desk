@@ -16,6 +16,7 @@ import { RouterLink } from '@angular/router';
 import { EstadoTicket } from '../../shared/estado-ticket/estado-ticket';
 import { PrioridadTicket } from '../../shared/prioridad-ticket/prioridad-ticket';
 import { AccionesTicket } from '../../shared/acciones-ticket/acciones-ticket';
+import { Sesion } from '../../services/sesion';
 import { IdTicket } from '../../shared/id-ticket/id-ticket';
 import { ConfirmDialog } from '../../shared/confirm-dialog/confirm-dialog';
 import { ConfirmDialogData } from '../../shared/confirm-dialog/confirm-dialog-data';
@@ -50,6 +51,8 @@ export class Tickets implements OnInit {
  
   private ticketService = inject(TicketService);
   private dialog = inject(MatDialog);
+  // AGREGADO: sesión, para mostrar Nuevo Ticket solo a los perfiles autorizados.
+  protected readonly sesion = inject(Sesion);
  
   columnas: string[] = [
     'id',
@@ -192,6 +195,10 @@ export class Tickets implements OnInit {
   }
  
   eliminar(ticket: Ticket): void {
+    // AGREGADO: el perfil Usuario no puede eliminar (el botón está oculto; esto lo refuerza).
+    if (!this.sesion.puedeGestionarTickets()) {
+      return;
+    }
     // CAMBIO: open<...> tipa los datos del diálogo y el resultado (boolean).
     const dialogRef = this.dialog.open<ConfirmDialog, ConfirmDialogData, boolean>(ConfirmDialog, {
       width: '430px',

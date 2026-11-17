@@ -19,14 +19,17 @@
           <p class="codigo">Ticket #{{ t.id }}</p>
           <h1>{{ t.asunto }}</h1>
         </div>
-        <span [matTooltip]="motivoNoEditable" [matTooltipDisabled]="puedeEditar(t)">
-          <a mat-flat-button
-            [routerLink]="puedeEditar(t) ? ['/tickets/editar', t.id] : null"
-            [disabled]="!puedeEditar(t)">
-            <mat-icon>edit</mat-icon>
-            Editar
-          </a>
-        </span>
+        <!-- CAMBIO: Editar solo se muestra a Soporte y Administrador. -->
+        @if (sesion.puedeGestionarTickets()) {
+          <span [matTooltip]="motivoNoEditable" [matTooltipDisabled]="puedeEditar(t)">
+            <a mat-flat-button
+              [routerLink]="puedeEditar(t) ? ['/tickets/editar', t.id] : null"
+              [disabled]="!puedeEditar(t)">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </a>
+          </span>
+        }
       </header>
 
       <!-- CAMBIO: antes eran dos <span> con clases globales calculadas con clase();

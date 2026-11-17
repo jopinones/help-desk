@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TicketService } from '../../services/ticket';
+import { Sesion } from '../../services/sesion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MOTIVO_NO_EDITABLE, Ticket, puedeEditar } from '../../models/ticket';
 // AGREGADO: componentes compartidos que muestran el estado y la prioridad como etiquetas.
@@ -27,6 +28,8 @@ import { PrioridadTicket } from '../../shared/prioridad-ticket/prioridad-ticket'
 export class TicketDetalle implements OnInit {
   private route = inject(ActivatedRoute);
   private ticketService = inject(TicketService);
+  // AGREGADO: sesión, para mostrar Editar solo a los perfiles autorizados.
+  protected readonly sesion = inject(Sesion);
 
   puedeEditar = puedeEditar;
   motivoNoEditable = MOTIVO_NO_EDITABLE;

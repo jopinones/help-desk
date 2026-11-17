@@ -1,6 +1,6 @@
 // CORRECCIÓN: se quitó `Service` del import; no se usa (el decorador es @Injectable) y no es
 // parte de la API que necesita este archivo.
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import type { Usuario } from '../models/usuario';
 
 export type Rol = Usuario['rol'];
@@ -8,6 +8,11 @@ export type Rol = Usuario['rol'];
 // AGREGADO: lista de roles válidos. La usa el login (para dibujar los botones) y la lectura de
 // la sesión guardada (para descartar datos manipulados o de otra versión).
 export const ROLES: readonly Rol[] = ['Administrador', 'Soporte', 'Usuario'];
+
+// AGREGADO: perfiles que pueden crear y editar tickets. Es la única definición de la regla: la
+// usan las rutas (guard), el menú y los botones Nuevo ticket / Editar. El perfil Usuario solo
+// consulta (listado y detalle).
+export const ROLES_GESTION_TICKETS: readonly Rol[] = ['Soporte', 'Administrador'];
 
 interface SesionActual {
     rol: Rol;
@@ -26,6 +31,10 @@ export class Sesion {
     // recargar la página (F5) se perdía la sesión y el guard mandaba de nuevo al login.
     private readonly estado = signal<SesionActual | null>(this.leer());
     readonly actual = this.estado.asReadonly();
+
+    // AGREGADO: true si el perfil activo puede crear/editar tickets. Es un computed: las vistas
+    // se actualizan solas al iniciar o cerrar sesión.
+    readonly puedeGestionarTickets = computed(() => this.tieneAlgunRol(ROLES_GESTION_TICKETS));
 
     // CORRECCIÓN: se llamaba `iniciaDemostracion` y el login invoca `iniciarDemostracion`
     // (error de compilación TS2551); se unificó el nombre en infinitivo.

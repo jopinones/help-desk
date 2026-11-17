@@ -33,14 +33,6 @@
       "id": "4"
     },
     {
-      "id": "6",
-      "asunto": "Impresora no disponible",
-      "descripcion": "Al intentar imprimir, la impresora aparece como no disponible",
-      "estado": "Cerrado",
-      "prioridad": "Alta",
-      "fechaCreacion": "2026-10-01"
-    },
-    {
       "asunto": "Problema de acceso",
       "descripcion": "Al intentar acceder, aparecer un error en pantalla",
       "estado": "En proceso",
@@ -53,14 +45,6 @@
       "asunto": "No genera reporte de ventas",
       "descripcion": "Durante el proceso de generación del resumen de ventas",
       "estado": "En proceso",
-      "prioridad": "Alta",
-      "fechaCreacion": "2026-10-01"
-    },
-    {
-      "id": "9",
-      "asunto": "Impresora no disponible",
-      "descripcion": "Al intentar imprimir, la impresora aparece como no disponible",
-      "estado": "Cerrado",
       "prioridad": "Alta",
       "fechaCreacion": "2026-10-01"
     },
@@ -103,6 +87,22 @@
       "prioridad": "Media",
       "fechaCreacion": "2026-10-08",
       "id": "5IxDAmyYXkY"
+    },
+    {
+      "asunto": "Impresora",
+      "descripcion": "Problema de atasco de papel",
+      "estado": "Abierto",
+      "prioridad": "Baja",
+      "fechaCreacion": "2026-11-12",
+      "id": "N8VsMNQifw8"
+    },
+    {
+      "asunto": "Impresora",
+      "descripcion": "Problema que falta papel tamaño carta",
+      "estado": "Abierto",
+      "prioridad": "Baja",
+      "fechaCreacion": "2026-11-12",
+      "id": "kONOsLVSUT4"
     }
   ],
   "usuarios": [
