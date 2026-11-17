@@ -21,7 +21,7 @@ describe('guards de acceso', () => {
 
   it('sesionGuard envía al login sin sesión y deja pasar con sesión', () => {
     expect(url(ejecutar(sesionGuard))).toBe('/login');
-    TestBed.inject(Sesion).iniciarDemostracion('Usuario');
+    TestBed.inject(Sesion).establecer({ rol: 'Usuario', token: 'demo-usuario', username: 'usuario' });
     expect(ejecutar(sesionGuard)).toBe(true);
   });
 
@@ -30,10 +30,10 @@ describe('guards de acceso', () => {
     expect(url(ejecutar(guard))).toBe('/login');
 
     const sesion = TestBed.inject(Sesion);
-    sesion.iniciarDemostracion('Usuario');
+    sesion.establecer({ rol: 'Usuario', token: 'demo-usuario', username: 'usuario' });
     expect(url(ejecutar(guard))).toBe('/sin-acceso');
 
-    sesion.iniciarDemostracion('Administrador');
+    sesion.establecer({ rol: 'Administrador', token: 'demo-administrador', username: 'administrador' });
     expect(ejecutar(guard)).toBe(true);
   });
 });

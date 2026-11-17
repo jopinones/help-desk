@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { Kanban } from './kanban';
+import { API_BASE_URL } from '../../config/api';
 
 describe('Kanban', () => {
   let component: Kanban;
@@ -60,7 +61,7 @@ describe('Kanban', () => {
 
   it('evita guardados simultáneos y conserva el estado si falla la petición', () => {
     const http = TestBed.inject(HttpTestingController);
-    http.expectOne('http://localhost:3000/tickets').flush([]);
+    http.expectOne(`${API_BASE_URL}/tickets`).flush([]);
     const ticket = {
       id: '1',
       asunto: 'a',
@@ -72,9 +73,9 @@ describe('Kanban', () => {
     component.tickets.set([ticket]);
     component.actualizarEstado(ticket, 'En proceso');
     component.actualizarEstado({ ...ticket, id: '2' }, 'Cerrado');
-    const peticion = http.expectOne('http://localhost:3000/tickets/1');
+    const peticion = http.expectOne(`${API_BASE_URL}/tickets/1`);
     expect(peticion.request.body.estado).toBe('En proceso');
-    http.expectNone('http://localhost:3000/tickets/2');
+    http.expectNone(`${API_BASE_URL}/tickets/2`);
     peticion.flush({}, { status: 500, statusText: 'Error' });
     expect(component.actualizandoID()).toBeNull();
     expect(component.tickets()[0].estado).toBe('Abierto');
@@ -87,7 +88,7 @@ describe('Kanban', () => {
 
   it('actualiza la columna cuando el servidor confirma el guardado', () => {
     const http = TestBed.inject(HttpTestingController);
-    http.expectOne('http://localhost:3000/tickets').flush([]);
+    http.expectOne(`${API_BASE_URL}/tickets`).flush([]);
     const ticket = {
       id: '1',
       asunto: 'a',
@@ -98,7 +99,7 @@ describe('Kanban', () => {
     } as const;
     component.tickets.set([ticket]);
     component.actualizarEstado(ticket, 'En proceso');
-    http.expectOne('http://localhost:3000/tickets/1').flush({ ...ticket, estado: 'En proceso' });
+    http.expectOne(`${API_BASE_URL}/tickets/1`).flush({ ...ticket, estado: 'En proceso' });
     expect(component.ticketsPorEstado('Abierto')).toEqual([]);
     expect(component.ticketsPorEstado('En proceso').length).toBe(1);
     expect(component.actualizandoID()).toBeNull();
@@ -115,7 +116,7 @@ describe('Kanban', () => {
       estado: 'Abierto',
       fechaCreacion: '2026-01-01',
     } as const;
-    http.expectOne('http://localhost:3000/tickets').flush([ticket]);
+    http.expectOne(`${API_BASE_URL}/tickets`).flush([ticket]);
     const destinos = [
       'En proceso',
       'Cerrado',
@@ -126,7 +127,7 @@ describe('Kanban', () => {
     ] as const;
     for (const estado of destinos) {
       component.actualizarEstado(component.tickets()[0], estado);
-      const peticion = http.expectOne('http://localhost:3000/tickets/1');
+      const peticion = http.expectOne(`${API_BASE_URL}/tickets/1`);
       expect(peticion.request.method).toBe('PUT');
       expect(peticion.request.body.estado).toBe(estado);
       peticion.flush({ ...ticket, estado });

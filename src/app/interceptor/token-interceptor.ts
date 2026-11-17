@@ -1,38 +1,51 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, type HttpInterceptorFn } from '@angular/common/http';
+import { DOCUMENT } from '@angular/common';
+
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
+
+import { API_BASE_URL } from '../config/api';
 import { Sesion } from '../services/sesion';
 
-// AGREGADO: el interceptor solo era un esqueleto (`return next(req)`) y además no estaba
-// registrado en app.config.ts, así que nunca se ejecutaba. Ahora:
-//  1) agrega "Authorization: Bearer <token>" a las peticiones a NUESTRA API, y
-//  2) si la API responde 401, cierra la sesión y envía al login.
-
-// Solo se adjunta el token a este origen: enviarlo a cualquier otra URL filtraría la credencial.
-const API_URL = 'http://localhost:3000/';
-
-export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
+export const tokenInterceptor: HttpInterceptorFn = (peticion, siguiente) => {
   const sesion = inject(Sesion);
-  const router = inject(Router);
-
   const token = sesion.actual()?.token;
 
-  // Las peticiones son inmutables: para cambiarlas hay que clonar. Sin sesión, o hacia otro
-  // origen, pasan sin modificar.
-  const peticion = token && req.url.startsWith(API_URL)
-    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-    : req;
+  if (!token) {
+    return siguiente(peticion);
+  }
 
-  return next(peticion).pipe(
+  const documento = inject(DOCUMENT);
+  const url = new URL(peticion.url, documento.baseURI);
+  const api = new URL(API_BASE_URL);
+
+  // MODIFICADO: limita el Bearer a tickets y usuarios del túnel.
+  const esRecursoProtegido =
+    url.origin === api.origin &&
+    /^\/(?:tickets|usuarios|usuario)(?:\/|$)/.test(url.pathname);
+
+  if (!esRecursoProtegido) {
+    return siguiente(peticion);
+  }
+
+  const router = inject(Router);
+
+  return siguiente(
+    peticion.clone({
+      setHeaders: { Authorization: `Bearer ${token}` },
+    }),
+  ).pipe(
+    // AGREGADO (repuesto): con la API externa el token puede vencer. Si un recurso protegido
+    // responde 401, se cierra la sesión y se envía al login; el error se relanza para que
+    // cada pantalla siga mostrando su mensaje. Solo aplica a recursos protegidos (no a
+    // /auth/token, donde un 401 significa "credenciales incorrectas" y lo muestra el login).
     catchError((error: unknown) => {
-      // Un 401 de nuestra API significa sesión inválida o vencida. Se relanza el error para
-      // que cada componente siga mostrando su mensaje.
-      if (error instanceof HttpErrorResponse && error.status === 401 && req.url.startsWith(API_URL)) {
+      if (error instanceof HttpErrorResponse && error.status === 401) {
         sesion.cerrar();
         void router.navigateByUrl('/login', { replaceUrl: true });
       }
       return throwError(() => error);
-    })
+    }),
   );
 };

@@ -29,18 +29,18 @@ describe('App', () => {
         (a) => a.getAttribute('href') ?? a.textContent?.trim(),
       );
 
-    sesion.iniciarDemostracion('Usuario');
+    sesion.establecer({ rol: 'Usuario', token: 'demo-usuario', username: 'usuario' });
     await fixture.whenStable();
     expect(enlaces()).not.toContain('/kanban');
     expect(enlaces()).not.toContain('/usuarios');
     expect(enlaces()).toContain('/acerca-de');
 
-    sesion.iniciarDemostracion('Soporte');
+    sesion.establecer({ rol: 'Soporte', token: 'demo-soporte', username: 'soporte' });
     await fixture.whenStable();
     expect(enlaces()).toContain('/kanban');
     expect(enlaces()).not.toContain('/reportes');
 
-    sesion.iniciarDemostracion('Administrador');
+    sesion.establecer({ rol: 'Administrador', token: 'demo-administrador', username: 'administrador' });
     await fixture.whenStable();
     expect(enlaces()).toEqual(expect.arrayContaining(['/kanban', '/reportes', '/usuarios']));
     sessionStorage.clear();

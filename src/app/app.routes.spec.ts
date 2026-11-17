@@ -6,6 +6,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { routes } from './app.routes';
 import { tokenInterceptor } from './interceptor/token-interceptor';
 import { Rol, Sesion } from './services/sesion';
+import { API_BASE_URL } from './config/api';
 
 // AGREGADO: pruebas de permisos sobre las rutas reales de tickets, con los tres perfiles.
 // Se navega con el router (navegación interna), sin recargar la página.
@@ -22,7 +23,7 @@ describe('Permisos de tickets en las rutas', () => {
         provideHttpClientTesting(),
       ],
     });
-    TestBed.inject(Sesion).iniciarDemostracion(rol);
+    TestBed.inject(Sesion).establecer({ rol, token: `demo-${rol.toLowerCase()}`, username: rol.toLowerCase() });
     http = TestBed.inject(HttpTestingController);
     harness = await RouterTestingHarness.create();
   }
@@ -68,7 +69,8 @@ describe('Permisos de tickets en las rutas', () => {
       await iniciar(rol);
 
       const listado = await harness.navigateByUrl('/tickets');
-      http.match((r) => r.url.endsWith('/tickets')).forEach((r) => r.flush([ticket]));
+      // CAMBIO: el listado ahora consulta /tickets/paginados y recibe una página {count, results}.
+      http.match((r) => r.url.endsWith('/tickets/paginados')).forEach((r) => r.flush({ count: 1, next: null, previous: null, results: [ticket] }));
       harness.detectChanges();
       const el: HTMLElement = harness.routeNativeElement!;
       const nuevo = !!el.querySelector('a[href="/tickets/nuevo"]');
@@ -96,7 +98,7 @@ describe('Permisos de tickets en las rutas', () => {
     TestBed.inject(TicketService)
       .crearTicket({ asunto: 'Prueba', descripcion: 'd', estado: 'Abierto', prioridad: 'Baja', fechaCreacion: '2026-01-01' })
       .subscribe();
-    const post = http.expectOne((r) => r.method === 'POST' && r.url === 'http://localhost:3000/tickets');
+    const post = http.expectOne((r) => r.method === 'POST' && r.url === `${API_BASE_URL}/tickets`);
     expect(post.request.headers.get('Authorization')).toBe('Bearer demo-soporte');
     post.flush({});
   });

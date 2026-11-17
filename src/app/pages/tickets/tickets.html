@@ -50,17 +50,31 @@
       <input matInput type="date" [ngModel]="filtros.fechaHasta" (ngModelChange)="aplicarFechaHasta($event)">
     </mat-form-field>
  
+    <!-- AGREGADO: vista rápida de tickets críticos (Abierto + Alta). El texto sale de los filtros
+         actuales: con Abierto y Alta (también si se eligieron a mano) dice "Quitar filtros
+         críticos"; si cambia cualquiera de los dos, vuelve a "Ver tickets críticos". -->
+    <button
+      mat-stroked-button
+      type="button"
+      class="boton-criticos"
+      [attr.aria-pressed]="filtrosCriticosActivos"
+      (click)="alternarFiltrosCriticos()">
+      {{ filtrosCriticosActivos ? 'Quitar filtros críticos' : 'Ver tickets críticos' }}
+    </button>
+
     <button mat-stroked-button type="button" (click)="limpiarFiltros()">Limpiar filtros</button>
   </section>
  
   @if (!cargando() && !error()) {
     <p class="contador-resultados" aria-live="polite">
       Mostrando
-      {{ dataSource.filteredData.length }} de {{ dataSource.data.length}}
+      <!-- CAMBIO: el total lo informa el servidor (count); antes se contaban las filas en memoria. -->
+      {{ dataSource.data.length }} de {{ total() }} tickets
     </p>
   }
  
-  @if (cargando()) {
+  <!-- CAMBIO: "Cargando" solo en la primera carga; en las recargas se conserva la tabla. -->
+  @if (cargando() && !tuvoDatos()) {
  
     <div class="mensaje">
       Cargando tickets...
@@ -161,15 +175,20 @@
              "no existe ningún ticket" y "los filtros no encontraron coincidencias". -->
         <tr class="mat-mdc-row sin-resultados" *matNoDataRow>
           <td class="mat-mdc-cell" [attr.colspan]="columnas.length">
-            {{ dataSource.data.length === 0 ? 'No hay tickets registrados' : 'Ningún ticket coincide con los filtros' }}
+            {{ hayFiltros ? 'Ningún ticket coincide con los filtros' : 'No hay tickets registrados' }}
           </td>
         </tr>
 
       </table>
  
+      <!-- CAMBIO: paginación del servidor. length es el total que informa la API (count), no
+           las filas de la tabla; (page) pide la página nueva. -->
       <mat-paginator
-        [pageSize]="5"
+        [length]="total()"
+        [pageIndex]="pagina()"
+        [pageSize]="tamanoPagina()"
         [pageSizeOptions]="[5, 10, 20]"
+        (page)="cambiarPagina($event)"
         showFirstLastButtons>
       </mat-paginator>
  

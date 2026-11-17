@@ -26,7 +26,7 @@ describe('AccionesTicket', () => {
       providers: [provideRouter([])],
     }).compileComponents();
 
-    TestBed.inject(Sesion).iniciarDemostracion('Soporte');
+    TestBed.inject(Sesion).establecer({ rol: 'Soporte', token: 'demo-soporte', username: 'soporte' });
     fixture = TestBed.createComponent(AccionesTicket);
     component = fixture.componentInstance;
     // CORRECCIÓN: `ticket` es un input obligatorio; sin darle un valor no se puede crear.
@@ -42,7 +42,7 @@ describe('AccionesTicket', () => {
 
   // AGREGADO: el perfil Usuario solo ve Detalle: sin Editar ni Eliminar.
   it('el perfil Usuario solo ve Detalle (sin Editar ni Eliminar)', async () => {
-    TestBed.inject(Sesion).iniciarDemostracion('Usuario');
+    TestBed.inject(Sesion).establecer({ rol: 'Usuario', token: 'demo-usuario', username: 'usuario' });
     await fixture.whenStable();
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('[aria-label="Editar ticket"]')).toBeNull();

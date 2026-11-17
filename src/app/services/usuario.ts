@@ -2,42 +2,41 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { NuevoUsuario, Usuario } from '../models/usuario';
+// CORRECCIÓN: URL de la API externa desde config/api.ts (antes 'http://localhost:3000/usuarios').
+import { API_BASE_URL } from '../config/api';
 
+// CORRECCIÓN: el código con la URL nueva se había pegado por error en pages/usuarios/usuarios.ts
+// (el COMPONENTE), y esa versión solo traía obtenerUsuarios(); se perdían obtenerUsuario,
+// crear, actualizar y eliminar, que usan los formularios y el listado. Se repuso todo aquí.
 @Injectable({
     providedIn: 'root'
 })
 export class UsuarioService {
     private http = inject(HttpClient);
-    private apiUrl = 'http://localhost:3000/usuarios';
+    private apiUrl = `${API_BASE_URL}/usuarios`;
 
     // Read - Get
     obtenerUsuarios(): Observable<Usuario[]> {
         return this.http.get<Usuario[]>(this.apiUrl);
     }
 
-    // CORRECCIÓN: obtenerUsuarios() no recibe parámetros; usuario-form llamaba
-    // obtenerUsuarios(id) esperando un solo usuario. Se agrega este método.
     obtenerUsuario(id: string): Observable<Usuario> {
         return this.http.get<Usuario>(`${this.apiUrl}/${id}`);
     }
 
-    // Create - Post (agregado: lo necesita usuario-form para guardar)
-    // CORRECCIÓN: el id correlativo ya no se calcula aquí. El intento anterior (leer los
-    // usuarios y enviar `id = mayor + 1`) no funcionaba: json-server 1.0.0-beta.15 ignora
-    // el `id` del POST y siempre pone uno aleatorio. Ahora el correlativo lo asigna el
-    // servidor (ver api/server.mjs, que se inicia con `npm run api`); el cliente solo envía
-    // los datos y recibe el usuario creado con su id.
+    // Create - Post. El id lo asigna el servidor.
+    // CAMBIO: ya no depende de api/server.mjs (el parche de ids correlativos de json-server);
+    // con la API externa el id lo decide el backend.
     crearUsuario(usuario: NuevoUsuario): Observable<Usuario> {
         return this.http.post<Usuario>(this.apiUrl, usuario);
     }
 
-    // Update - Put (agregado: lo necesita usuario-form en modo edición)
+    // Update - Put
     actualizarUsuario(id: string, usuario: NuevoUsuario): Observable<Usuario> {
         return this.http.put<Usuario>(`${this.apiUrl}/${id}`, usuario);
     }
 
-    // AGREGADO: "eliminar" usuario es un borrado lógico, no un DELETE: solo cambia el
-    // estado a 'Eliminado' con PATCH (modifica un campo sin reenviar el resto del registro).
+    // "Eliminar" usuario es un borrado lógico: PATCH que solo cambia el estado a 'Eliminado'.
     eliminarUsuario(id: string): Observable<Usuario> {
         return this.http.patch<Usuario>(`${this.apiUrl}/${id}`, { estado: 'Eliminado' });
     }
