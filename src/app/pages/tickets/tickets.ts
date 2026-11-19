@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 // AGREGADO: takeUntilDestroyed cancela la suscripción del debounce al destruir el componente.
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, Subscription, debounceTime } from 'rxjs';
@@ -86,6 +86,25 @@ export class Tickets implements OnInit {
   // reemplazan la tabla por el mensaje "Cargando" y los filtros/paginador no parpadean.
   tuvoDatos = signal(false);
 
+  // AGREGADO: filas que muestra la tabla ahora (la página actual). dataSource.data no es un
+  // signal, así que se guarda aquí una copia reactiva; se actualiza en el mismo momento que
+  // la tabla, y de ahí salen los contadores.
+  ticketsVisibles = signal<Ticket[]>([]);
+
+  // AGREGADO: contador por estado de los tickets visibles en la página. Es un computed: se
+  // recalcula solo al cambiar de página, de filtros o de tamaño de página, porque en todos esos
+  // casos llega una página nueva. Un estado sin tickets queda en 0. La suma de los tres
+  // coincide con las filas de la tabla porque ambos salen de la misma lista.
+  resumenEstados = computed(() => {
+    const resumen: Record<Ticket['estado'], number> = { 'Abierto': 0, 'En proceso': 0, 'Cerrado': 0 };
+
+    for (const ticket of this.ticketsVisibles()) {
+      resumen[ticket.estado] += 1;
+    }
+
+    return resumen;
+  });
+
   filtros: FiltrosTickets = {
     texto: '',
     estado: '',
@@ -128,6 +147,7 @@ export class Tickets implements OnInit {
           }
 
           this.dataSource.data = respuesta.results;
+          this.ticketsVisibles.set(respuesta.results);
           this.total.set(respuesta.count);
           this.tuvoDatos.set(true);
           this.cargando.set(false);

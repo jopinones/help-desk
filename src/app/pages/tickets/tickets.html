@@ -88,6 +88,28 @@
  
   } @else {
  
+    <!-- AGREGADO: resumen por estado de los tickets de la página que se está viendo. Se alimenta
+         de la misma lista que la tabla, así que la suma de los tres contadores coincide con
+         las filas mostradas. Un estado sin tickets muestra 0. -->
+    <section class="resumen-pagina" aria-labelledby="titulo-resumen-pagina">
+      <h2 id="titulo-resumen-pagina">En esta página</h2>
+
+      <dl class="resumen-contadores" aria-live="polite">
+        <div class="resumen-contador">
+          <dt>Abiertos</dt>
+          <dd data-estado="Abierto">{{ resumenEstados()['Abierto'] }}</dd>
+        </div>
+        <div class="resumen-contador">
+          <dt>En proceso</dt>
+          <dd data-estado="En proceso">{{ resumenEstados()['En proceso'] }}</dd>
+        </div>
+        <div class="resumen-contador">
+          <dt>Cerrados</dt>
+          <dd data-estado="Cerrado">{{ resumenEstados()['Cerrado'] }}</dd>
+        </div>
+      </dl>
+    </section>
+
     <div class="tabla-contenedor">
  
       <table mat-table [dataSource]="dataSource">

@@ -263,6 +263,44 @@ mat-paginator {
   width: 100%;
 }
  
+// AGREGADO: bloque "En esta página" con un contador por estado.
+.resumen-pagina {
+  margin-bottom: 14px;
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 15px;
+  }
+}
+
+.resumen-contadores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+}
+
+.resumen-contador {
+  min-width: 120px;
+  padding: 10px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+
+  dt {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 2px 0 0;
+    font-size: 24px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
 // CORRECCIÓN: el HTML usa .contador-resultados (guion medio), no guion bajo.
 .contador-resultados {
   margin: 4px 0 14px;
