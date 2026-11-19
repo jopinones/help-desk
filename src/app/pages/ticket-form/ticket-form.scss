@@ -21,3 +21,15 @@ form {
     gap: 8px;
     padding-top: 8px;
 }
+
+// AGREGADO: el aviso de error de guardado (.error-guardado) estaba en el HTML sin estilos.
+.error-guardado {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #b91c1c;
+}

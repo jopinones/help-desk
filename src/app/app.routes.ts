@@ -1,25 +1,13 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './pages/dashboard/dashboard';
-import { Tickets } from './pages/tickets/tickets';
-import { TicketForm } from './pages/ticket-form/ticket-form';
-import { TicketDetalle } from './pages/ticket-detalle/ticket-detalle';
-// CAMBIO: Kanban vuelve a cargarse bajo demanda (loadComponent) al final de este archivo; al
-// importarlo aquí, el datepicker y el drag & drop engordaban el bundle inicial por encima del
-// límite de error de 1 MB y el build de producción fallaba.
-import { Reportes } from './pages/reportes/reportes';
-// AGREGADO: se repusieron las rutas de Usuarios, Acerca de y la página 404, que la reescritura
-// de las rutas había quitado (el menú ya no podía llegar a ellas).
-import { Usuarios } from './pages/usuarios/usuarios';
-import { UsuarioForm } from './pages/usuario-form/usuario-form';
-import { UsuarioDetalle } from './pages/usuario-detalle/usuario-detalle';
-import { AcercaDe } from './pages/acerca-de/acerca-de';
-import { NotFound } from './pages/not-found/not-found';
-
-import { Login } from './pages/login/login';
+// CORRECCIÓN: el import apuntaba a './interceptor/guards/acceso-guard', una carpeta que no
+// existe; los guards están en src/app/guards. Era un error de compilación.
 import { requiereRoles, sesionGuard } from './guards/acceso-guard';
+// AGREGADO: lista única de perfiles que pueden crear/editar tickets (la misma que usan el menú
+// y los botones).
 import { ROLES_GESTION_TICKETS } from './services/sesion';
-import { SinAcceso } from './pages/sin-acceso/sin-acceso';
 
+// Todas las páginas se cargan bajo demanda (loadComponent): el bundle inicial se mantiene
+// pequeño y cada pantalla se descarga al visitarla.
 export const routes: Routes = [
   {
     path: '',
@@ -28,81 +16,85 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    component: Login
+    loadComponent: () => import('./pages/login/login').then(m => m.Login)
   },
   {
     path: 'sin-acceso',
     canActivate: [sesionGuard],
-    component: SinAcceso
+    loadComponent: () => import('./pages/sin-acceso/sin-acceso').then(m => m.SinAcceso)
   },
   {
     path: 'dashboard',
-    component: Dashboard,
-    canActivate: [sesionGuard]
+    canActivate: [sesionGuard],
+    loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.Dashboard)
   },
   {
     path: 'tickets',
-    component: Tickets,
-    canActivate: [sesionGuard]
+    canActivate: [sesionGuard],
+    loadComponent: () => import('./pages/tickets/tickets').then(m => m.Tickets)
   },
+  // CORRECCIÓN: crear y editar tickets exige Soporte o Administrador. La reescritura de las
+  // rutas los dejó con sesionGuard (cualquier perfil, incluido Usuario, podía abrir los
+  // formularios escribiendo la URL). Con perfil Usuario el guard redirige a /sin-acceso.
   {
-    // CAMBIO: crear y editar tickets exige Soporte o Administrador. Con perfil Usuario el guard
-    // redirige a /sin-acceso; el listado y el detalle siguen abiertos a cualquier sesión.
     path: 'tickets/nuevo',
-    component: TicketForm,
-    canActivate: [requiereRoles(...ROLES_GESTION_TICKETS)]
+    canActivate: [requiereRoles(...ROLES_GESTION_TICKETS)],
+    loadComponent: () => import('./pages/ticket-form/ticket-form').then(m => m.TicketForm)
   },
   {
     path: 'tickets/editar/:id',
-    component: TicketForm,
-    canActivate: [requiereRoles(...ROLES_GESTION_TICKETS)]
+    canActivate: [requiereRoles(...ROLES_GESTION_TICKETS)],
+    loadComponent: () => import('./pages/ticket-form/ticket-form').then(m => m.TicketForm)
   },
+  // Esta ruta va DESPUÉS de 'nuevo' y 'editar/:id'; si estuviera antes, "nuevo" se tomaría
+  // como un :id.
   {
     path: 'tickets/:id',
-    component: TicketDetalle,
-    canActivate: [sesionGuard]
+    canActivate: [sesionGuard],
+    loadComponent: () => import('./pages/ticket-detalle/ticket-detalle').then(m => m.TicketDetalle)
   },
   {
     path: 'kanban',
-    loadComponent: () => import('./pages/kanban/kanban').then((m) => m.Kanban),
-    canActivate: [requiereRoles('Soporte', 'Administrador')]
+    canActivate: [requiereRoles('Soporte', 'Administrador')],
+    loadComponent: () => import('./pages/kanban/kanban').then(m => m.Kanban)
   },
   {
     path: 'reportes',
-    component: Reportes,
-    canActivate: [requiereRoles('Administrador')]
+    canActivate: [requiereRoles('Administrador')],
+    loadComponent: () => import('./pages/reportes/reportes').then(m => m.Reportes)
   },
-  // AGREGADO: gestión de usuarios solo para Administrador (como el enlace del menú).
-  // 'nuevo' y 'editar/:id' van antes de ':id', si no 'nuevo' se tomaría como un id.
+  // AGREGADO (repuesto): las rutas de Usuarios, que la reescritura había quitado aunque el menú
+  // las enlaza. Solo Administrador. 'nuevo' y 'editar/:id' van antes de ':id'.
   {
     path: 'usuarios',
-    component: Usuarios,
-    canActivate: [requiereRoles('Administrador')]
+    canActivate: [requiereRoles('Administrador')],
+    loadComponent: () => import('./pages/usuarios/usuarios').then(m => m.Usuarios)
   },
   {
     path: 'usuarios/nuevo',
-    component: UsuarioForm,
-    canActivate: [requiereRoles('Administrador')]
+    canActivate: [requiereRoles('Administrador')],
+    loadComponent: () => import('./pages/usuario-form/usuario-form').then(m => m.UsuarioForm)
   },
   {
     path: 'usuarios/editar/:id',
-    component: UsuarioForm,
-    canActivate: [requiereRoles('Administrador')]
+    canActivate: [requiereRoles('Administrador')],
+    loadComponent: () => import('./pages/usuario-form/usuario-form').then(m => m.UsuarioForm)
   },
   {
     path: 'usuarios/:id',
-    component: UsuarioDetalle,
-    canActivate: [requiereRoles('Administrador')]
+    canActivate: [requiereRoles('Administrador')],
+    loadComponent: () => import('./pages/usuario-detalle/usuario-detalle').then(m => m.UsuarioDetalle)
   },
+  // AGREGADO (repuesto): la página "Acerca de", enlazada en el menú.
   {
     path: 'acerca-de',
-    component: AcercaDe,
-    canActivate: [sesionGuard]
+    canActivate: [sesionGuard],
+    loadComponent: () => import('./pages/acerca-de/acerca-de').then(m => m.AcercaDe)
   },
-  // CAMBIO: las rutas desconocidas vuelven a mostrar la página 404 (NotFound); la reescritura
-  // las redirigía en silencio al dashboard y ese componente quedaba sin uso.
+  // CORRECCIÓN: las rutas desconocidas vuelven a mostrar la página 404 (NotFound); redirigirlas
+  // en silencio al dashboard ocultaba los enlaces rotos y dejaba ese componente sin uso.
   {
     path: '**',
-    component: NotFound
+    loadComponent: () => import('./pages/not-found/not-found').then(m => m.NotFound)
   }
 ];

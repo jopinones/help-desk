@@ -137,6 +137,42 @@ describe('Kanban', () => {
   });
 
   // AGREGADO: pruebas de los filtros.
+  // AGREGADO: contador en vivo de segundos de espera ("Cargando datos").
+  it('mientras carga cuenta los segundos en vivo, y se detiene y reinicia en cada carga', () => {
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne(`${API_BASE_URL}/tickets`).flush([]);
+    expect(component.cargando()).toBe(false);
+
+    vi.useFakeTimers();
+    try {
+      component.cargarTickets();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Cargando datos… 0 s');
+
+      vi.advanceTimersByTime(3000);
+      fixture.detectChanges();
+      expect(component.segundosEspera()).toBe(3);
+      expect(fixture.nativeElement.textContent).toContain('Cargando datos… 3 s');
+
+      // Al llegar la respuesta se detiene: aunque pase más tiempo, el contador no sigue.
+      http.expectOne(`${API_BASE_URL}/tickets`).flush([]);
+      vi.advanceTimersByTime(5000);
+      expect(component.segundosEspera()).toBe(3);
+      expect(component.cargando()).toBe(false);
+
+      // Una carga nueva (p. ej. Reintentar) vuelve a empezar desde 0; y si falla, también se detiene.
+      component.cargarTickets();
+      expect(component.segundosEspera()).toBe(0);
+      vi.advanceTimersByTime(2000);
+      expect(component.segundosEspera()).toBe(2);
+      http.expectOne(`${API_BASE_URL}/tickets`).flush('x', { status: 500, statusText: 'Error' });
+      vi.advanceTimersByTime(4000);
+      expect(component.segundosEspera()).toBe(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('combina los filtros y limpiarFiltros los restablece', () => {
     const base = { descripcion: 'd', fechaCreacion: '2026-01-01' } as const;
     component.tickets.set([

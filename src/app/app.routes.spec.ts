@@ -52,6 +52,28 @@ describe('Permisos de tickets en las rutas', () => {
     }
   });
 
+  // AGREGADO: las rutas de Usuarios, Acerca de y 404 que la reescritura había quitado.
+  it('Usuarios solo para Administrador, Acerca de para cualquier sesión y 404 para rutas desconocidas', async () => {
+    await iniciar('Soporte');
+    const router = TestBed.inject(Router);
+    await harness.navigateByUrl('/usuarios');
+    expect(router.url).toBe('/sin-acceso');
+    await harness.navigateByUrl('/usuarios/nuevo');
+    expect(router.url).toBe('/sin-acceso');
+    await harness.navigateByUrl('/acerca-de');
+    expect(router.url).toBe('/acerca-de');
+    await harness.navigateByUrl('/ruta-que-no-existe');
+    expect(router.url).toBe('/ruta-que-no-existe');
+    http.match(() => true);
+
+    TestBed.inject(Sesion).establecer({ rol: 'Administrador', token: 'demo-administrador', username: 'administrador' });
+    for (const url of ['/usuarios', '/usuarios/nuevo', '/usuarios/editar/1', '/usuarios/1']) {
+      await harness.navigateByUrl(url);
+      expect(router.url).toBe(url);
+      http.match(() => true);
+    }
+  });
+
   it('Usuario conserva el acceso al listado y al detalle', async () => {
     await iniciar('Usuario');
     await harness.navigateByUrl('/tickets');

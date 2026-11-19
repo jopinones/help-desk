@@ -1,4 +1,6 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+// AGREGADO: interval emite cada segundo para el contador de espera; Subscription permite detenerlo.
+import { Subscription, interval } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -30,6 +32,7 @@ import { CdkDropListGroup } from '@angular/cdk/drag-drop';
 })
 export class Kanban implements OnInit{
   private ticketService = inject(TicketService);
+  private destroyRef = inject(DestroyRef);
  
   estados = [
     {
@@ -96,19 +99,47 @@ export class Kanban implements OnInit{
     this.cargarTickets();
   }
  
+  // AGREGADO: segundos transcurridos esperando la respuesta de la API (contador en vivo del
+  // mensaje "Cargando datos"). Se reinicia en cada carga y se detiene al terminar o fallar.
+  segundosEspera = signal(0);
+  private cronometro?: Subscription;
+
+  // AGREGADO: arranca el contador. Se calcula con la hora real (Date.now) y no sumando 1 en
+  // cada tick: así no se atrasa si el navegador demora un tick (pestaña en segundo plano).
+  private iniciarCronometro(): void {
+    this.detenerCronometro();
+    const inicio = Date.now();
+    this.segundosEspera.set(0);
+    this.cronometro = interval(1000).subscribe(() =>
+      this.segundosEspera.set(Math.floor((Date.now() - inicio) / 1000))
+    );
+  }
+
+  // Si el componente se destruye con la carga en curso, se libera el temporizador. Se registra
+  // una sola vez aquí (no en cada carga, que acumularía avisos de destrucción).
+  private liberarAlDestruir = this.destroyRef.onDestroy(() => this.detenerCronometro());
+
+  private detenerCronometro(): void {
+    this.cronometro?.unsubscribe();
+    this.cronometro = undefined;
+  }
+
   cargarTickets(): void {
     this.cargando.set(true);
     this.errorCarga.set(false);
+    this.iniciarCronometro();
  
     this.ticketService.obtenerTickets().subscribe({
       next: (tickets) => {
         this.tickets.set(tickets);
         this.cargando.set(false);
+        this.detenerCronometro();
       },
       error: (error) => {
         console.error("Error al cargar tickets: ", error)
         this.cargando.set(false);
         this.errorCarga.set(true);
+        this.detenerCronometro();
       }
     });
   }

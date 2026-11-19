@@ -65,7 +65,8 @@
     }
 
     @if (cargando()) {
-        <div class="mensaje">Cargando datos</div>
+        <!-- AGREGADO: contador en vivo de los segundos que lleva la espera (segundosEspera). -->
+        <div class="mensaje" role="status">Cargando datos… {{ segundosEspera() }} s</div>
     } @else if (errorCarga()) {
         <div class="mensaje error">
             No fue posible cargar los tickets
