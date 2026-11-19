@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arquitectura Help Desk</title>
+<style>
+:root{
+  --fondo:#f6f8fb; --sup:#ffffff; --sup2:#eef2f7; --borde:#d9e0ea; --txt:#1b2433; --suave:#5b6779;
+  --acento:#1d5fd1; --acento-fondo:#e6efff; --ok:#15803d; --ok-fondo:#e7f6ec; --aviso:#a16207; --aviso-fondo:#fdf3d8;
+  --rojo:#b91c1c; --rojo-fondo:#fdeaea; --codigo:#0f172a; --codigo-txt:#e2e8f0; --sombra:0 1px 3px rgba(15,23,42,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-tema="claro"]){
+    --fondo:#0f141c; --sup:#171e29; --sup2:#1e2735; --borde:#2d3a4d; --txt:#e6ebf2; --suave:#9aa8bd;
+    --acento:#6ea2ff; --acento-fondo:#1a2a47; --ok:#4ade80; --ok-fondo:#12281b; --aviso:#facc15; --aviso-fondo:#2f2a12;
+    --rojo:#f87171; --rojo-fondo:#331a1a; --codigo:#0b1018; --codigo-txt:#dbe4f0;
+  }
+}
+:root[data-tema="oscuro"]{
+  --fondo:#0f141c; --sup:#171e29; --sup2:#1e2735; --borde:#2d3a4d; --txt:#e6ebf2; --suave:#9aa8bd;
+  --acento:#6ea2ff; --acento-fondo:#1a2a47; --ok:#4ade80; --ok-fondo:#12281b; --aviso:#facc15; --aviso-fondo:#2f2a12;
+  --rojo:#f87171; --rojo-fondo:#331a1a; --codigo:#0b1018; --codigo-txt:#dbe4f0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--fondo);color:var(--txt);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);min-height:100vh}
+nav.indice{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;padding:22px 16px;background:var(--sup);border-right:1px solid var(--borde)}
+nav.indice h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);margin:0 0 10px}
+nav.indice a{display:block;padding:5px 10px;border-radius:8px;color:var(--txt);text-decoration:none;font-size:14px}
+nav.indice a:hover{background:var(--sup2)}
+nav.indice a.act{background:var(--acento-fondo);color:var(--acento);font-weight:600}
+nav.indice a.sub{padding-left:24px;font-size:13px;color:var(--suave)}
+nav.indice a.sub.act{color:var(--acento)}
+.tema{margin-top:14px;width:100%;padding:8px;border:1px solid var(--borde);border-radius:8px;background:var(--sup2);color:var(--txt);cursor:pointer;font:inherit;font-size:13px}
+main{padding:36px clamp(16px,4vw,56px) 80px;max-width:1080px;width:100%}
+header.portada{padding:28px 30px;margin-bottom:28px;border-radius:16px;background:linear-gradient(135deg,var(--acento-fondo),var(--sup));border:1px solid var(--borde)}
+header.portada h1{margin:0 0 6px;font-size:clamp(26px,4vw,36px);line-height:1.2}
+header.portada p{margin:0;color:var(--suave)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{padding:3px 11px;border-radius:999px;background:var(--sup);border:1px solid var(--borde);font-size:13px}
+section{margin-top:54px}
+h2{font-size:26px;margin:0 0 6px;padding-top:6px;border-top:2px solid var(--borde)}
+h3{font-size:19px;margin:30px 0 8px}
+h4{font-size:16px;margin:20px 0 6px}
+p{margin:10px 0}
+.intro{color:var(--suave);margin-top:0}
+a{color:var(--acento)}
+code{font:13.5px/1.4 ui-monospace,Consolas,"Cascadia Code",monospace;background:var(--sup2);padding:1px 6px;border-radius:5px}
+pre{margin:14px 0;padding:14px 16px;overflow:auto;border-radius:10px;background:var(--codigo);color:var(--codigo-txt);font:13px/1.55 ui-monospace,Consolas,monospace}
+pre code{background:none;padding:0;color:inherit}
+table{width:100%;border-collapse:collapse;margin:14px 0;background:var(--sup);border:1px solid var(--borde);border-radius:10px;overflow:hidden;font-size:14.5px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--borde)}
+th{background:var(--sup2);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--suave)}
+tr:last-child td{border-bottom:0}
+.tabla-scroll{overflow-x:auto}
+.ok{color:var(--ok);font-weight:700}.no{color:var(--rojo);font-weight:700}
+.caja{padding:14px 16px;border-radius:12px;border:1px solid var(--borde);background:var(--sup);margin:16px 0;box-shadow:var(--sombra)}
+.caja.info{background:var(--acento-fondo);border-color:transparent}
+.caja.aviso{background:var(--aviso-fondo);border-color:transparent}
+.caja.peligro{background:var(--rojo-fondo);border-color:transparent}
+.caja strong.t{display:block;margin-bottom:2px}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin:16px 0}
+.tarjeta{padding:14px 16px;border:1px solid var(--borde);border-radius:12px;background:var(--sup);box-shadow:var(--sombra)}
+.tarjeta h4{margin:0 0 4px}
+.tarjeta p{margin:4px 0;font-size:14.5px;color:var(--suave)}
+.tag{display:inline-block;padding:1px 8px;border-radius:6px;background:var(--sup2);border:1px solid var(--borde);font-size:12px;color:var(--suave);margin:2px 4px 2px 0}
+figure{margin:20px 0;padding:14px;background:var(--sup);border:1px solid var(--borde);border-radius:12px;overflow-x:auto}
+figure svg{display:block;width:100%;height:auto;min-width:640px}
+figcaption{margin-top:8px;font-size:13.5px;color:var(--suave);text-align:center}
+svg text{fill:var(--txt);font:13px system-ui,sans-serif}
+svg .s{fill:var(--suave);font-size:11.5px}
+svg .b{font-weight:700}
+svg .caja-s{fill:var(--sup2);stroke:var(--borde);stroke-width:1.3}
+svg .caja-a{fill:var(--acento-fondo);stroke:var(--acento);stroke-width:1.3}
+svg .caja-v{fill:var(--ok-fondo);stroke:var(--ok);stroke-width:1.3}
+svg .caja-y{fill:var(--aviso-fondo);stroke:var(--aviso);stroke-width:1.3}
+svg .caja-r{fill:var(--rojo-fondo);stroke:var(--rojo);stroke-width:1.3}
+svg .lin{stroke:var(--suave);stroke-width:1.5;fill:none}
+svg .lin-a{stroke:var(--acento);stroke-width:1.8;fill:none}
+svg .lin-d{stroke:var(--suave);stroke-width:1.2;stroke-dasharray:5 4;fill:none}
+svg .vida{stroke:var(--borde);stroke-width:1.5;stroke-dasharray:4 4}
+.pie{margin-top:60px;padding-top:16px;border-top:1px solid var(--borde);font-size:13px;color:var(--suave)}
+@media (max-width:900px){.layout{grid-template-columns:1fr}nav.indice{position:static;height:auto;max-height:260px;border-right:0;border-bottom:1px solid var(--borde)}}
+@media print{nav.indice,.tema{display:none}.layout{display:block}section{break-inside:avoid-page}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="indice" aria-label="Índice">
+  <h2>Contenido</h2>
+  <a href="#vision">1. Visión general</a>
+  <a href="#capas">2. Arquitectura en capas</a>
+  <a href="#estructura">3. Estructura del proyecto</a>
+  <a href="#arranque">4. Cómo arranca y funciona</a>
+  <a href="#seguridad">5. Rutas, sesión y permisos</a>
+  <a href="#datos">6. Datos: modelos, servicios, API</a>
+  <a href="#estado">7. Estado y reactividad</a>
+  <a href="#componentes">8. Componentes por tipo</a>
+  <a class="sub" href="#c-shell">Shell (App)</a>
+  <a class="sub" href="#c-paginas">Páginas</a>
+  <a class="sub" href="#c-compartidos">Compartidos</a>
+  <a class="sub" href="#c-dialogos">Diálogos</a>
+  <a class="sub" href="#c-infra">Guards, interceptor, servicios</a>
+  <a href="#flujos">9. Flujos clave</a>
+  <a href="#patrones">10. Patrones de diseño</a>
+  <a href="#estilos">11. Estilos y tema</a>
+  <a href="#pruebas">12. Pruebas</a>
+  <a href="#build">13. Configuración y build</a>
+  <a href="#limites">14. Limitaciones conocidas</a>
+  <button class="tema" id="tema" type="button">Cambiar tema</button>
+</nav>
+
+<main>
+
+<header class="portada">
+  <h1>Help Desk · Arquitectura y funcionamiento</h1>
+  <p>Aplicación Angular para gestionar solicitudes de soporte: tickets, tablero Kanban, dashboard de indicadores y administración de usuarios, conectada a una API externa (Django) con autenticación por token.</p>
+  <div class="chips">
+    <span class="chip">Angular 22</span><span class="chip">Angular Material / CDK 22</span><span class="chip">Standalone + Signals</span>
+    <span class="chip">RxJS 7.8</span><span class="chip">TypeScript 6</span><span class="chip">SCSS</span><span class="chip">Vitest</span><span class="chip">Sin zone.js</span>
+  </div>
+</header>
+
+<!-- ============================ 1 ============================ -->
+<section id="vision">
+<h2>1. Visión general</h2>
+<p class="intro">Qué hace la aplicación y con qué decisiones técnicas está construida.</p>
+
+<div class="rejilla">
+  <div class="tarjeta"><h4>Qué resuelve</h4><p>Registrar y seguir solicitudes de soporte. Cada <strong>ticket</strong> tiene asunto, descripción, estado (Abierto, En proceso, Cerrado), prioridad (Baja, Media, Alta) y fecha de creación.</p></div>
+  <div class="tarjeta"><h4>Quién la usa</h4><p>Tres perfiles: <strong>Usuario</strong> (solo consulta), <strong>Soporte</strong> (gestiona tickets y usa el Kanban) y <strong>Administrador</strong> (además Reportes y Usuarios).</p></div>
+  <div class="tarjeta"><h4>Pantallas</h4><p>Login, Dashboard, Tickets (listado, detalle, formulario), Kanban, Usuarios (listado, detalle, formulario), Reportes (pendiente), Acerca de, 404 y Acceso restringido.</p></div>
+</div>
+
+<h3>Decisiones técnicas principales</h3>
+<table>
+<tr><th>Decisión</th><th>Qué significa en este proyecto</th></tr>
+<tr><td><strong>Componentes standalone</strong></td><td>No hay <code>NgModule</code>. Cada componente declara sus <code>imports</code>. Es la forma actual de Angular.</td></tr>
+<tr><td><strong>Signals</strong></td><td>El estado de pantalla (<code>cargando</code>, <code>error</code>, listas, filtros del dashboard y del Kanban) vive en <code>signal()</code> y se deriva con <code>computed()</code>.</td></tr>
+<tr><td><strong>Sin zone.js</strong></td><td>Angular repinta cuando cambia un signal o cuando ocurre un evento de plantilla. Un campo normal modificado desde una suscripción <em>no</em> repinta, por eso el estado asincrónico se guarda en signals.</td></tr>
+<tr><td><strong>Carga bajo demanda</strong></td><td>Todas las páginas se cargan con <code>loadComponent</code>. El Kanban (con datepicker y drag &amp; drop) es un chunk aparte.</td></tr>
+<tr><td><strong>API externa</strong></td><td>Los datos vienen de un backend Django por HTTPS (<code>API_BASE_URL</code> en <code>config/api.ts</code>). Los tickets del listado se paginan y filtran <em>en el servidor</em>.</td></tr>
+<tr><td><strong>Reglas en un solo lugar</strong></td><td>Qué se puede editar o eliminar vive en <code>models/</code> y en <code>Sesion</code>; rutas, menú y botones consultan las mismas funciones.</td></tr>
+</table>
+</section>
+
+<!-- ============================ 2 ============================ -->
+<section id="capas">
+<h2>2. Arquitectura en capas</h2>
+<p class="intro">Las dependencias van siempre hacia abajo: una página usa componentes compartidos y servicios; los servicios usan <code>HttpClient</code>; el interceptor decora cada petición antes de llegar a la API.</p>
+
+<figure>
+<svg viewBox="0 0 920 470" role="img" aria-label="Arquitectura en capas">
+  <defs><marker id="f1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acento)"/></marker></defs>
+
+  <rect class="caja-a" x="20" y="14" width="640" height="76" rx="10"/>
+  <text class="b" x="36" y="38">1 · Presentación — páginas (src/app/pages)</text>
+  <text class="s" x="36" y="58">Dashboard · Tickets · TicketForm · TicketDetalle · Kanban(+Columna, TarjetaTicket)</text>
+  <text class="s" x="36" y="76">Usuarios · UsuarioForm · UsuarioDetalle · Login · Reportes · AcercaDe · NotFound · SinAcceso</text>
+
+  <rect class="caja-v" x="20" y="116" width="640" height="76" rx="10"/>
+  <text class="b" x="36" y="140">2 · Componentes compartidos (src/app/shared)</text>
+  <text class="s" x="36" y="160">EstadoTicket · PrioridadTicket · IdTicket · AccionesTicket · RolUsuario</text>
+  <text class="s" x="36" y="178">TarjetaIndicador · GraficoTickets · ConfirmDialog · InfoDialog</text>
+
+  <rect class="caja-y" x="20" y="218" width="640" height="76" rx="10"/>
+  <text class="b" x="36" y="242">3 · Servicios y estado de aplicación (src/app/services)</text>
+  <text class="s" x="36" y="262">Sesion (signal de sesión, roles, persistencia) · TicketService · UsuarioService</text>
+  <text class="s" x="36" y="280">Los componentes guardan el estado de su pantalla en signals propios</text>
+
+  <rect class="caja-s" x="20" y="320" width="640" height="62" rx="10"/>
+  <text class="b" x="36" y="344">4 · Infraestructura HTTP</text>
+  <text class="s" x="36" y="364">HttpClient → tokenInterceptor (agrega Bearer, maneja 401)</text>
+
+  <rect class="caja-r" x="20" y="408" width="640" height="48" rx="10"/>
+  <text class="b" x="36" y="429">5 · API externa Django (túnel de desarrollo)</text>
+  <text class="s" x="36" y="446">/auth/token · /tickets · /tickets/paginados · /usuarios</text>
+
+  <path class="lin-a" d="M340 90V114" marker-end="url(#f1)"/>
+  <path class="lin-a" d="M340 192V216" marker-end="url(#f1)"/>
+  <path class="lin-a" d="M340 294V318" marker-end="url(#f1)"/>
+  <path class="lin-a" d="M340 382V406" marker-end="url(#f1)"/>
+
+  <rect class="caja-s" x="690" y="14" width="214" height="442" rx="10" stroke-dasharray="6 4"/>
+  <text class="b" x="706" y="38">Transversal</text>
+  <rect class="caja-a" x="704" y="52" width="186" height="64" rx="8"/>
+  <text class="b" x="716" y="74">Router + Guards</text>
+  <text class="s" x="716" y="92">rutas lazy, sesionGuard,</text><text class="s" x="716" y="106">requiereRoles(...)</text>
+  <rect class="caja-v" x="704" y="128" width="186" height="64" rx="8"/>
+  <text class="b" x="716" y="150">Modelos y reglas</text>
+  <text class="s" x="716" y="168">Ticket, Usuario,</text><text class="s" x="716" y="182">puedeEditar(), motivos</text>
+  <rect class="caja-y" x="704" y="204" width="186" height="64" rx="8"/>
+  <text class="b" x="716" y="226">Configuración</text>
+  <text class="s" x="716" y="244">config/api.ts</text><text class="s" x="716" y="258">app.config.ts</text>
+  <rect class="caja-s" x="704" y="280" width="186" height="64" rx="8"/>
+  <text class="b" x="716" y="302">Estilos y tema</text>
+  <text class="s" x="716" y="320">styles.scss: tokens --hd-*</text><text class="s" x="716" y="334">tema Material --mat-sys-*</text>
+  <rect class="caja-r" x="704" y="356" width="186" height="86" rx="8"/>
+  <text class="b" x="716" y="378">Pruebas</text>
+  <text class="s" x="716" y="396">Vitest · 31 archivos</text><text class="s" x="716" y="410">119 pruebas · HttpTesting</text><text class="s" x="716" y="424">RouterTestingHarness</text>
+</svg>
+<figcaption>Figura 1. Capas de la aplicación y elementos transversales.</figcaption>
+</figure>
+
+<div class="caja info"><strong class="t">Regla de dependencias</strong>Las páginas no llaman a <code>HttpClient</code> directamente: siempre pasan por un servicio. Los componentes compartidos no conocen la API: reciben datos por <code>input()</code> y avisan con <code>output()</code>. Esa separación hace que los compartidos se puedan probar y reutilizar sin servidor.</div>
+</section>
+
+<!-- ============================ 3 ============================ -->
+<section id="estructura">
+<h2>3. Estructura del proyecto</h2>
+<p class="intro">Carpetas por tipo de pieza, no por funcionalidad: es un proyecto de tamaño medio donde cada tipo tiene reglas propias.</p>
+<pre><code>help-desk/
+├─ src/
+│  ├─ main.ts                   arranque (bootstrapApplication)
+│  ├─ styles.scss               tema Material, tokens --hd-* y clases globales
+│  └─ app/
+│     ├─ app.ts / app.html      shell: barra superior, menú lateral y router-outlet
+│     ├─ app.config.ts          proveedores: router, HttpClient + interceptor
+│     ├─ app.routes.ts          rutas (todas lazy) con guards
+│     ├─ config/api.ts          API_BASE_URL
+│     ├─ models/                ticket.ts, usuario.ts  (tipos + reglas de negocio)
+│     ├─ services/              sesion.ts, ticket.ts, usuario.ts
+│     ├─ guards/                acceso-guard.ts  (sesionGuard, requiereRoles)
+│     ├─ interceptor/           token-interceptor.ts
+│     ├─ pages/                 una carpeta por pantalla
+│     │  ├─ dashboard/  tickets/  ticket-form/  ticket-detalle/
+│     │  ├─ kanban/ (+ kanban-columna/)   tarjeta-ticket/
+│     │  ├─ usuarios/  usuario-form/  usuario-detalle/
+│     │  └─ login/  reportes/  acerca-de/  not-found/  sin-acceso/
+│     └─ shared/                componentes reutilizables
+│        ├─ estado-ticket/  prioridad-ticket/  id-ticket/  acciones-ticket/  rol-usuario/
+│        ├─ tarjeta-indicador/  grafico-tickets/
+│        └─ confirm-dialog/  info-dialog/
+├─ docs/                        esta documentación y el manual de construcción
+├─ angular.json  package.json  tsconfig*.json
+└─ api/  db.json                json-server heredado (ya no lo usa la app)</code></pre>
+<p>Cada componente tiene cuatro archivos: <code>.ts</code> (lógica), <code>.html</code> (plantilla), <code>.scss</code> (estilos encapsulados) y <code>.spec.ts</code> (pruebas).</p>
+</section>
+
+<!-- ============================ 4 ============================ -->
+<section id="arranque">
+<h2>4. Cómo arranca y cómo funciona la aplicación</h2>
+<p class="intro">Del arranque a la primera pantalla, y qué ocurre en cada petición.</p>
+
+<h3>4.1 Arranque</h3>
+<ol>
+  <li><code>main.ts</code> llama a <code>bootstrapApplication(App, appConfig)</code>. No hay módulo raíz.</li>
+  <li><code>app.config.ts</code> registra dos proveedores: <code>provideRouter(routes)</code> y <code>provideHttpClient(withInterceptors([tokenInterceptor]))</code>. También escucha errores globales del navegador.</li>
+  <li>El componente raíz <code>App</code> pinta la <strong>shell</strong>: barra superior con la marca y «Cerrar sesión», menú lateral (visible solo con sesión) y <code>&lt;router-outlet&gt;</code>.</li>
+  <li>El router resuelve la URL. La ruta vacía redirige a <code>/dashboard</code>; si no hay sesión, <code>sesionGuard</code> la convierte en <code>/login</code>.</li>
+  <li>Al entrar a una ruta, Angular descarga el chunk de esa página (<code>loadComponent</code>), la instancia y ejecuta su <code>ngOnInit</code>, que normalmente pide datos a un servicio.</li>
+</ol>
+
+<h3>4.2 Autenticación y ciclo de una petición</h3>
+<figure>
+<svg viewBox="0 0 920 560" role="img" aria-label="Secuencia de autenticación y petición">
+  <defs><marker id="f2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acento)"/></marker></defs>
+  <g>
+    <rect class="caja-a" x="10" y="10" width="150" height="34" rx="8"/><text class="b" x="85" y="32" text-anchor="middle">Login</text>
+    <rect class="caja-y" x="190" y="10" width="150" height="34" rx="8"/><text class="b" x="265" y="32" text-anchor="middle">Sesion</text>
+    <rect class="caja-v" x="370" y="10" width="170" height="34" rx="8"/><text class="b" x="455" y="32" text-anchor="middle">Servicio + HttpClient</text>
+    <rect class="caja-s" x="570" y="10" width="150" height="34" rx="8"/><text class="b" x="645" y="32" text-anchor="middle">tokenInterceptor</text>
+    <rect class="caja-r" x="750" y="10" width="160" height="34" rx="8"/><text class="b" x="830" y="32" text-anchor="middle">API Django</text>
+  </g>
+  <line class="vida" x1="85" y1="44" x2="85" y2="548"/><line class="vida" x1="265" y1="44" x2="265" y2="548"/>
+  <line class="vida" x1="455" y1="44" x2="455" y2="548"/><line class="vida" x1="645" y1="44" x2="645" y2="548"/><line class="vida" x1="830" y1="44" x2="830" y2="548"/>
+
+  <text class="s b" x="14" y="72">A · Inicio de sesión</text>
+  <path class="lin-a" d="M85 92H263" marker-end="url(#f2)"/><text class="s" x="92" y="86">1 iniciarSesion(usuario, clave)</text>
+  <path class="lin-a" d="M265 120H828" marker-end="url(#f2)"/><text class="s" x="300" y="114">2 POST /auth/token (sin Bearer: no es recurso protegido)</text>
+  <path class="lin" d="M828 148H267" marker-end="url(#f2)"/><text class="s" x="300" y="142">3 { rol, token, username }</text>
+  <rect class="caja-y" x="195" y="160" width="140" height="42" rx="6"/><text class="s" x="265" y="178" text-anchor="middle">4 valida rol y token,</text><text class="s" x="265" y="192" text-anchor="middle">signal + sessionStorage</text>
+  <path class="lin" d="M263 218H87" marker-end="url(#f2)"/><text class="s" x="100" y="212">5 OK → navigate('/dashboard')</text>
+
+  <text class="s b" x="14" y="258">B · Petición protegida (ej. listar tickets)</text>
+  <path class="lin-a" d="M455 284H643" marker-end="url(#f2)"/><text class="s" x="466" y="278">6 GET /tickets/paginados</text>
+  <rect class="caja-s" x="560" y="296" width="170" height="42" rx="6"/><text class="s" x="645" y="314" text-anchor="middle">7 lee Sesion.actual().token;</text><text class="s" x="645" y="328" text-anchor="middle">clona y agrega Authorization</text>
+  <path class="lin-a" d="M645 352H828" marker-end="url(#f2)"/><text class="s" x="660" y="346">8 Bearer &lt;token&gt;</text>
+  <path class="lin" d="M828 380H457" marker-end="url(#f2)"/><text class="s" x="560" y="374">9 { count, results }</text>
+
+  <text class="s b" x="14" y="420">C · Token vencido o inválido</text>
+  <path class="lin-a" d="M645 446H828" marker-end="url(#f2)"/><text class="s" x="660" y="440">10 petición protegida</text>
+  <path class="lin" d="M828 474H647" marker-end="url(#f2)"/><text class="s" x="690" y="468">11 401</text>
+  <path class="lin" d="M645 502H267" marker-end="url(#f2)"/><text class="s" x="330" y="496">12 cerrar() — borra la sesión</text>
+  <path class="lin" d="M265 528H87" marker-end="url(#f2)"/><text class="s" x="100" y="522">13 navigate('/login')</text>
+</svg>
+<figcaption>Figura 2. Inicio de sesión, petición protegida y manejo del 401.</figcaption>
+</figure>
+
+<div class="caja aviso"><strong class="t">El 401 del login no redirige</strong>El interceptor solo actúa en recursos protegidos (<code>/tickets</code>, <code>/usuarios</code>, <code>/usuario</code> del mismo origen). Un 401 de <code>/auth/token</code> significa «credenciales incorrectas» y lo muestra el propio Login.</div>
+</section>
+
+<!-- ============================ 5 ============================ -->
+<section id="seguridad">
+<h2>5. Rutas, sesión y permisos</h2>
+<p class="intro">Tres defensas en capas: la ruta (guard), el menú y los botones, y la lógica del método. Todas consultan la misma regla.</p>
+
+<h3>5.1 Mapa de rutas</h3>
+<div class="tabla-scroll"><table>
+<tr><th>Ruta</th><th>Página</th><th>Guard</th></tr>
+<tr><td><code>/login</code></td><td>Login</td><td>—</td></tr>
+<tr><td><code>/sin-acceso</code></td><td>SinAcceso</td><td><code>sesionGuard</code></td></tr>
+<tr><td><code>/dashboard</code></td><td>Dashboard</td><td><code>sesionGuard</code></td></tr>
+<tr><td><code>/tickets</code> · <code>/tickets/:id</code></td><td>Tickets · TicketDetalle</td><td><code>sesionGuard</code></td></tr>
+<tr><td><code>/tickets/nuevo</code> · <code>/tickets/editar/:id</code></td><td>TicketForm</td><td><code>requiereRoles(Soporte, Administrador)</code></td></tr>
+<tr><td><code>/kanban</code></td><td>Kanban</td><td><code>requiereRoles(Soporte, Administrador)</code></td></tr>
+<tr><td><code>/reportes</code></td><td>Reportes</td><td><code>requiereRoles(Administrador)</code></td></tr>
+<tr><td><code>/usuarios</code>, <code>/nuevo</code>, <code>/editar/:id</code>, <code>/:id</code></td><td>Usuarios · UsuarioForm · UsuarioDetalle</td><td><code>requiereRoles(Administrador)</code></td></tr>
+<tr><td><code>/acerca-de</code></td><td>AcercaDe</td><td><code>sesionGuard</code></td></tr>
+<tr><td><code>**</code></td><td>NotFound (404)</td><td>—</td></tr>
+</table></div>
+<p>El orden importa: <code>tickets/nuevo</code> y <code>tickets/editar/:id</code> se declaran <em>antes</em> de <code>tickets/:id</code>; si no, «nuevo» se interpretaría como un identificador.</p>
+
+<h3>5.2 Cómo decide un guard</h3>
+<figure>
+<svg viewBox="0 0 900 250" role="img" aria-label="Flujo del guard">
+  <defs><marker id="f3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acento)"/></marker></defs>
+  <rect class="caja-s" x="10" y="95" width="130" height="50" rx="8"/><text class="b" x="75" y="117" text-anchor="middle">Navegación</text><text class="s" x="75" y="133" text-anchor="middle">a una ruta</text>
+  <path class="lin-a" d="M140 120H190" marker-end="url(#f3)"/>
+  <polygon class="caja-y" points="190,120 270,70 350,120 270,170"/><text class="b" x="270" y="116" text-anchor="middle">¿hay</text><text class="b" x="270" y="132" text-anchor="middle">sesión?</text>
+  <path class="lin-a" d="M270 70V32H610" marker-end="url(#f3)"/><text class="s" x="290" y="26">no → UrlTree('/login')</text>
+  <path class="lin-a" d="M350 120H410" marker-end="url(#f3)"/><text class="s" x="358" y="112">sí</text>
+  <polygon class="caja-y" points="410,120 500,68 590,120 500,172"/><text class="b" x="500" y="112" text-anchor="middle">¿la ruta exige</text><text class="b" x="500" y="128" text-anchor="middle">roles y el rol sirve?</text>
+  <path class="lin-a" d="M590 120H660" marker-end="url(#f3)"/><text class="s" x="600" y="112">sí / sin roles</text>
+  <rect class="caja-v" x="660" y="98" width="150" height="44" rx="8"/><text class="b" x="735" y="125" text-anchor="middle">true: se abre</text>
+  <path class="lin-a" d="M500 172V220H610" marker-end="url(#f3)"/><text class="s" x="515" y="212">no</text>
+  <rect class="caja-r" x="610" y="198" width="200" height="44" rx="8"/><text class="b" x="710" y="225" text-anchor="middle">UrlTree('/sin-acceso')</text>
+  <rect class="caja-r" x="610" y="10" width="200" height="40" rx="8"/><text class="b" x="710" y="35" text-anchor="middle">/login</text>
+</svg>
+<figcaption>Figura 3. <code>sesionGuard</code> y <code>requiereRoles()</code> devuelven <code>true</code> o un <code>UrlTree</code> de redirección.</figcaption>
+</figure>
+
+<h3>5.3 Matriz de permisos</h3>
+<div class="tabla-scroll"><table>
+<tr><th>Acción / pantalla</th><th>Usuario</th><th>Soporte</th><th>Administrador</th></tr>
+<tr><td>Dashboard, listado y detalle de tickets, Acerca de</td><td class="ok">✔</td><td class="ok">✔</td><td class="ok">✔</td></tr>
+<tr><td>Crear, editar y eliminar tickets</td><td class="no">✘</td><td class="ok">✔</td><td class="ok">✔</td></tr>
+<tr><td>Kanban (incluye cambiar estado arrastrando)</td><td class="no">✘</td><td class="ok">✔</td><td class="ok">✔</td></tr>
+<tr><td>Reportes</td><td class="no">✘</td><td class="no">✘</td><td class="ok">✔</td></tr>
+<tr><td>Usuarios (listar, crear, editar, eliminar)</td><td class="no">✘</td><td class="no">✘</td><td class="ok">✔</td></tr>
+</table></div>
+
+<h3>5.4 La sesión</h3>
+<ul>
+  <li><code>Sesion</code> guarda <code>{ rol, token, username }</code> en un signal de solo lectura (<code>actual</code>).</li>
+  <li><code>iniciarSesion()</code> llama a <code>POST /auth/token</code> y <strong>valida</strong> la respuesta: rechaza roles desconocidos o ausencia de token.</li>
+  <li>Se persiste en <code>sessionStorage</code> (clave <code>help-desk.sesion</code>) para sobrevivir a una recarga (F5). La lectura valida la forma de los datos y tolera que el almacenamiento no exista.</li>
+  <li><code>puedeGestionarTickets</code> es un <code>computed</code> derivado de <code>ROLES_GESTION_TICKETS</code>; menú, botones y rutas usan la misma lista.</li>
+</ul>
+<div class="caja peligro"><strong class="t">Los guards no son seguridad real</strong>Un guard solo ordena la navegación en el navegador. La autorización verdadera (quién puede borrar un ticket) debe validarla la API con el token en cada petición.</div>
+</section>
+
+<!-- ============================ 6 ============================ -->
+<section id="datos">
+<h2>6. Datos: modelos, servicios y API</h2>
+
+<h3>6.1 Modelos y reglas de negocio</h3>
+<figure>
+<svg viewBox="0 0 900 250" role="img" aria-label="Modelos">
+  <rect class="caja-a" x="20" y="14" width="400" height="220" rx="10"/>
+  <text class="b" x="36" y="38">Ticket  (models/ticket.ts)</text>
+  <text x="36" y="62">id: string</text><text x="36" y="82">asunto: string</text><text x="36" y="102">descripcion: string</text>
+  <text x="36" y="122">estado: 'Abierto' | 'En proceso' | 'Cerrado'</text>
+  <text x="36" y="142">prioridad: 'Baja' | 'Media' | 'Alta'</text>
+  <text x="36" y="162">fechaCreacion: string  (yyyy-MM-dd)</text>
+  <text class="s b" x="36" y="188">Reglas</text>
+  <text class="s" x="36" y="206">puedeEditar(t): estado !== 'Cerrado'</text>
+  <text class="s" x="36" y="222">NuevoTicket = Omit&lt;Ticket, 'id'&gt;</text>
+  <rect class="caja-v" x="470" y="14" width="410" height="220" rx="10"/>
+  <text class="b" x="486" y="38">Usuario  (models/usuario.ts)</text>
+  <text x="486" y="62">id: string</text><text x="486" y="82">nombre · email: string</text>
+  <text x="486" y="102">rol: 'Administrador' | 'Soporte' | 'Usuario'</text>
+  <text x="486" y="122">estado: 'Vigente' | 'Bloqueado' | 'Eliminado'</text>
+  <text x="486" y="142">fechaCreacion: string</text>
+  <text class="s b" x="486" y="168">Reglas</text>
+  <text class="s" x="486" y="186">puedeEditar(u): estado === 'Vigente'</text>
+  <text class="s" x="486" y="202">puedeEliminar(u): estado !== 'Eliminado'</text>
+  <text class="s" x="486" y="218">motivoNoEditable(u): texto para el tooltip</text>
+</svg>
+<figcaption>Figura 4. Modelos de dominio. Las reglas son funciones puras reutilizadas por listado, detalle y formulario.</figcaption>
+</figure>
+
+<h3>6.2 Servicios y endpoints</h3>
+<div class="tabla-scroll"><table>
+<tr><th>Servicio</th><th>Método</th><th>Petición</th><th>Quién lo usa</th></tr>
+<tr><td rowspan="6"><code>TicketService</code></td><td><code>obtenerTickets()</code></td><td>GET <code>/tickets</code></td><td>Dashboard, Kanban</td></tr>
+<tr><td><code>obtenerTicketsPaginados(pagina, tamaño, filtros)</code></td><td>GET <code>/tickets/paginados?page&amp;page_size&amp;texto&amp;estado&amp;prioridad&amp;fechaDesde&amp;fechaHasta</code> — solo envía filtros con valor</td><td>Tickets (listado)</td></tr>
+<tr><td><code>obtenerTicket(id)</code></td><td>GET <code>/tickets/:id</code></td><td>TicketDetalle, TicketForm</td></tr>
+<tr><td><code>crearTicket(t)</code></td><td>POST <code>/tickets</code></td><td>TicketForm</td></tr>
+<tr><td><code>actualizarTicket(id, t)</code></td><td>PUT <code>/tickets/:id</code></td><td>TicketForm, Kanban</td></tr>
+<tr><td><code>eliminarTicket(id)</code></td><td>DELETE <code>/tickets/:id</code></td><td>Tickets</td></tr>
+<tr><td rowspan="4"><code>UsuarioService</code></td><td><code>obtenerUsuarios()</code> · <code>obtenerUsuario(id)</code></td><td>GET <code>/usuarios</code> · <code>/usuarios/:id</code></td><td>Usuarios, UsuarioDetalle, UsuarioForm</td></tr>
+<tr><td><code>crearUsuario(u)</code></td><td>POST <code>/usuarios</code></td><td>UsuarioForm</td></tr>
+<tr><td><code>actualizarUsuario(id, u)</code></td><td>PUT <code>/usuarios/:id</code></td><td>UsuarioForm</td></tr>
+<tr><td><code>eliminarUsuario(id)</code></td><td>PATCH <code>/usuarios/:id</code> con <code>{ estado: 'Eliminado' }</code> (borrado lógico)</td><td>Usuarios</td></tr>
+<tr><td><code>Sesion</code></td><td><code>iniciarSesion(u, p)</code></td><td>POST <code>/auth/token</code> → <code>{ rol, token, username }</code></td><td>Login</td></tr>
+</table></div>
+<p>La URL base viene de <code>config/api.ts</code>. Si el túnel de desarrollo cambia, solo hay que editar esa constante: servicios, sesión e interceptor la comparten.</p>
+
+<h3>6.3 Respuesta paginada</h3>
+<pre><code>interface PaginaTickets {
+  count: number;          // total de tickets que cumplen los filtros (no solo los de la página)
+  next: string | null;
+  previous: string | null;
+  results: Ticket[];      // los de la página pedida
+}</code></pre>
+
+<h3>6.4 Interceptor</h3>
+<p><code>tokenInterceptor</code> es una función (<code>HttpInterceptorFn</code>) que se ejecuta en cada petición:</p>
+<ol>
+  <li>Sin token en la sesión → deja pasar la petición sin cambios.</li>
+  <li>Resuelve la URL y comprueba que el <em>origen</em> sea el de la API y que la ruta empiece por <code>tickets</code>, <code>usuarios</code> o <code>usuario</code>. Si no, no agrega nada (el token nunca viaja a otros orígenes ni a <code>/auth/token</code>).</li>
+  <li>Clona la petición con <code>Authorization: Bearer &lt;token&gt;</code>.</li>
+  <li>Si la respuesta es 401, cierra la sesión, navega a <code>/login</code> y relanza el error.</li>
+</ol>
+</section>
+
+<!-- ============================ 7 ============================ -->
+<section id="estado">
+<h2>7. Estado y reactividad</h2>
+<p class="intro">Cada pantalla es dueña de su estado y lo expone con signals. No hay un store global: lo único compartido es la sesión.</p>
+
+<h3>7.1 El patrón «cargando / error / datos»</h3>
+<p>Todas las pantallas que consultan la API usan tres signals y una plantilla con <code>@if / @else if / @else</code>:</p>
+<pre><code>cargando = signal(true);
+error    = signal(false);
+tickets  = signal&lt;Ticket[]&gt;([]);
+
+cargar() {
+  this.cargando.set(true); this.error.set(false);
+  this.servicio.obtener().subscribe({
+    next:  d => { this.tickets.set(d); this.cargando.set(false); },
+    error: e => { console.error(e); this.error.set(true); this.cargando.set(false); }
+  });
+}</code></pre>
+<p>En la plantilla: <code>@if (cargando()) { … } @else if (error()) { … } @else { …datos… }</code>.</p>
+
+<h3>7.2 Dos estrategias de filtrado</h3>
+<div class="rejilla">
+  <div class="tarjeta"><h4>Servidor — Tickets</h4><p>El volumen puede ser grande, así que cada cambio de página, tamaño o filtro hace una petición con <code>page</code>, <code>page_size</code> y los filtros. La tabla solo guarda la página actual.</p></div>
+  <div class="tarjeta"><h4>Cliente — Kanban y Dashboard</h4><p>Cargan todos los tickets una vez y derivan con <code>computed()</code>. Un filtro no hace red: recalcula en memoria.</p></div>
+</div>
+
+<h3>7.3 Derivación en el Dashboard</h3>
+<figure>
+<svg viewBox="0 0 900 240" role="img" aria-label="Derivación de signals del dashboard">
+  <defs><marker id="f4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acento)"/></marker></defs>
+  <rect class="caja-y" x="10" y="20" width="140" height="48" rx="8"/><text class="b" x="80" y="42" text-anchor="middle">tickets</text><text class="s" x="80" y="58" text-anchor="middle">signal (API)</text>
+  <rect class="caja-y" x="10" y="150" width="140" height="48" rx="8"/><text class="b" x="80" y="172" text-anchor="middle">prioridad</text><text class="s" x="80" y="188" text-anchor="middle">signal (filtro)</text>
+  <rect class="caja-a" x="200" y="84" width="150" height="48" rx="8"/><text class="b" x="275" y="106" text-anchor="middle">ticketsFiltrados</text><text class="s" x="275" y="122" text-anchor="middle">computed</text>
+  <rect class="caja-a" x="400" y="84" width="130" height="48" rx="8"/><text class="b" x="465" y="106" text-anchor="middle">resumen</text><text class="s" x="465" y="122" text-anchor="middle">totales por estado</text>
+  <rect class="caja-a" x="580" y="14" width="150" height="40" rx="8"/><text class="b" x="655" y="38" text-anchor="middle">pendientes · %</text>
+  <rect class="caja-a" x="580" y="70" width="150" height="40" rx="8"/><text class="b" x="655" y="94" text-anchor="middle">serieEstados</text>
+  <rect class="caja-a" x="580" y="126" width="150" height="40" rx="8"/><text class="b" x="655" y="150" text-anchor="middle">seriePendientes…</text>
+  <rect class="caja-a" x="580" y="182" width="150" height="40" rx="8"/><text class="b" x="655" y="206" text-anchor="middle">serieCreadosPorDia</text>
+  <rect class="caja-v" x="770" y="14" width="124" height="94" rx="8"/><text class="b" x="832" y="52" text-anchor="middle">TarjetaIndicador</text><text class="s" x="832" y="70" text-anchor="middle">× 7 indicadores</text>
+  <rect class="caja-v" x="770" y="126" width="124" height="96" rx="8"/><text class="b" x="832" y="164" text-anchor="middle">GraficoTickets</text><text class="s" x="832" y="182" text-anchor="middle">× 4 gráficos</text>
+  <path class="lin-a" d="M150 44L198 98" marker-end="url(#f4)"/><path class="lin-a" d="M150 174L198 120" marker-end="url(#f4)"/>
+  <path class="lin-a" d="M350 108H398" marker-end="url(#f4)"/>
+  <path class="lin-a" d="M530 100L578 38" marker-end="url(#f4)"/><path class="lin-a" d="M530 108L578 90" marker-end="url(#f4)"/>
+  <path class="lin-a" d="M350 120L578 146" marker-end="url(#f4)"/><path class="lin-a" d="M350 130L578 200" marker-end="url(#f4)"/>
+  <path class="lin-a" d="M730 34H768" marker-end="url(#f4)"/><path class="lin-a" d="M730 90H750V140H768" marker-end="url(#f4)"/>
+  <path class="lin-a" d="M730 146H768" marker-end="url(#f4)"/><path class="lin-a" d="M730 202H750V170H768" marker-end="url(#f4)"/>
+</svg>
+<figcaption>Figura 5. Solo hay dos entradas (<code>tickets</code> y el filtro de prioridad); todo lo demás se recalcula solo. Por eso al cambiar la prioridad se actualizan tarjetas y gráficos a la vez, y la suma de los puntos «por día» siempre coincide con el total de la selección.</figcaption>
+</figure>
+</section>
+
+<!-- ============================ 8 ============================ -->
+<section id="componentes">
+<h2>8. Componentes por tipo</h2>
+<p class="intro">Qué hace cada uno, qué recibe y cómo funciona por dentro.</p>
+
+<h3 id="c-shell">8.1 Shell de la aplicación — <code>App</code></h3>
+<p>Estructura fija: <code>mat-toolbar</code> (marca + «Cerrar sesión - rol»), <code>mat-sidenav</code> y <code>router-outlet</code>.</p>
+<ul>
+  <li>El menú solo se abre con sesión: <code>[opened]="sesion.actual() !== null"</code>.</li>
+  <li>Submenú <strong>Tickets</strong> (Listado / Crear ticket) con su propio signal <code>ticketsAbierto</code>; se abre solo si la ruta activa pertenece al grupo.</li>
+  <li>Visibilidad por rol: Kanban para Soporte/Administrador; Reportes y Usuarios solo Administrador; «Crear ticket» solo si <code>puedeGestionarTickets()</code>.</li>
+  <li><code>cerrarSesion()</code> limpia la sesión y navega a <code>/login</code>.</li>
+</ul>
+
+<h3 id="c-paginas">8.2 Páginas (componentes contenedor)</h3>
+<p>Una página conoce servicios, rutas y diálogos; delega la presentación en componentes compartidos.</p>
+<div class="rejilla">
+
+<div class="tarjeta"><h4>Login</h4><span class="tag">formulario por plantilla</span><span class="tag">Sesion</span>
+<p>Formulario usuario/contraseña con <code>ngModel</code>. <code>entrar()</code> ignora entradas vacías o un envío en curso, llama a <code>Sesion.iniciarSesion()</code> y, si todo sale bien, borra la contraseña y navega a <code>/dashboard</code>. Los errores se traducen según el código HTTP (0 → sin conexión/CORS, 400/401 → credenciales, 403, 429, otro).</p></div>
+
+<div class="tarjeta"><h4>Dashboard</h4><span class="tag">signals + computed</span><span class="tag">TicketService</span>
+<p>Carga todos los tickets (<code>takeUntilDestroyed</code>). Filtro único de <strong>prioridad</strong>. Muestra 4 indicadores por estado, 3 de seguimiento (pendientes, alta prioridad pendiente, % cerrado), una «lectura operacional» en texto y 4 gráficos: por estado (barras), pendientes y cerrados (anillo), pendientes por prioridad (barras) y creados por día (líneas). Botón «Actualizar datos».</p></div>
+
+<div class="tarjeta"><h4>Tickets (listado)</h4><span class="tag">paginación servidor</span><span class="tag">MatTable</span><span class="tag">debounce</span>
+<p>Filtros de texto (espera 300 ms), estado, prioridad y rango de fechas; botón de vista rápida <em>tickets críticos</em> (Abierto + Alta, una sola consulta); bloque «En esta página» con contadores por estado; tabla con <code>IdTicket</code>, <code>EstadoTicket</code>, <code>PrioridadTicket</code> y <code>AccionesTicket</code>; paginador conectado al total del servidor. Cancela la consulta anterior al lanzar otra y retrocede de página si la última queda vacía tras eliminar.</p></div>
+
+<div class="tarjeta"><h4>TicketForm</h4><span class="tag">formularios reactivos</span><span class="tag">crear/editar</span><span class="tag">ConfirmDialog</span>
+<p>Un único componente para crear y editar (según haya <code>:id</code> en la ruta). Validaciones: asunto 5–100, descripción 10–500. Recorta espacios antes de guardar y conserva la fecha original al editar. Un ticket <em>Cerrado</em> se muestra bloqueado. <strong>Cancelar</strong> compara los valores con los iniciales: sin cambios vuelve directo; con cambios pide confirmación. Los errores HTTP se muestran con su motivo.</p></div>
+
+<div class="tarjeta"><h4>TicketDetalle</h4><span class="tag">solo lectura</span>
+<p>Lee <code>:id</code>, carga el ticket y lo presenta con etiquetas de estado y prioridad. «Editar» solo aparece a Soporte/Administrador y se deshabilita (con tooltip) si el ticket está cerrado.</p></div>
+
+<div class="tarjeta"><h4>Kanban</h4><span class="tag">CDK drag &amp; drop</span><span class="tag">filtros cliente</span><span class="tag">lazy chunk</span>
+<p>Tablero de tres columnas. Filtros: texto, estado, prioridad y rango de fechas (Material datepicker). Cada columna se ordena por fecha, del más reciente al más antiguo. Mientras carga muestra un contador de segundos en vivo. Al soltar una tarjeta en otra columna se hace un <code>PUT</code> y solo cuando el servidor confirma se actualiza la lista (no hay actualización optimista); mientras hay un guardado en curso todo el tablero queda bloqueado.</p></div>
+
+<div class="tarjeta"><h4>Usuarios · UsuarioForm · UsuarioDetalle</h4><span class="tag">CRUD</span><span class="tag">borrado lógico</span>
+<p>Listado con <code>RolUsuario</code>, estado y acciones. «Eliminar» no borra: hace <code>PATCH estado='Eliminado'</code> tras confirmar y avisa con <code>InfoDialog</code>. El formulario solo ofrece Vigente/Bloqueado; un usuario Bloqueado o Eliminado se muestra bloqueado (aun por URL directa). Las reglas salen de <code>models/usuario.ts</code>.</p></div>
+
+<div class="tarjeta"><h4>Reportes · AcercaDe · NotFound · SinAcceso</h4>
+<p><strong>Reportes</strong> es un marcador («Próximamente»). <strong>AcercaDe</strong> describe el sistema. <strong>NotFound</strong> es la página 404 (rutas desconocidas). <strong>SinAcceso</strong> es el destino cuando un guard de roles rechaza.</p></div>
+</div>
+
+<h4>Jerarquía del Kanban</h4>
+<figure>
+<svg viewBox="0 0 900 300" role="img" aria-label="Jerarquía del Kanban">
+  <defs><marker id="f5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acento)"/></marker></defs>
+  <rect class="caja-a" x="320" y="10" width="260" height="56" rx="8"/><text class="b" x="450" y="34" text-anchor="middle">Kanban (contenedor)</text><text class="s" x="450" y="52" text-anchor="middle">signals: tickets, filtros, actualizandoID</text>
+  <rect class="caja-v" x="40" y="110" width="240" height="56" rx="8"/><text class="b" x="160" y="134" text-anchor="middle">KanbanColumna «Abiertos»</text><text class="s" x="160" y="152" text-anchor="middle">cdkDropList</text>
+  <rect class="caja-v" x="330" y="110" width="240" height="56" rx="8"/><text class="b" x="450" y="134" text-anchor="middle">KanbanColumna «En proceso»</text><text class="s" x="450" y="152" text-anchor="middle">cdkDropList</text>
+  <rect class="caja-v" x="620" y="110" width="240" height="56" rx="8"/><text class="b" x="740" y="134" text-anchor="middle">KanbanColumna «Cerrados»</text><text class="s" x="740" y="152" text-anchor="middle">cdkDropList</text>
+  <rect class="caja-y" x="330" y="210" width="240" height="50" rx="8"/><text class="b" x="450" y="232" text-anchor="middle">TarjetaTicket (cdkDrag)</text><text class="s" x="450" y="248" text-anchor="middle">IdTicket · PrioridadTicket · selector de estado</text>
+  <path class="lin-a" d="M450 66V88H160V108" marker-end="url(#f5)"/><path class="lin-a" d="M450 66V108" marker-end="url(#f5)"/><path class="lin-a" d="M450 66V88H740V108" marker-end="url(#f5)"/>
+  <path class="lin-a" d="M450 166V208" marker-end="url(#f5)"/>
+  <text class="s" x="466" y="92">[tickets] [titulo] [estado] [actualizando]</text>
+  <text class="s" x="466" y="190">[ticket] [actualizando]</text>
+  <path class="lin-d" d="M330 236H20V90H318" marker-end="url(#f5)"/><text class="s" x="26" y="262">(cambiarEstado) sube desde tarjeta y columna hasta Kanban → PUT</text>
+</svg>
+<figcaption>Figura 6. Los datos bajan por <code>input()</code>; los eventos suben por <code>output()</code>. Solo el contenedor habla con el servicio.</figcaption>
+</figure>
+
+<h3 id="c-compartidos">8.3 Componentes compartidos (presentacionales)</h3>
+<p>No inyectan servicios de datos: reciben todo por entradas.</p>
+<div class="tabla-scroll"><table>
+<tr><th>Componente</th><th>Entradas / salidas</th><th>Función</th></tr>
+<tr><td><code>app-estado-ticket</code></td><td><code>estado</code></td><td>Etiqueta de color según el estado (Abierto azul, En proceso ámbar, Cerrado verde).</td></tr>
+<tr><td><code>app-prioridad-ticket</code></td><td><code>prioridad</code></td><td>Etiqueta de color (Baja verde, Media ámbar, Alta roja).</td></tr>
+<tr><td><code>app-id-ticket</code></td><td><code>ticketId</code></td><td>Muestra «#id» como enlace al detalle. Se llama <code>ticketId</code> para no chocar con el atributo HTML <code>id</code>.</td></tr>
+<tr><td><code>app-rol-usuario</code></td><td><code>rol</code></td><td>Etiqueta del rol del usuario.</td></tr>
+<tr><td><code>app-acciones-ticket</code></td><td>in: <code>ticket</code>, <code>eliminando</code> · out: <code>eliminar</code></td><td>Botones Detalle, Editar y Eliminar de cada fila. Editar/Eliminar solo para quien <code>puedeGestionarTickets()</code>; Editar se deshabilita en tickets cerrados con tooltip. Eliminar solo <em>avisa</em> al padre: la confirmación y la API no están aquí.</td></tr>
+<tr><td><code>app-tarjeta-indicador</code></td><td><code>titulo</code>, <code>valor</code> (obligatorios); <code>descripcion</code>, <code>apoyo</code>, <code>unidad</code>, <code>icono</code>, <code>variante</code></td><td>Tarjeta de un indicador. La variante (neutra, principal, azul, ámbar, verde, roja) solo fija dos variables CSS (<code>--acento</code>, <code>--fondo-icon</code>).</td></tr>
+<tr><td><code>app-grafico-tickets</code></td><td><code>titulo</code>, <code>tipo</code> ('bar' | 'doughnut' | 'line'), <code>series</code></td><td>Gráficos en SVG propio, sin librería: barras, anillo (círculos con <code>stroke-dasharray</code>) y líneas (polilínea). Resalta una serie por puntero o foco y muestra su detalle y porcentaje.</td></tr>
+<tr><td><code>app-tarjeta-ticket</code></td><td>in: <code>ticket</code>, <code>actualizando</code> · out: <code>cambiarEstado</code></td><td>Tarjeta del Kanban con un selector que ofrece las mismas transiciones que arrastrar.</td></tr>
+</table></div>
+
+<h3 id="c-dialogos">8.4 Diálogos</h3>
+<div class="rejilla">
+<div class="tarjeta"><h4>ConfirmDialog</h4><p>Se abre con <code>MatDialog.open</code> y recibe <code>{ titulo, mensaje, textoConfirmar?, textoCancelar? }</code> por <code>MAT_DIALOG_DATA</code>. Devuelve <code>true</code> al confirmar. Lo usan: eliminar ticket, eliminar usuario y descartar cambios del formulario. Los llamadores abren con <code>disableClose</code> para obligar a decidir.</p></div>
+<div class="tarjeta"><h4>InfoDialog</h4><p>Aviso con un solo botón «Cerrar». Se muestra <em>después</em> de que la API confirma una eliminación (ticket o usuario), no antes.</p></div>
+</div>
+
+<h3 id="c-infra">8.5 Guards, interceptor y servicios</h3>
+<table>
+<tr><th>Pieza</th><th>Responsabilidad</th></tr>
+<tr><td><code>sesionGuard</code></td><td>Permite el paso si hay sesión; si no, <code>UrlTree('/login')</code>.</td></tr>
+<tr><td><code>requiereRoles(...roles)</code></td><td>Fábrica de guards: sin sesión → login; rol no permitido → <code>/sin-acceso</code>; si no, <code>true</code>.</td></tr>
+<tr><td><code>tokenInterceptor</code></td><td>Agrega el Bearer a recursos protegidos y gestiona el 401 (ver 6.4).</td></tr>
+<tr><td><code>Sesion</code></td><td>Estado y persistencia de la sesión, login y consulta de roles.</td></tr>
+<tr><td><code>TicketService</code> / <code>UsuarioService</code></td><td>Una función por operación HTTP; devuelven <code>Observable</code> tipado. No guardan estado.</td></tr>
+</table>
+</section>
+
+<!-- ============================ 9 ============================ -->
+<section id="flujos">
+<h2>9. Flujos clave</h2>
+
+<h3>9.1 Listado de tickets con paginación y filtros del servidor</h3>
+<figure>
+<svg viewBox="0 0 900 230" role="img" aria-label="Flujo del listado">
+  <defs><marker id="f6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acento)"/></marker></defs>
+  <rect class="caja-s" x="10" y="20" width="150" height="62" rx="8"/><text class="b" x="85" y="44" text-anchor="middle">Evento de UI</text><text class="s" x="85" y="62" text-anchor="middle">filtro · página · tamaño</text>
+  <rect class="caja-a" x="190" y="20" width="160" height="62" rx="8"/><text class="b" x="270" y="44" text-anchor="middle">Tickets</text><text class="s" x="270" y="62" text-anchor="middle">pagina → 0 si es filtro</text>
+  <rect class="caja-y" x="380" y="20" width="170" height="62" rx="8"/><text class="b" x="465" y="44" text-anchor="middle">TicketService</text><text class="s" x="465" y="62" text-anchor="middle">…/paginados?page=…</text>
+  <rect class="caja-r" x="580" y="20" width="130" height="62" rx="8"/><text class="b" x="645" y="44" text-anchor="middle">API</text><text class="s" x="645" y="62" text-anchor="middle">interceptor + Bearer</text>
+  <rect class="caja-v" x="740" y="20" width="150" height="62" rx="8"/><text class="b" x="815" y="44" text-anchor="middle">Respuesta</text><text class="s" x="815" y="62" text-anchor="middle">{ count, results }</text>
+  <path class="lin-a" d="M160 51H188" marker-end="url(#f6)"/><path class="lin-a" d="M350 51H378" marker-end="url(#f6)"/><path class="lin-a" d="M550 51H578" marker-end="url(#f6)"/><path class="lin-a" d="M710 51H738" marker-end="url(#f6)"/>
+  <rect class="caja-v" x="190" y="130" width="130" height="50" rx="8"/><text class="b" x="255" y="152" text-anchor="middle">tabla</text><text class="s" x="255" y="168" text-anchor="middle">dataSource.data</text>
+  <rect class="caja-v" x="340" y="130" width="130" height="50" rx="8"/><text class="b" x="405" y="152" text-anchor="middle">paginador</text><text class="s" x="405" y="168" text-anchor="middle">length = count</text>
+  <rect class="caja-v" x="490" y="130" width="150" height="50" rx="8"/><text class="b" x="565" y="152" text-anchor="middle">«En esta página»</text><text class="s" x="565" y="168" text-anchor="middle">ticketsVisibles → computed</text>
+  <path class="lin-a" d="M815 82V105H255V128" marker-end="url(#f6)"/><path class="lin-a" d="M815 105H405V128" marker-end="url(#f6)"/><path class="lin-a" d="M565 105V128" marker-end="url(#f6)"/>
+  <text class="s" x="190" y="214">La búsqueda por texto espera 300 ms; una consulta nueva cancela la anterior.</text>
+</svg>
+<figcaption>Figura 7. Cada evento termina en una única consulta; los tres bloques se alimentan de la misma respuesta.</figcaption>
+</figure>
+
+<h3>9.2 Formulario de ticket: estados y salida</h3>
+<figure>
+<svg viewBox="0 0 900 250" role="img" aria-label="Estados del formulario">
+  <defs><marker id="f7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acento)"/></marker></defs>
+  <rect class="caja-s" x="10" y="90" width="150" height="56" rx="10"/><text class="b" x="85" y="114" text-anchor="middle">Cargando</text><text class="s" x="85" y="132" text-anchor="middle">(solo al editar)</text>
+  <rect class="caja-v" x="210" y="90" width="170" height="56" rx="10"/><text class="b" x="295" y="114" text-anchor="middle">Sin cambios</text><text class="s" x="295" y="132" text-anchor="middle">valoresIniciales = actual</text>
+  <rect class="caja-y" x="450" y="90" width="170" height="56" rx="10"/><text class="b" x="535" y="114" text-anchor="middle">Con cambios</text><text class="s" x="535" y="132" text-anchor="middle">actual ≠ valoresIniciales</text>
+  <rect class="caja-a" x="710" y="90" width="170" height="56" rx="10"/><text class="b" x="795" y="114" text-anchor="middle">Guardando</text><text class="s" x="795" y="132" text-anchor="middle">Cancelar deshabilitado</text>
+  <rect class="caja-r" x="450" y="190" width="170" height="44" rx="10"/><text class="b" x="535" y="216" text-anchor="middle">ConfirmDialog</text>
+  <rect class="caja-s" x="210" y="190" width="170" height="44" rx="10"/><text class="b" x="295" y="216" text-anchor="middle">/tickets (listado)</text>
+  <path class="lin-a" d="M160 118H208" marker-end="url(#f7)"/>
+  <path class="lin-a" d="M380 108H448" marker-end="url(#f7)"/><text class="s" x="384" y="100">el usuario edita</text>
+  <path class="lin-a" d="M448 128H382" marker-end="url(#f7)"/><text class="s" x="384" y="146">deshace</text>
+  <path class="lin-a" d="M620 118H708" marker-end="url(#f7)"/><text class="s" x="640" y="110">Guardar</text>
+  <path class="lin-a" d="M795 146V170H640" marker-end="url(#f7)"/>
+  <path class="lin-a" d="M535 146V188" marker-end="url(#f7)"/><text class="s" x="545" y="172">Cancelar</text>
+  <path class="lin-a" d="M450 212H382" marker-end="url(#f7)"/><text class="s" x="392" y="206">descartar</text>
+  <path class="lin-a" d="M295 146V188" marker-end="url(#f7)"/><text class="s" x="305" y="172">Cancelar</text>
+  <path class="lin-d" d="M535 190V160H600" /><text class="s" x="600" y="164">seguir editando → vuelve</text>
+  <text class="s" x="645" y="190">éxito: navega al listado · error: muestra el motivo</text>
+</svg>
+<figcaption>Figura 8. «Cambios» se calcula comparando valores, no con el indicador <em>dirty</em> de Angular: si el usuario deshace lo escrito, ya no hay nada que perder.</figcaption>
+</figure>
+
+<h3>9.3 Cambiar el estado en el Kanban</h3>
+<ol>
+  <li>El usuario arrastra una tarjeta (por el asa) o usa el selector de la tarjeta.</li>
+  <li><code>KanbanColumna.soltarTicket()</code> descarta movimientos dentro de la misma columna, fuera del contenedor o durante un guardado; si procede, emite <code>cambiarEstado</code>.</li>
+  <li><code>Kanban.actualizarEstado()</code> ignora el cambio si no cambia el estado o si ya hay un guardado en curso; marca <code>actualizandoID</code> y envía un <code>PUT</code> con el ticket completo.</li>
+  <li><strong>Éxito:</strong> reemplaza el ticket en el signal <code>tickets</code> con la respuesta; los <code>computed</code> reubican la tarjeta. <strong>Error:</strong> la tarjeta no se mueve y se muestra un aviso.</li>
+</ol>
+
+<h3>9.4 Eliminar un ticket</h3>
+<ol>
+  <li><code>AccionesTicket</code> emite <code>eliminar(ticket)</code> (solo si el perfil puede gestionar).</li>
+  <li><code>Tickets.eliminar()</code> vuelve a comprobar el permiso y abre <code>ConfirmDialog</code>.</li>
+  <li>Si el usuario confirma: marca <code>eliminandoId</code>, llama a <code>DELETE</code>; al confirmar el servidor recarga la página actual y abre <code>InfoDialog</code>.</li>
+</ol>
+</section>
+
+<!-- ============================ 10 ============================ -->
+<section id="patrones">
+<h2>10. Patrones de diseño aplicados</h2>
+<div class="tabla-scroll"><table>
+<tr><th>Patrón</th><th>Dónde se aplica</th><th>Beneficio</th></tr>
+<tr><td><strong>Contenedor / Presentacional</strong></td><td>Páginas (Tickets, Kanban, Dashboard) vs. <code>shared/*</code> y <code>TarjetaTicket</code>, <code>KanbanColumna</code></td><td>Solo las páginas conocen servicios; lo demás es reutilizable y fácil de probar.</td></tr>
+<tr><td><strong>Inyección de dependencias</strong></td><td><code>inject()</code> en componentes, guards e interceptor; servicios <code>providedIn: 'root'</code></td><td>Acoplamiento bajo; en pruebas se sustituyen por dobles (<code>HttpTestingController</code>).</td></tr>
+<tr><td><strong>Observador / Reactividad</strong></td><td><code>Observable</code> (HTTP, debounce) y <code>signal</code>/<code>computed</code> (estado)</td><td>La vista se actualiza sola al cambiar los datos; los valores derivados nunca quedan desfasados.</td></tr>
+<tr><td><strong>Cadena de responsabilidad</strong></td><td><code>tokenInterceptor</code> en la tubería de <code>HttpClient</code></td><td>Preocupación transversal (autenticación) fuera de cada servicio.</td></tr>
+<tr><td><strong>Estrategia / Política de acceso</strong></td><td><code>requiereRoles(...)</code> parametriza el guard por ruta</td><td>Una sola fábrica para todas las restricciones por rol.</td></tr>
+<tr><td><strong>Repositorio / Fachada de datos</strong></td><td><code>TicketService</code>, <code>UsuarioService</code></td><td>Ocultan URLs y parámetros; un cambio de API se corrige en un archivo.</td></tr>
+<tr><td><strong>Fuente única de verdad de reglas</strong></td><td><code>puedeEditar</code>, <code>puedeEliminar</code>, <code>ROLES_GESTION_TICKETS</code>, <code>puedeGestionarTickets</code></td><td>Ruta, menú, botón y método aplican exactamente la misma regla.</td></tr>
+<tr><td><strong>Defensa en profundidad</strong></td><td>Guard de ruta + elemento oculto + comprobación dentro del método</td><td>Si una capa falla, la siguiente protege.</td></tr>
+<tr><td><strong>Carga diferida (proxy virtual)</strong></td><td><code>loadComponent</code> en todas las rutas</td><td>Bundle inicial pequeño; el Kanban pesa 186 kB aparte.</td></tr>
+<tr><td><strong>Borrado lógico</strong></td><td>Eliminar usuario = <code>PATCH estado</code></td><td>Conserva el historial y permite recuperar.</td></tr>
+<tr><td><strong>Debounce y cancelación</strong></td><td>Búsqueda del listado; <code>unsubscribe</code> de la consulta previa</td><td>Menos peticiones y sin respuestas obsoletas que pisen a las nuevas.</td></tr>
+<tr><td><strong>Comunicación datos↓ eventos↑</strong></td><td><code>input()</code> / <code>output()</code> entre Kanban → Columna → Tarjeta</td><td>Flujo unidireccional, predecible.</td></tr>
+<tr><td><strong>Composición sobre herencia</strong></td><td>Las pantallas se arman con componentes pequeños (etiquetas, acciones, tarjetas)</td><td>Ninguna jerarquía de clases; se combinan según se necesite.</td></tr>
+<tr><td><strong>Adaptador</strong></td><td><code>provideNativeDateAdapter()</code> para el datepicker</td><td>El selector de Material trabaja con <code>Date</code> sin dependencias extra.</td></tr>
+</table></div>
+</section>
+
+<!-- ============================ 11 ============================ -->
+<section id="estilos">
+<h2>11. Estilos y tema</h2>
+<ul>
+  <li><strong>Tema Material 3</strong> con <code>mat.theme()</code> en <code>styles.scss</code> (paleta azure, tipografía Roboto). Genera variables <code>--mat-sys-*</code>.</li>
+  <li><strong>Tokens propios <code>--hd-*</code></strong> (radio, espacio, superficie, fondo, borde, texto suave, sombra) definidos a partir de las variables de Material: cambiar la paleta cambia toda la app.</li>
+  <li><strong>Clases globales</strong> compartidas: <code>.pagina</code>, <code>.encabezado</code>, <code>.tarjeta</code>, <code>.tabla-contenedor</code>, <code>.mensaje</code>, <code>.error</code>, además de <code>h1</code>, <code>h2</code>, <code>p</code> y <code>a</code>.</li>
+  <li><strong>Estilos por componente</strong> (<code>.scss</code> encapsulado): solo lo propio. Los componentes compartidos usan tokens para respetar el tema; algunos acentos (azul, ámbar, verde, rojo de los estados) siguen con colores fijos.</li>
+  <li>Presupuestos de estilo: aviso a 4 kB y error a 8 kB por componente.</li>
+</ul>
+</section>
+
+<!-- ============================ 12 ============================ -->
+<section id="pruebas">
+<h2>12. Pruebas</h2>
+<p>Se usa <strong>Vitest</strong> (<code>ng test</code>): <strong>31 archivos y 119 pruebas</strong> en la última ejecución.</p>
+<table>
+<tr><th>Tipo</th><th>Técnica</th></tr>
+<tr><td>Servicios</td><td><code>provideHttpClientTesting()</code> + <code>HttpTestingController</code>: se comprueban método, URL, parámetros y cuerpo.</td></tr>
+<tr><td>Interceptor</td><td>Con un <code>HttpClient</code> real y el interceptor registrado: token agregado, no agregado a otros orígenes, 401 cierra sesión.</td></tr>
+<tr><td>Guards y rutas</td><td><code>RouterTestingHarness</code> con las rutas reales y los tres perfiles; se comprueba la URL final.</td></tr>
+<tr><td>Componentes</td><td><code>fixture.componentRef.setInput()</code> para entradas obligatorias; el diálogo se simula con <code>vi.spyOn(MatDialog, 'open')</code>.</td></tr>
+<tr><td>Tiempo</td><td><code>vi.useFakeTimers()</code> para el debounce de 300 ms y el contador de espera del Kanban.</td></tr>
+</table>
+<p>Las pruebas de los <code>computed</code> de signals (dashboard, kanban, contadores) verifican invariantes, por ejemplo «la suma de los puntos por día es igual al total de la selección» y «la suma de los contadores es igual a las filas de la tabla».</p>
+</section>
+
+<!-- ============================ 13 ============================ -->
+<section id="build">
+<h2>13. Configuración y build</h2>
+<table>
+<tr><th>Elemento</th><th>Detalle</th></tr>
+<tr><td>Comandos</td><td><code>npm start</code> (<code>ng serve</code>) · <code>npm run build</code> · <code>npm test</code></td></tr>
+<tr><td>URL de la API</td><td><code>src/app/config/api.ts</code> → <code>API_BASE_URL</code></td></tr>
+<tr><td>Presupuesto inicial</td><td>Aviso 500 kB, error 1 MB. Estado actual: ≈565 kB (hay aviso); chunk lazy del Kanban ≈186 kB.</td></tr>
+<tr><td>Presupuesto por componente (estilos)</td><td>Aviso 4 kB, error 8 kB. <code>tickets.scss</code> está ligeramente sobre el aviso.</td></tr>
+<tr><td>json-server (<code>api/</code>, <code>db.json</code>)</td><td>Quedó de la etapa de desarrollo con API local; la aplicación ya no lo usa.</td></tr>
+</table>
+</section>
+
+<!-- ============================ 14 ============================ -->
+<section id="limites">
+<h2>14. Limitaciones conocidas y mejoras sugeridas</h2>
+<div class="caja aviso"><strong class="t">Seguridad</strong>El token se guarda en <code>sessionStorage</code>, legible por cualquier script de la página. Es aceptable mientras no se cargue código de terceros; una alternativa más robusta es una cookie <code>HttpOnly</code> emitida por el backend. La autorización final debe validarla siempre la API.</div>
+<ul>
+  <li><strong>Confirmación de salida del formulario:</strong> solo cubre el botón Cancelar. Salir por el menú o con «Atrás» pierde los cambios sin preguntar; para cubrirlo haría falta un guard <code>canDeactivate</code>.</li>
+  <li><strong>URL de la API fija en código:</strong> cambiar de entorno requiere editar <code>config/api.ts</code>. Se podría mover a <code>environment</code> por configuración de build.</li>
+  <li><strong>Reportes</strong> es un marcador sin funcionalidad.</li>
+  <li><strong>Supuestos sobre la API:</strong> nombres de filtros y de paginación (<code>page</code>, <code>page_size</code>, <code>texto</code>, <code>fechaDesde</code>, <code>fechaHasta</code>), ruta <code>/tickets/paginados</code> y forma de los usuarios (<code>estado</code>, <code>fechaCreacion</code>) se tomaron del código y no se verificaron contra el backend real. Los ids se declaran como texto aunque Django suele entregar números; funciona porque nunca se comparan con textos.</li>
+  <li><strong>Dashboard y Kanban cargan todos los tickets:</strong> con volúmenes grandes convendrá agregar los totales en el servidor.</li>
+  <li><strong>Peso del bundle inicial</strong> por encima de la recomendación de 500 kB; la mayor parte es Angular Material.</li>
+</ul>
+</section>
+
+<div class="pie">Documento generado a partir del código del proyecto (Angular 22). Describe la aplicación tal como está hoy; si el código cambia, este documento no se actualiza solo.</div>
+
+</main>
+</div>
+
+<script>
+(function(){
+  // Tema claro/oscuro manual (por defecto sigue al sistema).
+  var raiz=document.documentElement, boton=document.getElementById('tema');
+  try{var g=localStorage.getItem('tema-arq'); if(g) raiz.setAttribute('data-tema',g);}catch(e){}
+  boton.addEventListener('click',function(){
+    var oscuroSistema=window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var actual=raiz.getAttribute('data-tema')||(oscuroSistema?'oscuro':'claro');
+    var nuevo=actual==='oscuro'?'claro':'oscuro';
+    raiz.setAttribute('data-tema',nuevo);
+    try{localStorage.setItem('tema-arq',nuevo);}catch(e){}
+  });
+  // Resalta en el índice la sección visible.
+  var enlaces=[].slice.call(document.querySelectorAll('nav.indice a'));
+  var mapa={}; enlaces.forEach(function(a){mapa[a.getAttribute('href').slice(1)]=a;});
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){enlaces.forEach(function(a){a.classList.remove('act');}); var a=mapa[e.target.id]; if(a) a.classList.add('act');}
+    });
+  },{rootMargin:'-10% 0px -80% 0px'});
+  Object.keys(mapa).forEach(function(id){var el=document.getElementById(id); if(el) obs.observe(el);});
+})();
+</script>
+</body>
+</html>
